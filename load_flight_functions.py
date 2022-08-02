@@ -66,7 +66,12 @@ def read_MMS(filename_MMS,cur_day):
     MMS_HDG = MMS[' HDG_MMS']*0.01
     MMS_PITCH = MMS[' PITCH_MMS']*0.01
     #MMS_YAW = MMS[' YAW_MMS']*0.01 # has **** to filter out
-    MMS_AOA = MMS[' AOA_MMS                                   ']*0.01
+    
+    # AOA is last columm in file
+    # may be ' AOA_MMS                                   ' or ' AOA_MMS     '
+    # let number of spaces at end be flexible:
+    AOA_col = MMS.columns[MMS.columns.str.startswith(' AOA')]
+    MMS_AOA = MMS[AOA_col[0]]*0.01
     
     # clean up
     MMS_LAT[MMS_LAT<-500] = np.nan # clean up

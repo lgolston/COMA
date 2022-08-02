@@ -1,13 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 plot data after a WB-57 flight
-Use COMA data from instrument
-MMS from FTP server
-
-known issues
-- IWG1 plots are designed to show inlet air (not the cals). Right now this is just MIU 8, however
-flush data (MIU 1) could also be included if first 20 s or so excluded
-
+Use COMA data files from instrument
+MMS from data archive (https://www-air.larc.nasa.gov/cgi-bin/ArcView/acclip)
 """
 
 # %% EDIT THESE
@@ -21,8 +16,8 @@ from load_flight_functions import V_to_T
 from load_flight_functions import read_COMA
 from load_flight_functions import read_MMS
 
-case = 13#9-13
-focus = 'flight_N2O' # lab, flight_CO, flight_N2O
+case = 14
+focus = 'flight_CO' # lab, flight_CO, flight_N2O
 
 if case == 0: # FCF
     filename_COMA = ['../Data/2021-08-06/n2o-co_2021-08-06_f0002.txt']
@@ -59,7 +54,6 @@ elif case == 8:
      filename_COMA = ['../Data/2022-07-18/n2o-co_2022-07-18_f0002.txt']
      filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220718_RA.ict'
      cur_day = datetime(2022,7,18)
-     
 elif case == 9: # Ellington to Seattle
      filename_COMA = ['../Data/2022-07-21/n2o-co_2022-07-21_f0000.txt',
                       '../Data/2022-07-21/n2o-co_2022-07-21_f0001.txt']
@@ -81,7 +75,10 @@ elif case == 13: # Misawa to Osan
      filename_COMA = ['../Data/2022-07-27/n2o-co_2022-07-27_f0000.txt']
      filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220727_RA.ict'
      cur_day = datetime(2022,7,27)
-
+elif case == 14: # Science Flight 1
+     filename_COMA = ['../Data/2022-08-02/n2o-co_2022-08-02_f0000.txt']
+     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220802_RA.ict'
+     cur_day = datetime(2022,8,2)
 
 # %% data
 # read COMA data, combining multiple files if needed
@@ -277,6 +274,8 @@ if focus != 'lab':
         ax4.set_extent([130, 190, 30, 65], crs=plate) # Transit 4 (trick for international date line)
     elif case == 13:
         ax4.set_extent([122, 144, 30, 45], crs=plate) # Transit 5
+    elif case == 14:
+        ax4.set_extent([110, 145, 15, 44], crs=plate) # Science Flight 1
     
     cb1 = plt.colorbar(sc1)
     cb1.ax.set_yticklabels(pd.to_datetime(cb1.get_ticks()).strftime(date_format='%H:%M'))
