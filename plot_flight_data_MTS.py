@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-plot data after a WB-57 flight
+plot data -during- a WB-57 flight
 using COMA and IWG1 from MTS
 """
 
@@ -8,47 +8,31 @@ using COMA and IWG1 from MTS
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from datetime import datetime, timedelta
+from datetime import datetime
 import matplotlib.dates as mdates
 
-case = 2
+from load_flight_functions import V_to_T
 
-if case == 0: # transit Houston to Seattle
-    filename_COMA = '../Data/2022-07-21/telemetry-62d94e74c5950a96da9a1f8e.csv'
-    cur_day = datetime(2022,7,21)
-if case == 1: #no COMA data Seattle to Anchorage
-    1
-elif case == 2: # transit Anchorage to Adak
-     filename_COMA = '../Data/2022-07-24/telemetry-62ddbb1d9f75ebc8ab741691.csv'
-     #filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220718_RA.ict'
-     cur_day = datetime(2022,7,24)
+filename_COMA_MTS = '../Data/2022-08-02/telemetry-62e876f99f75ebc8abffaf51.csv'
+filename_IWG1_MTS = '../Data/2022-08-02/telemetry-62e876539f75ebc8abffa3ed.csv'
+cur_day = datetime(2022,8,2)
 
 # %% data
-# read COMA data
-LGR = pd.read_csv(filename_COMA,sep=',',header=0)
-#LGR = pd.concat([LGR1,LGR2],ignore_index=True)
+# read COMA data (obtained over MTS)
+LGR = pd.read_csv(filename_COMA_MTS,sep=',',header=0)
 
 LGR_time = LGR["Timestamp"]
 LGR_time = [datetime.strptime(tstamp,"%Y-%m-%dT%H:%M:%S.%fZ") for tstamp in LGR_time]
 LGR_time = pd.DataFrame(LGR_time)
-LGR_time=LGR_time[0]
+LGR['time'] = LGR_time[0]
 
-# index MIU valves
-#ix_8 = np.ravel(np.where( (LGR["      MIU_VALVE"]==8) & (LGR["      GasP_torr"]>52.45) & (LGR["      GasP_torr"]<52.65)) ) # Inlet
-#ix_8 = np.ravel(np.where(LGR["      MIU_VALVE"]==8)) # inlet
-#ix_7 = np.ravel(np.where(LGR["      MIU_VALVE"]==7)) # inlet (lab)
-#ix_3 = np.ravel(np.where(LGR["      MIU_VALVE"]==3)) # high cal
-#ix_2 = np.ravel(np.where(LGR["      MIU_VALVE"]==2)) # low cal
-#ix_1 = np.ravel(np.where(LGR["      MIU_VALVE"]==1)) # flush
+# load WB-57 IWG1 data (obtained over MTS)
+IWG1 = pd.read_csv(filename_IWG1_MTS,sep=',',header=0)
 
-# convert laser and supercool voltage to temperature [values from Ian]
-def V_to_T(voltage):
-    a = 1.1279*10**-3
-    b = 2.3429*10**-4
-    c = 8.7298*10**-8
-    R = voltage/(100*10**-6) # 100 microAmp
-    return 1/(a+b*np.log(R)+c*np.log(R)**3) - 273.15
-
+IWG1_time = IWG1["TimeStamp"]
+IWG1_time = [datetime.strptime(tstamp,"%Y-%m-%dT%H:%M:%S.%fZ") for tstamp in IWG1_time]
+IWG1_time = pd.DataFrame(IWG1_time)
+IWG1['time'] = IWG1_time[0]
 
 # %% plot data
 plt.rc('axes', labelsize=6) # xaxis and yaxis labels
@@ -57,37 +41,47 @@ plt.rc('ytick', labelsize=6) # ytick labels
 fig, ax = plt.subplots(3, 2, figsize=(9,3.5),dpi=200,sharex=True)
 
 # 1. CO
-ax[0,0].plot(LGR_time,LGR["CO_ppm"]*1000,'k.',markersize=2)
+ax[0,0].plot(LGR['time'],LGR["CO_ppm"]*1000,'k.',markersize=2)
 ax[0,0].set_ylabel('CO (dry), ppbv')
 ax[0,0].set_ylim(0,300)
 
-# 2. N2O
-ax[1,0].plot(LGR_time,LGR["N2O_ppm"]*1000,'.',markersize=2)
-ax[1,0].set_ylabel('$\mathregular{N_2O (dry), ppbv}$')
-ax[1,0].set_ylim(200,350)
+# 2. altitude
+ax[1,0].plot(IWG1['time'],IWG1["Pressure Altitude"],'k.',markersize=2)
+ax[1,0].set_ylabel('Pressure altitude, ft')
+#ax[0,0].set_ylim(0,300)
 
-# 3. H2O
-ax[2,0].plot(LGR_time,LGR["H2O_ppm"],'.',markersize=2)
-ax[2,0].set_ylabel('$\mathregular{H_2O, ppmv}$')
-ax[2,0].set_yscale('log')
+# 3. MIU
+ax[2,0].plot(LGR['time'],LGR["MIU_Valve"],'k.',markersize=2)
+ax[2,0].set_ylabel('MUI #')
+#ax[0,0].set_ylim(0,300)
 
-# 4. laser temperature
+# 4. N2O
+ax[0,1].plot(LGR['time'],LGR["N2O_ppm"]*1000,'.',markersize=2)
+ax[0,1].set_ylabel('$\mathregular{N_2O (dry), ppbv}$')
+ax[0,1].set_ylim(200,350)
+
+# 5. laser temperature
 laserT = V_to_T(LGR["AIN6"])
-ax[0,1].plot(LGR_time,laserT,'.',markersize=2) # laser temp
-ax[0,1].set_ylabel('Laser T, C')
+ax[1,1].plot(LGR['time'],laserT,'.',markersize=2) # laser temp
+ax[1,1].set_ylabel('Laser T, C')
 
-# 5. supercool temperature
+# 6. supercool temperature
 supercoolT = V_to_T(LGR["AIN5"])
-ax[1,1].plot(LGR_time,supercoolT,'.',markersize=2)
-ax[1,1].set_ylabel('Supercool T, C')
+ax[2,1].plot(LGR['time'],supercoolT,'.',markersize=2)
+ax[2,1].set_ylabel('Supercool T, C')
 
-# 9. gas and ambient temperatures
+# other. H2O
+#ax[2,0].plot(LGR_time,LGR["H2O_ppm"],'.',markersize=2)
+#ax[2,0].set_ylabel('$\mathregular{H_2O, ppmv}$')
+#ax[2,0].set_yscale('log')
+
+# other. gas and ambient temperatures
 #ax[2,2].plot(LGR_time,LGR["         GasT_C"],'-',markersize=2)
-ax[2,1].plot(LGR_time,LGR["Amb_T"],'-',markersize=2)
-ax[2,1].legend(['Amb_T'],edgecolor='none',facecolor='none',fontsize='xx-small')
-ax[2,1].set_ylabel('Temperatures, C')
+#ax[2,1].plot(LGR_time,LGR["Amb_T"],'.',markersize=2)
+#ax[2,1].legend(['Amb_T'],edgecolor='none',facecolor='none',fontsize='xx-small')
+#ax[2,1].set_ylabel('Temperatures, C')
 
-# 10. cell pressure
+# other. cell pressure
 #ax[0,3].plot(LGR_time,LGR["      GasP_torr"],'.',markersize=2)
 #ax[0,3].set_ylabel('$\mathregular{Gas P, torr}$')
 
@@ -99,3 +93,21 @@ plt.tight_layout()
 plt.show()
 
 #fig.savefig('fig1.png',dpi=300)
+
+# %% plot correlations
+# sync data
+COMA_1s = LGR.groupby(pd.Grouper(key="time", freq="1s")).mean()
+IWG1_1s = IWG1.groupby(pd.Grouper(key="time", freq="1s")).mean()
+sync_data = pd.merge(COMA_1s, IWG1_1s, how='inner', on=['time'])
+ix_8 = np.ravel(np.where(LGR["MIU_Valve"]==8))
+
+# vertical profile
+#fig, ax = plt.subplots(1, 1, figsize=(6,5),dpi=200)
+#plt.plot(sync_data["Pressure Altitude"][ix_8],sync_data["CO_ppm"][ix_8]*1000,'.')
+
+# N-S profile
+fig, ax = plt.subplots(1, 1, figsize=(6,5),dpi=200)
+plt.plot(sync_data["Latitude"][ix_8],sync_data["CO_ppm"][ix_8]*1000,'.')
+plt.grid()
+plt.ylim([40,100])
+
