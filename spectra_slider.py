@@ -9,6 +9,7 @@ add
 """
 
 # %% header
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
@@ -53,23 +54,33 @@ LGR_CO = LGR["      [CO]d_ppm"]*1000
 LGR_N2O = LGR["     [N2O]d_ppm"]*1000
 
 # %% plot time series and spectra
+plt.rc('xtick', labelsize=10) 
+plt.rc('ytick', labelsize=10) 
+
 # set up plot with slider
-fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1, figsize=(10, 6))
+fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1, figsize=(15, 7))
 
-ax1.plot(LGR[" SpectraID"],LGR["     [N2O]d_ppm"]*1000)
+ax1.plot(LGR[" SpectraID"],LGR["     [N2O]d_ppm"]*1000,linewidth=2)
+l1, = ax1.plot([50,50],[0,1000])
+ax1.grid('on')
 
-floats = [float(x) for x in spectra[180:1123]]
+floats = np.ravel([float(x) for x in spectra[180:1123]])
 l2, = ax2.plot(floats,'.')
 #ax2.set_xlim(300,900)
-ax2.set_xlim(400,600)
-ax2.set_ylim(-0.90,-0.60)
+ax2.set_xlim(375,850)
+ax2.set_ylim(-0.05,0.25)
+ax2.grid('on')
+
+x_fit = np.concatenate( ( list(range(175,300)), list(range(600,675)) ) )
+x_plot = list(range(0,943))
+l3, = ax2.plot(x_plot,floats[x_plot],'k:')
 
 axcolor = 'lightgoldenrodyellow'
 axfreq = plt.axes([0.15, 0.05, 0.76, 0.03], facecolor=axcolor)
 sfreq = Slider(axfreq, 'Freq', 0, len(ID), valinit=1, valstep=1)
 
-ax1.set_position([0.12, 0.62, 0.85, 0.35]) #left, bottom, width, height
-ax2.set_position([0.12, 0.18, 0.85, 0.35])
+ax1.set_position([0.07, 0.62, 0.90, 0.35]) #left, bottom, width, height
+ax2.set_position([0.07, 0.18, 0.90, 0.35])
 
 # main loop
 def update(val):
@@ -79,23 +90,31 @@ def update(val):
     # grab the laser scan
     x0 = 180+ii*1126
     x1 = 1123+ii*1126
-    floats = [float(x) for x in spectra[x0:x1]]
+    floats = np.ravel([float(x) for x in spectra[x0:x1]])
     
     # grab the ringdown scan
     #x0 = 17+ii*1126
     #x1 = 176+ii*1126
     
-    # plot the scan
-    l2.set_ydata(floats)
+    # plot vertical line
+    l1.set_data([ii,ii],[0,1000])
     
-    # set axes limits
-    ax1.set_xlim(int(ID[ii])-50,int(ID[ii])+50)
+    # set axes limits (top plot)
     ix = int(ID[ii])
+    ax1.set_xlim(ix-50,ix+50)
     ax1.set_ylim(LGR_N2O[ix]-5,LGR_N2O[ix]+5)
     
-    #ax1.plot([int(ID[ii]),int(ID[ii])],[270,300])
+    # calculate spectral baseline
+    combined = floats[x_fit]
+    z1 = np.polyfit(x_fit, combined, 2)
+    baseline = np.polyval(z1,x_plot)
     
-    # update plot
+    # plot the scan (bottom plot)
+    #l3.set_data(x_plot,baseline)
+    #l2.set_ydata(floats)
+    l2.set_ydata(baseline-floats) 
+    
+    # update figure
     fig.canvas.draw_idle()
    
 sfreq.on_changed(update)

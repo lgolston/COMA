@@ -12,7 +12,7 @@ import matplotlib.dates as mdates
 
 from load_flight_functions import read_COMA
 
-case = 4
+case = 5
 
 # %% load data
 if case == 0: # Ellington to Seattle
@@ -36,10 +36,19 @@ elif case == 4: # Misawa to Osan
      filename_COMA = ['../Data/2022-07-27/n2o-co_2022-07-27_f0000.txt']
      filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220727_RA.ict'
      cur_day = datetime(2022,7,27)
- 
+elif case == 5: # Osan Flight 1
+     filename_COMA = ['../Data/2022-08-02/n2o-co_2022-08-02_f0000.txt']
+     filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220802_RA.ict.txt'
+     filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220727_RA.ict'
+     cur_day = datetime(2022,8,2)
+
 # load COMA
 COMA = read_COMA(filename_COMA)
 ix_8 = np.ravel(np.where(COMA["      MIU_VALVE"]==8)) # inlet
+
+# load ACOS
+ACOS = pd.read_csv(filename_ACOS,sep=',',header=37)
+ACOS_time = [cur_day+timedelta(seconds=t) for t in ACOS['TIME_START']]
 
 # load COLD2
 COLD2 = pd.read_csv(filename_COLD2,sep=',',header=32)
@@ -47,5 +56,6 @@ COLD_time = [cur_day+timedelta(seconds=t) for t in COLD2['Time_Start']]
 
 # %% plot data
 plt.plot(COMA['time'][ix_8],COMA["      [CO]d_ppm"][ix_8]*1000,'b.',markersize=2)
-plt.plot(COLD_time,COLD2[' CO_COLD2_ppbv'],'.g')
+plt.plot(ACOS_time,ACOS['ACOS_CO_PPB'],'.m')
+#plt.plot(COLD_time,COLD2[' CO_COLD2_ppbv'],'.g')
 plt.ylim([0,1000])

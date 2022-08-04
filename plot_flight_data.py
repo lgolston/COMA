@@ -16,69 +16,74 @@ from load_flight_functions import V_to_T
 from load_flight_functions import read_COMA
 from load_flight_functions import read_MMS
 
-case = 14
+case = '2022-08-04'
 focus = 'flight_CO' # lab, flight_CO, flight_N2O
 
-if case == 0: # FCF
+if case == '2021-08-06': # FCF
     filename_COMA = ['../Data/2021-08-06/n2o-co_2021-08-06_f0002.txt']
     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20210806_RA.ict'
     filename_WB57 = '../Data/_OtherData_/NP_WB57_20210806_R0.ict'
     cur_day = datetime(2021,8,6)
-elif case == 1: # Test Flight 1
+elif case == '2021-08-10': # Test Flight 1
     filename_COMA = ['../Data/2021-08-10/n2o-co_2021-08-10_f0003.txt']
     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20210810_RA.ict'
     filename_WB57 = '../Data/_OtherData_/NP_WB57_20210810_R0.ict'
     cur_day = datetime(2021,8,10)
-elif case == 2: # Test Flight 2
+elif case == '2021-08-16': # Test Flight 2
     filename_COMA = ['../Data/2021-08-16/n2o-co_2021-08-16_f0002.txt']
     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20210816_RA.ict'
     filename_WB57 = '../Data/_OtherData_/NP_WB57_20210816_R0.ict'
     cur_day = datetime(2021,8,16)
-elif case == 3: # Test Flight 3
+elif case == '2021-08-17': # Test Flight 3
     filename_COMA = ['../Data/2021-08-17/n2o-co_2021-08-17_f0002.txt']
     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20210817_RA.ict'
     filename_WB57 = '../Data/_OtherData_/NP_WB57_20210817_R0.ict'
     cur_day = datetime(2021,8,17)
-elif case == 4: # lab breathing air
+elif case == '2021-08-17': # lab breathing air
     #filename_COMA = '../Data/2021-08-06/n2o-co_2021-08-06_f0000.txt' # chop 3am part
     #filename_COMA = '../Data/2021-08-10/n2o-co_2021-08-10_f0000.txt'
     #filename_COMA = '../Data/2021-08-16/n2o-co_2021-08-16_f0000.txt'
     filename_COMA = ['../Data/2021-08-17/n2o-co_2021-08-17_f0000.txt']
-elif case == 5:
-     filename_COMA = ['../Data/2022-07-14/n2o-co_2022-07-14_f0002.txt']
-elif case == 6:
-     filename_COMA = ['../Data/2022-05-20/n2o-co_2022-05-20_f0000.txt']
-elif case == 7:
-     filename_COMA = ['../Data/2022-07-16/n2o-co_2022-07-16_f0002.txt']
-elif case == 8:
-     filename_COMA = ['../Data/2022-07-18/n2o-co_2022-07-18_f0002.txt']
-     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220718_RA.ict'
-     cur_day = datetime(2022,7,18)
-elif case == 9: # Ellington to Seattle
-     filename_COMA = ['../Data/2022-07-21/n2o-co_2022-07-21_f0000.txt',
-                      '../Data/2022-07-21/n2o-co_2022-07-21_f0001.txt']
-     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220721_RA_1.ict'
-     cur_day = datetime(2022,7,21)
-elif case == 10: # Seattle to Anchorage
-     filename_COMA = ['../Data/2022-07-21/n2o-co_2022-07-21_f0002.txt']
-     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220721_RA_2.ict'
-     cur_day = datetime(2022,7,21)
-elif case == 11: # Anchorage to Adak
-     filename_COMA = ['../Data/2022-07-24/n2o-co_2022-07-24_f0000.txt']
-     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220724_RA.ict'
-     cur_day = datetime(2022,7,24)
-elif case == 12: # Adak to Misawa
-     filename_COMA = ['../Data/2022-07-25/n2o-co_2022-07-25_f0000.txt']
-     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220725_RA.ict'
-     cur_day = datetime(2022,7,25)
-elif case == 13: # Misawa to Osan
-     filename_COMA = ['../Data/2022-07-27/n2o-co_2022-07-27_f0000.txt']
-     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220727_RA.ict'
-     cur_day = datetime(2022,7,27)
-elif case == 14: # Science Flight 1
-     filename_COMA = ['../Data/2022-08-02/n2o-co_2022-08-02_f0000.txt']
-     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220802_RA.ict'
-     cur_day = datetime(2022,8,2)
+elif case == '2022-05-20':
+    filename_COMA = ['../Data/2022-05-20/n2o-co_2022-05-20_f0000.txt']
+elif case == '2022-07-14': # FCF Houston integration 2022
+    filename_COMA = ['../Data/2022-07-14/n2o-co_2022-07-14_f0002.txt']
+elif case == '2022-07-16': # science flight 1 Houston
+    filename_COMA = ['../Data/2022-07-16/n2o-co_2022-07-16_f0002.txt']
+elif case == '2022-07-18': # science flight 2 Houston
+    filename_COMA = ['../Data/2022-07-18/n2o-co_2022-07-18_f0002.txt',
+                     '../Data/2022-07-18/n2o-co_2022-07-18_f0003.txt']
+    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220718_RA.ict'
+    cur_day = datetime(2022,7,18)
+elif case == '2022-07-21-A': # Ellington to Seattle
+    filename_COMA = ['../Data/2022-07-21/n2o-co_2022-07-21_f0000.txt',
+                     '../Data/2022-07-21/n2o-co_2022-07-21_f0001.txt']
+    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220721_RA_1.ict'
+    cur_day = datetime(2022,7,21)
+elif case == '2022-07-21-B': # Seattle to Anchorage
+    filename_COMA = ['../Data/2022-07-21/n2o-co_2022-07-21_f0002.txt']
+    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220721_RA_2.ict'
+    cur_day = datetime(2022,7,21)
+elif case == '2022-07-24': # Anchorage to Adak
+    filename_COMA = ['../Data/2022-07-24/n2o-co_2022-07-24_f0000.txt']
+    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220724_RA.ict'
+    cur_day = datetime(2022,7,24)
+elif case == '2022-07-25': # Adak to Misawa
+    filename_COMA = ['../Data/2022-07-25/n2o-co_2022-07-25_f0000.txt']
+    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220725_RA.ict'
+    cur_day = datetime(2022,7,25)
+elif case == '2022-07-27': # Misawa to Osan
+    filename_COMA = ['../Data/2022-07-27/n2o-co_2022-07-27_f0000.txt']
+    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220727_RA.ict'
+    cur_day = datetime(2022,7,27)
+elif case == '2022-08-02': # Science Flight 1
+    filename_COMA = ['../Data/2022-08-02/n2o-co_2022-08-02_f0000.txt']
+    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220802_RA.ict'
+    cur_day = datetime(2022,8,2)
+elif case == '2022-08-04': # Science Flight 2
+    filename_COMA = ['../Data/2022-08-04/n2o-co_2022-08-04_f0000.txt']
+    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220804_RA.ict'
+    cur_day = datetime(2022,8,4)
 
 # %% data
 # read COMA data, combining multiple files if needed
@@ -154,7 +159,11 @@ ax[2,2].legend(['Gas_T','Amb_T'],edgecolor='none',facecolor='none',fontsize='xx-
 ax[2,2].set_ylabel('Temperatures, C')
 
 # 10. cell pressure
-ax[0,3].plot(COMA['time'],COMA["      GasP_torr"],'k.',markersize=2)
+ax[0,3].plot(COMA['time'][ix_8],COMA["      GasP_torr"][ix_8],'b.',markersize=2)
+ax[0,3].plot(COMA['time'][ix_2],COMA["      GasP_torr"][ix_2],'y.',markersize=2)
+ax[0,3].plot(COMA['time'][ix_3],COMA["      GasP_torr"][ix_3],'m.',markersize=2)
+ax[0,3].plot(COMA['time'][ix_1],COMA["      GasP_torr"][ix_1],'g.',markersize=2)
+#x[0,3].plot(COMA['time'],COMA["      GasP_torr"],'k.',markersize=2)
 ax[0,3].set_ylabel('$\mathregular{Gas P, torr}$')
 
 # 11. Gnd
@@ -302,9 +311,12 @@ if focus != 'lab':
     plt.ylabel('Altitude, m')
     
 # %% save all
-#fig.savefig('fig1.png',dpi=300)
-#fig2.savefig('fig2.png',dpi=300)
-#fig3.savefig('fig3.png',dpi=300)
-#fig4.savefig('fig4.png',dpi=300)
-#fig5.savefig('fig5.png',dpi=300)
-#plt.close('all')
+"""
+fig.savefig('fig1.png',dpi=300)
+fig2.savefig('fig2_CO.png',dpi=300)
+fig2.savefig('fig2_N2O.png',dpi=300)
+fig3.savefig('fig3.png',dpi=300)
+fig4.savefig('fig4.png',dpi=300)
+fig5.savefig('fig5.png',dpi=300)
+plt.close('all')
+"""

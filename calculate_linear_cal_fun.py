@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Jun 16 13:08:19 2022
-
-@author: madco
+Main function used by cal_cycle_calculation
 """
 
 # headers
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 
 # function to calculate the average and standard deviation at end of cal cycle
 def calc_mean(gas_vals):
@@ -117,10 +114,7 @@ def calc_cal(LGR_time,CO_raw,N2O_raw,ix_low,ix_high):
         tmp = N2O_raw[starting_index[ii]:starting_index[ii+1]]*1000
         N2O_cal[starting_index[ii]:starting_index[ii+1]] = tmp*N2O_slope[ii]+N2O_intercept[ii]
     
-    #breakpoint()
-    
     # print averages
-    """
     print('Average values:')
     print('CO low ratio ' + "{:.3f}".format(np.mean(CO_low_ratio)))
     print('CO high ratio ' + "{:.3f}".format(np.mean(CO_high_ratio)))
@@ -131,7 +125,22 @@ def calc_cal(LGR_time,CO_raw,N2O_raw,ix_low,ix_high):
     print('N2O high ratio ' + "{:.3f}".format(np.mean(N2O_high_ratio)))
     print('N2O equation ' + "{:.3f}".format(np.mean(N2O_slope)) + 'x + ' 
                          + "{:.3f}".format(np.mean(N2O_intercept)))
-    """
     
-    # calibrated outputs
+    # calibration outputs
+    CO_cal = pd.DataFrame({'low_mean': low_CO_mean[rng],
+                           'low_std': low_CO_std[rng],
+                           'high_mean': high_CO_mean[rng],
+                           'high_std': high_CO_std[rng],
+                           'low_ratio': CO_low_ratio,
+                           'high_ratio': CO_high_ratio, 
+                           'slope': CO_slope,
+                           'intercept': CO_intercept})
+    N2O_cal = pd.DataFrame({'low_mean': low_N2O_mean[rng],
+                            'low_std': low_N2O_std[rng],
+                            'high_mean': high_N2O_mean[rng],
+                            'high_std': high_N2O_std[rng],
+                            'low_ratio': N2O_low_ratio,
+                            'high_ratio': N2O_high_ratio, 
+                            'slope': N2O_slope,
+                            'intercept': N2O_intercept})
     return CO_cal, N2O_cal

@@ -10,12 +10,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
 import matplotlib.dates as mdates
-
 from load_flight_functions import V_to_T
 
-filename_COMA_MTS = '../Data/2022-08-02/telemetry-62e876f99f75ebc8abffaf51.csv'
-filename_IWG1_MTS = '../Data/2022-08-02/telemetry-62e876539f75ebc8abffa3ed.csv'
-cur_day = datetime(2022,8,2)
+filename_COMA_MTS = '../Data/2022-08-04/telemetry-62eb16602961aec3c064281d.csv'
+filename_IWG1_MTS = '../Data/2022-08-04/telemetry-62eb16602961aec3c0642823.csv'
+cur_day = datetime(2022,8,4)
 
 # %% data
 # read COMA data (obtained over MTS)
@@ -25,6 +24,12 @@ LGR_time = LGR["Timestamp"]
 LGR_time = [datetime.strptime(tstamp,"%Y-%m-%dT%H:%M:%S.%fZ") for tstamp in LGR_time]
 LGR_time = pd.DataFrame(LGR_time)
 LGR['time'] = LGR_time[0]
+
+ix_8 = np.ravel(np.where(LGR["MIU_Valve"]==8)) # inlet
+ix_7 = np.ravel(np.where(LGR["MIU_Valve"]==7)) # inlet (lab)
+ix_3 = np.ravel(np.where(LGR["MIU_Valve"]==3)) # high cal
+ix_2 = np.ravel(np.where(LGR["MIU_Valve"]==2)) # low cal
+ix_1 = np.ravel(np.where(LGR["MIU_Valve"]==1)) # flush
 
 # load WB-57 IWG1 data (obtained over MTS)
 IWG1 = pd.read_csv(filename_IWG1_MTS,sep=',',header=0)
@@ -42,6 +47,9 @@ fig, ax = plt.subplots(3, 2, figsize=(9,3.5),dpi=200,sharex=True)
 
 # 1. CO
 ax[0,0].plot(LGR['time'],LGR["CO_ppm"]*1000,'k.',markersize=2)
+ax[0,0].plot(LGR['time'][ix_8],LGR["CO_ppm"][ix_8]*1000,'b.',markersize=2)
+ax[0,0].plot(LGR['time'][ix_2],LGR["CO_ppm"][ix_2]*1000,'y.',markersize=2)
+ax[0,0].plot(LGR['time'][ix_3],LGR["CO_ppm"][ix_3]*1000,'m.',markersize=2)
 ax[0,0].set_ylabel('CO (dry), ppbv')
 ax[0,0].set_ylim(0,300)
 
@@ -56,18 +64,21 @@ ax[2,0].set_ylabel('MUI #')
 #ax[0,0].set_ylim(0,300)
 
 # 4. N2O
-ax[0,1].plot(LGR['time'],LGR["N2O_ppm"]*1000,'.',markersize=2)
+ax[0,1].plot(LGR['time'],LGR["N2O_ppm"]*1000,'k.',markersize=2)
+ax[0,1].plot(LGR['time'][ix_8],LGR["N2O_ppm"][ix_8]*1000,'b.',markersize=2)
+ax[0,1].plot(LGR['time'][ix_2],LGR["N2O_ppm"][ix_2]*1000,'y.',markersize=2)
+ax[0,1].plot(LGR['time'][ix_3],LGR["N2O_ppm"][ix_3]*1000,'m.',markersize=2)
 ax[0,1].set_ylabel('$\mathregular{N_2O (dry), ppbv}$')
 ax[0,1].set_ylim(200,350)
 
 # 5. laser temperature
 laserT = V_to_T(LGR["AIN6"])
-ax[1,1].plot(LGR['time'],laserT,'.',markersize=2) # laser temp
+ax[1,1].plot(LGR['time'],laserT,'k.',markersize=2) # laser temp
 ax[1,1].set_ylabel('Laser T, C')
 
 # 6. supercool temperature
 supercoolT = V_to_T(LGR["AIN5"])
-ax[2,1].plot(LGR['time'],supercoolT,'.',markersize=2)
+ax[2,1].plot(LGR['time'],supercoolT,'k.',markersize=2)
 ax[2,1].set_ylabel('Supercool T, C')
 
 # other. H2O
@@ -111,3 +122,4 @@ plt.plot(sync_data["Latitude"][ix_8],sync_data["CO_ppm"][ix_8]*1000,'.')
 plt.grid()
 plt.ylim([40,100])
 
+#plt.plot(sync_data["Latitude"][ix_8],sync_data["CO_ppm"][ix_8]*1000,'.')
