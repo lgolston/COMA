@@ -6,6 +6,7 @@
 # %% load data
 # import libraries
 import pandas as pd
+import numpy as np
 from load_flight_functions import read_MMS
 from load_flight_functions import read_COMA
 from datetime import datetime
@@ -30,6 +31,12 @@ MT = pd.read_excel(filename_MT,sheet_name=sheet,header=6)
 # load COMA file
 COMA = read_COMA(filename_COMA)
 
+ix_8 = np.ravel(np.where(COMA["      MIU_VALVE"]==8)) # inlet
+ix_7 = np.ravel(np.where(COMA["      MIU_VALVE"]==7)) # inlet (lab)
+ix_3 = np.ravel(np.where(COMA["      MIU_VALVE"]==3)) # high cal
+ix_2 = np.ravel(np.where(COMA["      MIU_VALVE"]==2)) # low cal
+ix_1 = np.ravel(np.where(COMA["      MIU_VALVE"]==1)) # flush
+
 # load MMS
 MMS = read_MMS(filename_MMS,cur_day)
 
@@ -45,6 +52,9 @@ ax0_twin.set_ylabel('Altitude, m')
 ax[0].set_xlabel('Time, UTC')
 
 ax[1].plot(COMA['time'],COMA["      GasP_torr"],'k.')
+ax[1].plot(COMA['time'][ix_8],COMA["      GasP_torr"][ix_8],'b.')
+ax[1].plot(COMA['time'][ix_2],COMA["      GasP_torr"][ix_2],'y.')
+ax[1].plot(COMA['time'][ix_3],COMA["      GasP_torr"][ix_3],'m.')
 ax[1].grid('on')
 ax[1].set_ylabel('Cell pressure, Torr')
 fig1.tight_layout()

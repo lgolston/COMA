@@ -6,6 +6,10 @@ add
 - get EPOCH_TIME working
 - match spectra ID
 - label Slider (SpectraID and Time) and axes
+
+fitting
+- scipy.optimize
+- common to use Levenberg–Marquardt algorithm
 """
 
 # %% header
@@ -112,7 +116,10 @@ def update(val):
     # plot the scan (bottom plot)
     #l3.set_data(x_plot,baseline)
     #l2.set_ydata(floats)
-    l2.set_ydata(baseline-floats) 
+    l2.set_ydata(baseline-floats)
+    
+    # perform spectral fitting
+    #
     
     # update figure
     fig.canvas.draw_idle()
@@ -120,3 +127,6 @@ def update(val):
 sfreq.on_changed(update)
 
 plt.show()
+
+def voigt():
+    return 1
