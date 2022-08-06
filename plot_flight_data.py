@@ -16,8 +16,8 @@ from load_flight_functions import V_to_T
 from load_flight_functions import read_COMA
 from load_flight_functions import read_MMS
 
-case = '2022-08-02'
-focus = 'flight_CO' # lab, flight_CO, flight_N2O
+case = '2022-08-04'
+focus = 'flight_H2O' # lab, flight_CO, flight_N2O
 
 if case == '2021-08-06': # FCF
     filename_COMA = ['../Data/2021-08-06/n2o-co_2021-08-06_f0002.txt']
@@ -193,9 +193,15 @@ if focus != 'lab':
     
     fig2, ax2 = plt.subplots(1, 2, figsize=(6,3),dpi=200)
     
-    df_lowcal = pd.DataFrame({'time': COMA['time'][ix_2], 'CO_dry': COMA["      [CO]d_ppm"][ix_2]*1000, 'N2O_dry': COMA["     [N2O]d_ppm"][ix_2]*1000})
+    df_lowcal = pd.DataFrame({'time': COMA['time'][ix_2],
+                              'CO_dry': COMA["      [CO]d_ppm"][ix_2]*1000,
+                              'N2O_dry': COMA["     [N2O]d_ppm"][ix_2]*1000,
+                              'H2O': COMA["      [H2O]_ppm"][ix_2]})
     df_lowcal['groups'] = (df_lowcal.index.to_series().diff()>5).cumsum()
-    df_highcal = pd.DataFrame({'time': COMA['time'][ix_3], 'CO_dry': COMA["      [CO]d_ppm"][ix_3]*1000, 'N2O_dry': COMA["     [N2O]d_ppm"][ix_3]*1000})
+    df_highcal = pd.DataFrame({'time': COMA['time'][ix_3],
+                               'CO_dry': COMA["      [CO]d_ppm"][ix_3]*1000,
+                               'N2O_dry': COMA["     [N2O]d_ppm"][ix_3]*1000,
+                               'H2O': COMA["      [H2O]_ppm"][ix_3]})
     df_highcal['groups'] = (df_highcal.index.to_series().diff()>5).cumsum()
     #df_flush = pd.DataFrame({'time': LGR_time[ix_1], 'CO_dry': LGR["      [CO]d_ppm"][ix_1]*1000})
     #df_flush['groups'] = (df_flush.index.to_series().diff()>5).cumsum()
@@ -210,6 +216,7 @@ if focus != 'lab':
             ax2[1].set_ylim(140,170)
             
         ax2[0].set_ylabel('CO, ppb')
+        
     elif focus == 'flight_N2O':
         for ct, data in df_lowcal.groupby('groups'):
             ax2[0].plot(data['N2O_dry'].values,'.')
@@ -220,6 +227,19 @@ if focus != 'lab':
             ax2[1].set_ylim(320,350)
             
         ax2[0].set_ylabel('N2O, ppb')        
+    
+    elif focus == 'flight_H2O':
+        for ct, data in df_lowcal.groupby('groups'):
+            ax2[0].plot(data['H2O'].values,'.')
+            #ax2[0].set_ylim(250,270)
+            
+        for ct, data in df_highcal.groupby('groups'):
+            ax2[1].plot(data['H2O'].values,'.')
+            #ax2[1].set_ylim(320,350)
+        
+        ax2[0].set_yscale('log')
+        ax2[1].set_yscale('log')
+        ax2[0].set_ylabel('H2O, ppb')        
     
     ax2[0].grid()
     ax2[1].grid()

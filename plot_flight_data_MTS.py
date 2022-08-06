@@ -12,8 +12,8 @@ from datetime import datetime
 import matplotlib.dates as mdates
 from load_flight_functions import V_to_T
 
-filename_COMA_MTS = '../Data/2022-08-04/telemetry-62eb16602961aec3c064281d.csv'
-filename_IWG1_MTS = '../Data/2022-08-04/telemetry-62eb16602961aec3c0642823.csv'
+filename_COMA_MTS = '../Data/2022-08-06/telemetry-62edba01f0f7526bfddb58e2.csv'
+filename_IWG1_MTS = '../Data/2022-08-06/telemetry-62edb9e9f0f7526bfddb554c.csv'
 cur_day = datetime(2022,8,4)
 
 # %% data
