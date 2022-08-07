@@ -16,8 +16,8 @@ from load_flight_functions import V_to_T
 from load_flight_functions import read_COMA
 from load_flight_functions import read_MMS
 
-case = '2022-08-04'
-focus = 'flight_H2O' # lab, flight_CO, flight_N2O
+case = '2022-08-06'
+focus = 'flight_CO' # lab, flight_CO, flight_N2O
 
 if case == '2021-08-06': # FCF
     filename_COMA = ['../Data/2021-08-06/n2o-co_2021-08-06_f0002.txt']
@@ -76,15 +76,19 @@ elif case == '2022-07-27': # Misawa to Osan
     filename_COMA = ['../Data/2022-07-27/n2o-co_2022-07-27_f0000.txt']
     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220727_RA.ict'
     cur_day = datetime(2022,7,27)
-elif case == '2022-08-02': # Science Flight 1
+elif case == '2022-08-02': # RF03
     filename_COMA = ['../Data/2022-08-02/n2o-co_2022-08-02_f0000.txt']
     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220802_RA.ict'
     cur_day = datetime(2022,8,2)
-elif case == '2022-08-04': # Science Flight 2
+elif case == '2022-08-04': # RF04
     filename_COMA = ['../Data/2022-08-04/n2o-co_2022-08-04_f0000.txt']
     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220804_RA.ict'
     cur_day = datetime(2022,8,4)
-
+elif case == '2022-08-06': # RF05
+    filename_COMA = ['../Data/2022-08-06/n2o-co_2022-08-06_f0000.txt']
+    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220806_RA.ict'
+    cur_day = datetime(2022,8,6)
+    
 # %% data
 # read COMA data, combining multiple files if needed
 COMA = read_COMA(filename_COMA)

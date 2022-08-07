@@ -1,69 +1,83 @@
 # -*- coding: utf-8 -*-
 """
 Output data to archive format for NASA DAAC
+
+Preliminary version uses factory calibration
 """
 
-# %% header
+# %% set up
+# import libraries
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 from datetime import datetime
 from load_flight_functions import read_COMA
 
-filename_COMA = ['../Data/2022-08-02/n2o-co_2022-08-02_f0000.txt']
-output_name = 'COMA_WB57_20220802_R_alpha.ict'
-t0 = datetime(2022,8,2,1,10)
-t1 = datetime(2022,8,2,6,33)
+# select file to export
+case = '2022-08-04'
 
-#filename_COMA = ['../Data/2022-08-04/n2o-co_2022-08-04_f0000.txt']
-#output_name = 'COMA_WB57_20220804_R_alpha.ict'
-#t0 = datetime(2022,8,4,1,12)
-#t1 = datetime(2022,8,4,6,18)
+if case == '2022-08-02':
+    filename_COMA = ['../Data/2022-08-02/n2o-co_2022-08-02_f0000.txt']
+    output_name = 'COMA_WB57_20220802_R_alpha.ict'
+    t0 = datetime(2022,8,2,1,10)
+    t1 = datetime(2022,8,2,6,33)
+elif case == '2022-08-04':
+    filename_COMA = ['../Data/2022-08-04/n2o-co_2022-08-04_f0000.txt']
+    output_name = 'COMA_WB57_20220804_R_alpha.ict'
+    t0 = datetime(2022,8,4,1,12)
+    t1 = datetime(2022,8,4,6,18)
+elif case == '2022-08-06':
+    1 # add
 
 # read COMA data
 COMA = read_COMA(filename_COMA)
+
+# filter to inlet air (valve 8), between takeoff (t0) and landing (t1)
 ix_flight = np.ravel( np.where((COMA["      MIU_VALVE"]==8) & 
                                (COMA["time"]>t0) & 
                                (COMA["time"]<t1)) )
 
 # %% output data
+# convert timestamp to seconds after midnight
 time_midnight = [(t.hour * 3600) + (t.minute * 60) + t.second + (t.microsecond / 1000000.0) for t in COMA['time']]
 time_midnight = np.array(time_midnight)
 
+# select mixing ratios to output
 CO = COMA["      [CO]d_ppm"]*1000
 N2O = COMA["     [N2O]d_ppm"]*1000
 H2O = COMA["      [H2O]_ppm"]
 
-# filter between takeoff and landing
-ix_8 = np.ravel(np.where(COMA["      MIU_VALVE"]==8)) # inlet
-
+# create DataFrame with desired variables
 df = pd.DataFrame({'time': time_midnight[ix_flight],
                     'CO_ppbv': CO[ix_flight],
                     'N2O_ppbv': N2O[ix_flight], 
                     'H2O_ppmv': H2O[ix_flight]})
 
+# loop that saves string formatted (commas, decimal places) data
+# create new file; overwrites if needed
 with open(output_name,"w") as ofile:
      fmt = '%.1f, %6.2f, %6.2f, %6.0f'
      np.savetxt(ofile, df.values, fmt=fmt)
 
-# %% add header
-header = '39,1001\n'
-header += 'Podolske, James\n'
-header += 'NASA Ames Research Center\n'
-header += 'In-situ gas-phase CO/N2O Analyzer (Los Gatos Research)\n'
-header += 'ACCLIP 2022\n'
-header += '1,1\n'
-header += '2022, 08, 02, 2022, 08, 05\n'
-header += '-1\n'
-header += 'Start_Time,Seconds after midnight\n'
-header += '3\n'
-header += '1,1,1\n'
-header += '-9999.00,-9999.00,-9999.00\n'
-header += 'CO_ppbv, ppbv, CO dry air volume mixing ratio\n'
-header += 'N2O_ppmv, ppmv, N2O2 dry air volume mixing ratio\n'
-header += 'H2O_ppmv, ppmv, H2O volume mixing ratio\n'
-header += '0\n'
-header += '24\n'
+# %% create file header
+# refer to ICARTT 2.0 specifications for more details
+header = '39,1001\n' # number of lines in header, file format index
+header += 'Podolske, James\n' # PI name
+header += 'NASA Ames Research Center\n' # PI affiliation
+header += 'In-situ gas-phase CO/N2O Analyzer (Los Gatos Research)\n' # data source description
+header += 'ACCLIP 2022\n' # mission name
+header += '1,1\n' # file volume number, total number of file volumes
+header += '2022, 08, 02, 2022, 08, 05\n' # date of data collection, date of most recent revision
+header += '-1\n' # data interval code
+header += 'Start_Time,Seconds after midnight\n' # name of independent variable, units of variable
+header += '3\n' # number of dependent variables
+header += '1,1,1\n' # scale factors of dependent variables
+header += '-9999.00,-9999.00,-9999.00\n' # missing data flags of dependent variables
+header += 'CO_ppbv, ppbv, CO dry air volume mixing ratio\n' # dependent variable short name, units, standard name
+header += 'N2O_ppmv, ppmv, N2O2 dry air volume mixing ratio\n' # (repeat as necessary)
+header += 'H2O_ppmv, ppmv, H2O volume mixing ratio\n' # (repeat as necessary)
+header += '0\n' # number of special comment lines (not including this line)
+header += '24\n' # number of normal comment lines (not including this line)
 header += '******************************************************************************************************************\n'
 header += 'NASA Ames Trace Gas Data (2022 ACCLIP) field campaign\n'
 header += '\n'
@@ -87,6 +101,7 @@ header += 'R0: preliminary field data, subject to corrections due to calibration
 header += '******************************************************************************************************************\n'
 header += 'Time_Start,CO_ppbv,N2O_ppmv,H2O_ppmv\n'
 
+# append the defined header to the already created data file
 with open(output_name, 'r+') as f:
     content = f.read()
     f.seek(0, 0)
