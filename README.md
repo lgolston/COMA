@@ -14,3 +14,4 @@ Functions for:
 Dependencies
 - cartopy (for mapping flight)
 - openpyxl (for reading MadgeTech .xlsx file)
+- hitran-api (HAPI, for spectral calculation)
