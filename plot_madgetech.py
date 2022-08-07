@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-@author: madco
+Load data file from MadgeTech temperature logger
+Plot against MMS and COMA data
+
+Note that loading .xlsx file takes 5-10 seconds
 """
 
 # %% load data
@@ -13,10 +16,19 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
-filename_MT = '../Data/2022-08-04/8.4.2022 flight Madgetech.xlsx'
-filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220804_RA.ict'
-filename_COMA = ['../Data/2022-08-04/n2o-co_2022-08-04_f0000.txt']
-cur_day = datetime(2022,8,4)
+# select files to analyze
+case = '2022-08-06'
+
+if case == '2022-08-04': #RF04
+    filename_MT = '../Data/2022-08-04/8.4.2022 flight Madgetech.xlsx'
+    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220804_RA.ict'
+    filename_COMA = ['../Data/2022-08-04/n2o-co_2022-08-04_f0000.txt']
+    cur_day = datetime(2022,8,4)
+elif case == '2022-08-06': #RF05
+    filename_MT = '../Data/2022-08-06/8.6.2022 flight Madgetech.xlsx'
+    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220804_RA.ict'
+    filename_COMA = ['../Data/2022-08-06/n2o-co_2022-08-06_f0000.txt']    
+    cur_day = datetime(2022,8,6)
 
 # set font sizes
 plt.rc('axes', labelsize=12) # xaxis and yaxis labels
@@ -42,7 +54,8 @@ MMS = read_MMS(filename_MMS,cur_day)
 
 # %% plot data
 fig1, ax = plt.subplots(2, 1, figsize=(8,5.5),sharex=True)
-ax[0].plot(MT['Date'],MT['Thermocouple 5 (°C)'],'r.')
+#ax[0].plot(MT['Date'],MT['Thermocouple 5 (°C)'],'r.') # RF04 (before column given name)
+ax[0].plot(MT['Date'],MT['InletSolen (°C)'],'r.') # RF05
 ax[0].grid('on')
 ax0_twin = ax[0].twinx()
 ax0_twin.plot(MMS['time'],MMS['ALT'],'k.')

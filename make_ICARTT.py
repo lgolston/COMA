@@ -2,7 +2,9 @@
 """
 Output data to archive format for NASA DAAC
 
-Preliminary version uses factory calibration
+Before adding to DAAC:
+- apply calibration factor to CO, N2O
+- verify format of ICARTT header
 """
 
 # %% set up
