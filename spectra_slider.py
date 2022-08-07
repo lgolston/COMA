@@ -19,21 +19,12 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 from matplotlib.widgets import Slider
 
-to_plot = 'CO' # CO or N2O
-file_case = 0
+case = 'RF05'
 
-if file_case == 0:
-    filename_s = '../Data/2021-08-06/n2o-co_2021-08-06_s0002.txt'
-    filename_f = '../Data/2021-08-06/n2o-co_2021-08-06_f0002.txt'
-elif file_case == 1:
-    filename_s = '../Data/2021-08-10/n2o-co_2021-08-10_s0003.txt'
-    filename_f = '../Data/2021-08-10/n2o-co_2021-08-10_f0003.txt'
-elif file_case == 2:
-    filename_s = '../Data/2021-08-16/n2o-co_2021-08-16_s0002.txt'
-    filename_f = '../Data/2021-08-16/n2o-co_2021-08-16_f0002.txt'
-elif file_case == 3:
-    filename_s = '../Data/2021-08-17/n2o-co_2021-08-17_s0002.txt'
-    filename_f = '../Data/2021-08-17/n2o-co_2021-08-17_f0002.txt'
+if case == 'RF05':
+    filename_f = '../Data/2022-08-06/n2o-co_2022-08-06_f0000.txt'
+    filename_s = '../Data/2022-08-06/n2o-co_2022-08-06_s0000.txt'
+    cur_day = datetime(2022,8,6)
 
 # %% load files
 # load spectra file
@@ -69,7 +60,7 @@ ax1.grid('on')
 raw_scan = np.ravel([float(x) for x in spectra[180:1123]])
 l2, = ax2.plot(raw_scan,'.')
 #ax2.set_xlim(300,900)
-ax2.set_xlim(375,850)
+ax2.set_xlim(300,875)
 ax2.set_ylim(-0.05,0.25)
 ax2.grid('on')
 
@@ -85,24 +76,33 @@ ax1.set_position([0.07, 0.62, 0.90, 0.35]) #left, bottom, width, height
 ax2.set_position([0.07, 0.18, 0.90, 0.35])
 
 # create class (allows data to be accessed outside of the callback function)
-class Index:
+class Spectral:
+    # key variables
     raw_scan = None
     baseline = None
+    
+    # spectral parameters
+    H2O_center = 340
+    N2O_center_a = 425
+    N2O_center_a = 458
+    N2O_center = 542
+    CO_center = 806
 
+    # function called when slider is moved
     def update(self, event):
         # get value of slider
         ii = sfreq.val
         
-        # grab the laser scan
+        # select the laser scan
         x0 = 180+ii*1126
         x1 = 1123+ii*1126
         self.raw_scan = np.ravel([float(x) for x in spectra[x0:x1]])
         
-        # grab the ringdown scan
+        # select the ringdown scan
         #x0 = 17+ii*1126
         #x1 = 176+ii*1126
         
-        # plot vertical line
+        # plot vertical line on concentration time series (top plot)
         l1.set_data([ii,ii],[0,1000])
         
         # set axes limits (top plot)
@@ -126,10 +126,10 @@ class Index:
         # update figure
         fig.canvas.draw_idle()
 
+    def voigt():
+        return 1
+
 # set up callback
-callback = Index()   
+callback = Spectral()   
 sfreq.on_changed(callback.update)
 plt.show()
-
-def voigt():
-    return 1
