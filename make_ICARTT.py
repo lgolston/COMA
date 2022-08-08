@@ -16,7 +16,7 @@ from datetime import datetime
 from load_flight_functions import read_COMA
 
 # select file to export
-case = '2022-08-04'
+case = '2022-08-06'
 
 if case == '2022-08-02':
     filename_COMA = ['../Data/2022-08-02/n2o-co_2022-08-02_f0000.txt']
@@ -29,7 +29,10 @@ elif case == '2022-08-04':
     t0 = datetime(2022,8,4,1,12)
     t1 = datetime(2022,8,4,6,18)
 elif case == '2022-08-06':
-    1 # add
+    filename_COMA = ['../Data/2022-08-06/n2o-co_2022-08-06_f0000.txt']
+    output_name = 'COMA_WB57_20220806_R_alpha.ict'
+    t0 = datetime(2022,8,6,1,0)
+    t1 = datetime(2022,8,6,7,9)
 
 # read COMA data
 COMA = read_COMA(filename_COMA)
