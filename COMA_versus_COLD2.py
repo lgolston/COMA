@@ -52,7 +52,7 @@ elif case == 'RF04': # RF04, Osan
     cur_day = datetime(2022,8,4)
 elif case == 'RF05': # RF05, Osan
     filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220806_RA.ict'
-    filename_COLD2 = None
+    filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220806_RA.ict'
     filename_COMA = ['../Data/2022-08-06/n2o-co_2022-08-06_f0000.txt']
     cur_day = datetime(2022,8,6)
 

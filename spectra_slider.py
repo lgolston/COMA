@@ -2,14 +2,11 @@
 """
 Plot spectra below concentration time series
 
-add
-- get EPOCH_TIME working
-- match spectra ID
-- label Slider (SpectraID and Time) and axes
-
-fitting
-- scipy.optimize
-- common to use Levenberg–Marquardt algorithm
+todo:
+- add fiting; scipy.optimize; Levenberg–Marquardt algorithm is common
+- alllow flexible peak positions
+- calibrate output
+- compensate for laser power changes
 """
 
 # %% header
@@ -64,19 +61,27 @@ plt.rc('ytick', labelsize=10)
 fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1, figsize=(15, 7))
 
 ax1.plot(LGR[" SpectraID"],LGR["     [N2O]d_ppm"]*1000,linewidth=2)
-l1, = ax1.plot([50,50],[0,1000])
+line_conc, = ax1.plot([50,50],[0,1000])
 ax1.grid('on')
 
 raw_scan = np.ravel([float(x) for x in spectra[180:1123]])
-l2, = ax2.plot(raw_scan,'.')
-#ax2.set_xlim(300,900)
-ax2.set_xlim(300,875)
-ax2.set_ylim(-0.05,0.25)
-ax2.grid('on')
 
 x_fit = np.concatenate( ( list(range(175,300)), list(range(600,675)) ) )
 x_plot = list(range(0,943))
-l3, = ax2.plot(x_plot,raw_scan[x_plot],'k:')
+x_micron943 = np.linspace(start=2189.8,stop=2190.7,num=943)
+x_wn2001 = np.linspace(start=2189,stop=2191,num=2001) # wavenumber
+x_micron2001 = 10000/x_wn2001
+line_scan, = ax2.plot(x_micron943,raw_scan,'k-')
+ax2.set_xlim(4.5645,4.5665)
+#ax2.set_xlim(2189.8,2190.7)
+#ax2.set_xlim(200,900)
+ax2.set_ylim(-0.05,0.25)
+ax2.grid('on')
+
+#line_fit, = ax2.plot(x_hapi_micron,x_hapi_micron,'g:')
+line_fit_CO, = ax2.plot(x_micron2001-2100,x_micron2001,'g:')
+line_fit_N2O, = ax2.plot(x_micron2001-2100,x_micron2001,'m:')
+line_fit_H2O, = ax2.plot(x_micron2001-2100,x_micron2001,'b:')
 
 axcolor = 'lightgoldenrodyellow'
 axfreq = plt.axes([0.15, 0.05, 0.76, 0.03], facecolor=axcolor)
@@ -85,7 +90,8 @@ sfreq = Slider(axfreq, 'Freq', 0, len(ID), valinit=1, valstep=1)
 ax1.set_position([0.07, 0.62, 0.90, 0.35]) #left, bottom, width, height
 ax2.set_position([0.07, 0.18, 0.90, 0.35])
 
-# create class (allows data to be accessed outside of the callback function)
+# create spectral fitting routines
+# (using a class allows data to be accessed outside of the callback function)
 class Spectral:
     # key variables
     raw_scan = None
@@ -93,37 +99,43 @@ class Spectral:
     ringdown = None
     
     # spectral parameters
-    H2O_center = 340
-    N2O_center_a = 425
-    N2O_center_a = 458
-    N2O_center = 542
-    CO_center = 806
+    H2O_center = 340 # 4.5649515
+    N2O_center_a = 425 # 4.5651781
+    N2O_center_a = 458 # 4.5652604
+    N2O_center = 542 # 4.5654808
+    CO_center = 806 # 4.5661734
+    
+    cell_P = 0.07 # 0.07 atm = 53.2 torr
+    cell_T = 296 # 296 K = 22.85 Celcius
+    path_length = 100000 # default of 100 cm resulted in spectrum that was quantized/rounded
     
     nu_CO,coef_CO = hapi.absorptionCoefficient_Voigt(SourceTables='CO',
                                                  Diluent={'air':1.0},
                                                  WavenumberRange = [2189, 2191],
                                                  WavenumberStep=0.001,
-                                                 Environment={'p':0.1,'T':296})
-
+                                                 Environment={'p':cell_P,'T':cell_T})
+    nu_CO_abs,absorp_CO = hapi.absorptionSpectrum(nu_CO,coef_CO,Environment={'l':path_length})
+    
     nu_N2O,coef_N2O = hapi.absorptionCoefficient_Voigt(SourceTables='N2O',
                                                  Diluent={'air':1.0},
                                                  WavenumberRange = [2189, 2191],
                                                  WavenumberStep=0.001,
-                                                 Environment={'p':0.1,'T':296})
-
+                                                 Environment={'p':cell_P,'T':cell_T})
+    nu_N2O_abs,absorp_N2O = hapi.absorptionSpectrum(nu_N2O,coef_N2O,Environment={'l':path_length})
+    
     nu_H2O,coef_H2O = hapi.absorptionCoefficient_Voigt(SourceTables='H2O',
                                                  Diluent={'air':1.0},
                                                  WavenumberRange = [2189, 2191],
                                                  WavenumberStep=0.001,
-                                                 Environment={'p':0.1,'T':296})
+                                                 Environment={'p':cell_P,'T':cell_T})
     
     # function called when slider is moved
     def update(self, event):
         # get value of slider
         ii = sfreq.val
-                
+        
         # plot vertical line on concentration time series (top plot)
-        l1.set_data([ii,ii],[0,1000])
+        line_conc.set_data([ii,ii],[0,1000])
         
         # set axes limits (top plot)
         ix = int(ID[ii])
@@ -148,14 +160,15 @@ class Spectral:
         # plot the scan (bottom plot)
         #l3.set_data(x_plot,baseline)
         #l2.set_ydata(floats)
-        l2.set_ydata(self.baseline-self.raw_scan)
+        xdata = [2.619642E-06*tmp + 4.564062E+00 for tmp in x_plot]
+        ydata = self.baseline-self.raw_scan
+        line_scan.set_data(xdata,ydata)
         
         # perform spectral fitting
-        # ...
-        #plt.plot(nu_CO,coef_CO*100E-9,'b')
-        #plt.plot(nu_N2O,coef_N2O*300E-9,'g')
-        #plt.plot(nu_H2O,coef_H2O*1E-2,'m')
-        #plt.xlim(2189.8,2190.7)
+        xdata = x_micron2001
+        line_fit_CO.set_data(xdata,(self.absorp_CO*100E-9)*3E17)
+        line_fit_N2O.set_data(xdata,(self.absorp_N2O*300E-9)*3E17)
+        #line_fit_H2O.set_data(xdata,(self.coef_H2O*0.01)*4E22)
         
         # update figure
         fig.canvas.draw_idle()
@@ -167,3 +180,12 @@ class Spectral:
 callback = Spectral()   
 sfreq.on_changed(callback.update)
 plt.show()
+
+# %% preview data
+# get overview of spectral region
+"""
+plt.plot(callback.nu_CO,callback.coef_CO*100E-9,'b')
+plt.plot(callback.nu_N2O,callback.coef_N2O*300E-9,'g')
+plt.plot(callback.nu_H2O,callback.coef_H2O*1E-2,'m')
+plt.xlim(2189.8,2190.7)
+"""
