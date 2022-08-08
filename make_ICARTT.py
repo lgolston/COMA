@@ -76,10 +76,10 @@ header += '3\n' # number of dependent variables
 header += '1,1,1\n' # scale factors of dependent variables
 header += '-9999.00,-9999.00,-9999.00\n' # missing data flags of dependent variables
 header += 'CO_ppbv, ppbv, CO dry air volume mixing ratio\n' # dependent variable short name, units, standard name
-header += 'N2O_ppmv, ppmv, N2O2 dry air volume mixing ratio\n' # (repeat as necessary)
+header += 'N2O_ppbv, ppmv, N2O2 dry air volume mixing ratio\n' # (repeat as necessary)
 header += 'H2O_ppmv, ppmv, H2O volume mixing ratio\n' # (repeat as necessary)
 header += '0\n' # number of special comment lines (not including this line)
-header += '24\n' # number of normal comment lines (not including this line)
+header += '22\n' # number of normal comment lines (not including this line)
 header += '******************************************************************************************************************\n'
 header += 'NASA Ames Trace Gas Data (2022 ACCLIP) field campaign\n'
 header += '\n'
@@ -101,7 +101,7 @@ header += 'OTHER_COMMENTS: none\n'
 header += 'REVISION: R_alpha\n'
 header += 'R0: preliminary field data, subject to corrections due to calibrations, time lags, and future analysis results\n'
 header += '******************************************************************************************************************\n'
-header += 'Time_Start,CO_ppbv,N2O_ppmv,H2O_ppmv\n'
+header += 'Time_Start,CO_ppbv,N2O_ppbv,H2O_ppmv\n'
 
 # append the defined header to the already created data file
 with open(output_name, 'r+') as f:
