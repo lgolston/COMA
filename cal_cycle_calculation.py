@@ -10,17 +10,19 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 import matplotlib.dates as mdates
 from calculate_linear_cal_fun import calc_cal
+from load_flight_functions import read_COMA
 
-case = 10
+case = '2022-08-06'
 
-if case == 0: # FCF
+if case == '2021-08-06': # FCF
     filename_COMA = '../Data/2021-08-06/n2o-co_2021-08-06_f0002.txt'
-elif case == 1: # Test Flight 1
+elif case == '2021-08-10': # Test Flight 1
     filename_COMA = '../Data/2021-08-10/n2o-co_2021-08-10_f0003.txt'
-elif case == 2: # Test Flight 2
+elif case == '2021-08-16': # Test Flight 2
     filename_COMA = '../Data/2021-08-16/n2o-co_2021-08-16_f0002.txt'
-elif case == 3: # Test Flight 3
+elif case == '2021-08-17': # Test Flight 3
     filename_COMA = '../Data/2021-08-17/n2o-co_2021-08-17_f0002.txt'
+"""
 elif case == 4: # lab breathing air
     filename_COMA = '../Data/2021-08-06/n2o-co_2021-08-06_f0000.txt' # chop 3am part
 elif case == 5:
@@ -29,24 +31,29 @@ elif case == 6:
     filename_COMA = '../Data/2021-08-16/n2o-co_2021-08-16_f0000.txt'
 elif case == 7:
     filename_COMA = '../Data/2021-08-17/n2o-co_2021-08-17_f0000.txt'
-elif case == 8: # cal gases
+"""
+if case == '2022-04-22': # cal gases
     filename_COMA = '../Data/2022-04-22/n2o-co_2022-04-22_f0000.txt'
-elif case == 9: # EEL Day 2
+elif case == '2022-05-20': # EEL Day 2
     filename_COMA = '../Data/2022-05-20/n2o-co_2022-05-20_f0000_cut_timechange.txt'
-elif case == 10: # Osan Flight 1
-     filename_COMA = '../Data/2022-08-02/n2o-co_2022-08-02_f0000.txt'
-     cur_day = datetime(2022,8,2)
-else:
-    print('not a valid case')
+elif case == '2022-08-02': # RF03 - first flight in Osan
+    filename_COMA = '../Data/2022-08-02/n2o-co_2022-08-02_f0000.txt'
+elif case == '2022-08-04': # RF04
+    filename_COMA = 1
+elif case == '2022-08-06': # RF05
+    filename_COMA = ['../Data/2022-08-05/n2o-co_2022-08-05_f0000_no_10s_cal.txt',
+                     '../Data/2022-08-06/n2o-co_2022-08-06_f0000_no_10s_cal.txt',
+                     '../Data/2022-08-06/n2o-co_2022-08-06_f0001.txt']
 
 # %% data
 # read COMA data
-LGR = pd.read_csv(filename_COMA,sep=',',header=1)
-
-LGR_time = LGR["                     Time"]
-LGR_time = [datetime.strptime(tstamp,"  %m/%d/%Y %H:%M:%S.%f") for tstamp in LGR_time]
-LGR_time = pd.DataFrame(LGR_time)
-LGR_time=LGR_time[0]
+#LGR = pd.read_csv(filename_COMA,sep=',',header=1)
+#LGR_time = LGR["                     Time"]
+#LGR_time = [datetime.strptime(tstamp,"  %m/%d/%Y %H:%M:%S.%f") for tstamp in LGR_time]
+#LGR_time = pd.DataFrame(LGR_time)
+#LGR_time=LGR_time[0]
+LGR = read_COMA(filename_COMA)
+LGR_time = LGR['time']
 
 # index MIU valves
 #ix_8 = np.ravel(np.where( (LGR["      MIU_VALVE"]==8) & (LGR["      GasP_torr"]>52.45) & (LGR["      GasP_torr"]<52.65)) ) # Inlet
@@ -80,7 +87,6 @@ CO_intercept = [-3.25823985, -2.81917073, -3.42491811, -1.73777896, -3.77446838,
 """
 
 cmap = plt.get_cmap("tab20")
-
 
 #ax2[0].set_xlabel('Seconds')
 #ax2[0].set_title('Low cal')
@@ -116,10 +122,28 @@ ax[3].set_xlabel('Cycle #')
 ax[3].set_ylabel('N2O, ppb')
 #ax[3].set_ylim([46,52])
 
+ax[0].grid()
+ax[1].grid()
+ax[2].grid()
+ax[3].grid()
+
 plt.tight_layout()
 #plt.savefig('fig1.png',dpi=300)
 
+# %% output results
+print("CO:")
+for ii in range(len(CO_cal)):
+    print(pd.to_datetime(CO_cal['time'][ii]).strftime("%m/%d/%Y %H:%M:%S") + 
+          ' ' + "{:.3f}".format(CO_cal.slope[ii]) + 
+          ' ' + "{:.3f}".format(CO_cal.intercept[ii]))
 
+print()
+print("N2O:")
+for ii in range(len(CO_cal)):
+    print(pd.to_datetime(CO_cal['time'][ii]).strftime("%m/%d/%Y %H:%M:%S") + 
+          ' ' + "{:.3f}".format(N2O_cal.slope[ii]) + 
+          ' ' + "{:.3f}".format(N2O_cal.intercept[ii]))
+    
 # %% test curve fit
 # Exponential fit to determine flush rate and steady state concentration
 # (skip first several points where concentration seems to overshoot)

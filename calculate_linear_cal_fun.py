@@ -24,6 +24,7 @@ def calc_cal(LGR_time,CO_raw,N2O_raw,ix_low,ix_high):
     low_N2O_std = np.zeros(20)
     high_N2O_mean = np.zeros(20)
     high_N2O_std = np.zeros(20)
+    CO_time = np.zeros(20)
     
     df_lowcal = pd.DataFrame({'time': LGR_time[ix_low], 'CO_dry': CO_raw[ix_low]*1000, 'N2O_dry': N2O_raw[ix_low]*1000})
     df_lowcal['groups'] = (df_lowcal.index.to_series().diff()>5).cumsum()
@@ -34,6 +35,7 @@ def calc_cal(LGR_time,CO_raw,N2O_raw,ix_low,ix_high):
     for ct, data in df_lowcal.groupby('groups'):
         CO_series = pd.Series(data['CO_dry'].values)
         low_CO_mean[ii], low_CO_std[ii] = calc_mean(CO_series)
+        CO_time[ii] = data['time'].values[0]
         ii += 1
 
     ii = 0
@@ -134,7 +136,8 @@ def calc_cal(LGR_time,CO_raw,N2O_raw,ix_low,ix_high):
                            'low_ratio': CO_low_ratio,
                            'high_ratio': CO_high_ratio, 
                            'slope': CO_slope,
-                           'intercept': CO_intercept})
+                           'intercept': CO_intercept,
+                           'time':CO_time[rng]})
     N2O_cal = pd.DataFrame({'low_mean': low_N2O_mean[rng],
                             'low_std': low_N2O_std[rng],
                             'high_mean': high_N2O_mean[rng],
