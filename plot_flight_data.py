@@ -5,7 +5,7 @@ Use COMA data files from instrument
 MMS from data archive (https://www-air.larc.nasa.gov/cgi-bin/ArcView/acclip)
 """
 
-# %% EDIT THESE
+# %% load libraries and files
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -16,8 +16,9 @@ from load_flight_functions import V_to_T
 from load_flight_functions import read_COMA
 from load_flight_functions import read_MMS
 
-case = '2022-08-06'
-focus = 'flight_N2O' # lab, flight_CO, flight_N2O
+# EDIT THESE
+case = '2022-08-12'
+focus = 'flight_CO' # lab, flight_CO, flight_N2O
 
 if case == '2021-08-06': # FCF
     filename_COMA = ['../Data/2021-08-06/n2o-co_2021-08-06_f0002.txt']
@@ -88,6 +89,10 @@ elif case == '2022-08-06': # RF05
     filename_COMA = ['../Data/2022-08-06/n2o-co_2022-08-06_f0000_no_10s_cal.txt']
     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220806_RA.ict'
     cur_day = datetime(2022,8,6)
+elif case == '2022-08-12': # RF06
+    filename_COMA = ['../Data/2022-08-12/n2o-co_2022-08-12_f0000.txt']
+    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220812_RA.ict'
+    cur_day = datetime(2022,8,12)
     
 # %% data
 # read COMA data, combining multiple files if needed

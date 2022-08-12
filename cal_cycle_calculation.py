@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 Calculate linear calibration based on the cal cycles
+
+TODO
+- handle tank values from original NOAA tanks; and newer Matheson gas values
 """
 
 # %% EDIT THESE
@@ -12,7 +15,7 @@ import matplotlib.dates as mdates
 from calculate_linear_cal_fun import calc_cal
 from load_flight_functions import read_COMA
 
-case = '2022-08-06'
+case = '2022-08-12'
 
 if case == '2021-08-06': # FCF
     filename_COMA = '../Data/2021-08-06/n2o-co_2021-08-06_f0002.txt'
@@ -44,6 +47,9 @@ elif case == '2022-08-06': # RF05
     filename_COMA = ['../Data/2022-08-05/n2o-co_2022-08-05_f0000_no_10s_cal.txt',
                      '../Data/2022-08-06/n2o-co_2022-08-06_f0000_no_10s_cal.txt',
                      '../Data/2022-08-06/n2o-co_2022-08-06_f0001.txt']
+elif case == '2022-08-12': # RF06
+    filename_COMA = ['../Data/2022-08-11/n2o-co_2022-08-11_f0001.txt',
+                     '../Data/2022-08-12/n2o-co_2022-08-12_f0000.txt']
 
 # %% data
 # read COMA data
@@ -134,15 +140,19 @@ plt.tight_layout()
 print("CO:")
 for ii in range(len(CO_cal)):
     print(pd.to_datetime(CO_cal['time'][ii]).strftime("%m/%d/%Y %H:%M:%S") + 
-          ' ' + "{:.3f}".format(CO_cal.slope[ii]) + 
-          ' ' + "{:.3f}".format(CO_cal.intercept[ii]))
+          '  ' + "{:.3f}".format(CO_cal.slope[ii]) + 
+          '  ' + "{:.3f}".format(CO_cal.intercept[ii]) + 
+          '  ' + "{:.3f}".format(CO_cal.low_mean[ii]) + 
+          '  ' + "{:.3f}".format(CO_cal.high_mean[ii]))
 
 print()
 print("N2O:")
 for ii in range(len(CO_cal)):
     print(pd.to_datetime(CO_cal['time'][ii]).strftime("%m/%d/%Y %H:%M:%S") + 
           ' ' + "{:.3f}".format(N2O_cal.slope[ii]) + 
-          ' ' + "{:.3f}".format(N2O_cal.intercept[ii]))
+          ' ' + "{:.3f}".format(N2O_cal.intercept[ii]) + 
+          '  ' + "{:.3f}".format(N2O_cal.low_mean[ii]) + 
+          '  ' + "{:.3f}".format(N2O_cal.high_mean[ii]))
     
 # %% test curve fit
 # Exponential fit to determine flush rate and steady state concentration
