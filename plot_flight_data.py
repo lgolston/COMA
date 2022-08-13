@@ -17,8 +17,8 @@ from load_flight_functions import read_COMA
 from load_flight_functions import read_MMS
 
 # EDIT THESE
-case = '2022-08-12'
-focus = 'flight_CO' # lab, flight_CO, flight_N2O
+case = '2022-08-13'
+focus = 'flight_N2O' # lab, flight_CO, flight_N2O
 
 if case == '2021-08-06': # FCF
     filename_COMA = ['../Data/2021-08-06/n2o-co_2021-08-06_f0002.txt']
@@ -93,6 +93,10 @@ elif case == '2022-08-12': # RF06
     filename_COMA = ['../Data/2022-08-12/n2o-co_2022-08-12_f0000.txt']
     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220812_RA.ict'
     cur_day = datetime(2022,8,12)
+elif case == '2022-08-13': # RF07
+    filename_COMA = ['../Data/2022-08-13/n2o-co_2022-08-13_f0000.txt']
+    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220813_RA.ict'
+    cur_day = datetime(2022,8,13)
     
 # %% data
 # read COMA data, combining multiple files if needed
@@ -186,13 +190,12 @@ ax[2,3].set_yscale('log')
 
 # formatting
 plt.tight_layout()
-plt.show()
-
-ax[2,0].set_xticklabels(ax[2,0].get_xticks(), rotation = 45)
-ax[2,1].set_xticklabels(ax[2,0].get_xticks(), rotation = 45)
-ax[2,2].set_xticklabels(ax[2,0].get_xticks(), rotation = 45)
-ax[2,3].set_xticklabels(ax[2,0].get_xticks(), rotation = 45)
+ax[2,0].tick_params(axis='x', labelrotation = 45)
+ax[2,1].tick_params(axis='x', labelrotation = 45)
+ax[2,2].tick_params(axis='x', labelrotation = 45)
+ax[2,3].tick_params(axis='x', labelrotation = 45)
 ax[2,0].xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+plt.show()
 
 
 # %% plot cal gas
@@ -218,23 +221,31 @@ if focus != 'lab':
     if focus == 'flight_CO':
         for ct, data in df_lowcal.groupby('groups'):
             ax2[0].plot(data['CO_dry'].values,'.')
-            ax2[0].set_ylim(40,70)
-        
+            
         for ct, data in df_highcal.groupby('groups'):
             ax2[1].plot(data['CO_dry'].values,'.')
+        
+        if cur_day <= datetime(2022,8,11): # NOAA gas bottle
+            ax2[0].set_ylim(40,70)
             ax2[1].set_ylim(140,170)
-            
-        ax2[0].set_ylabel('CO, ppb')
+        else:                              # Matheson gas bottle
+            ax2[0].set_ylim(170,220)
+            ax2[1].set_ylim(800,1000)
+        ax2[0].set_ylabel('CO, ppb')        
         
     elif focus == 'flight_N2O':
         for ct, data in df_lowcal.groupby('groups'):
             ax2[0].plot(data['N2O_dry'].values,'.')
-            ax2[0].set_ylim(250,270)
         
         for ct, data in df_highcal.groupby('groups'):
             ax2[1].plot(data['N2O_dry'].values,'.')
+        
+        if cur_day <= datetime(2022,8,11): # NOAA gas bottle
+            ax2[0].set_ylim(250,270)
             ax2[1].set_ylim(320,350)
-            
+        else:                              # Matheson gas bottle
+            ax2[0].set_ylim(170,220)
+            ax2[1].set_ylim(800,1000)
         ax2[0].set_ylabel('N2O, ppb')        
     
     elif focus == 'flight_H2O':
@@ -278,7 +289,7 @@ if focus != 'lab':
     # time-sync the data with COMA
     sync_data = pd.merge(MMS_sync, COMA_df_sync, how='inner', on=['time'])
 
-    # %% altitude scatterplot
+    # %% altitude vs time scatterplot
     fig3, ax3 = plt.subplots(1, 1, figsize=(6,3.5),dpi=200)
     #ax3[0].scatter(sync_data.index,sync_data['alt'],c=sync_data['CO_dry'],vmin=20, vmax=80, s = 15)
     ax3.scatter(sync_data.index,sync_data['ALT'],c=sync_data.index, s = 15)
@@ -302,18 +313,18 @@ if focus != 'lab':
     
     sc1 = ax4.scatter(sync_data['LON'].values,sync_data['LAT'].values,c=sync_data.index, s = 15, transform=plate)
     
-    if case == 9:
+    if case == '2022-07-21-A':
         ax4.set_extent([-125, -90, 23, 53], crs=plate) # Transit 1
-    elif case == 10:
+    elif case == '2022-07-21-B':
         ax4.set_extent([-155, -115, 40, 65], crs=plate) # Transit 2
-    elif case == 11:
+    elif case == '2022-07-24':
         ax4.set_extent([170, 220, 40, 65], crs=plate) # Transit 3 (trick for international date line)
-    elif case == 12:
+    elif case == '2022-07-25':
         ax4.set_extent([130, 190, 30, 65], crs=plate) # Transit 4 (trick for international date line)
-    elif case == 13:
+    elif case == '2022-07-27':
         ax4.set_extent([122, 144, 30, 45], crs=plate) # Transit 5
-    elif case == 14:
-        ax4.set_extent([110, 145, 15, 44], crs=plate) # Science Flight 1
+    elif case == '2022-08-02':
+        ax4.set_extent([110, 145, 15, 44], crs=plate) # RF03 (first flight Osan)
     
     cb1 = plt.colorbar(sc1)
     cb1.ax.set_yticklabels(pd.to_datetime(cb1.get_ticks()).strftime(date_format='%H:%M'))
@@ -326,11 +337,11 @@ if focus != 'lab':
     
     if focus == 'flight_CO':
             sc2 = plt.scatter(sync_data['CO_dry'],sync_data['ALT'],c=sync_data.index,s=8)
-            plt.xlim(15,115)
+            plt.xlim(15,200)
             plt.xlabel('CO, ppb')
     elif focus == 'flight_N2O':
             sc2 = plt.scatter(sync_data['N2O_dry'],sync_data['ALT'],c=sync_data.index,s=8)
-            plt.xlim(240,310)
+            plt.xlim(280,350)
             plt.xlabel('N2O, ppb')
     
     ax5.grid()

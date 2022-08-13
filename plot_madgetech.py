@@ -34,6 +34,11 @@ elif case == '2022-08-12': #RF06
     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220812_RA.ict'
     filename_COMA = ['../Data/2022-08-12/n2o-co_2022-08-12_f0000.txt']    
     cur_day = datetime(2022,8,12)
+elif case == '2022-08-13': #RF07
+    filename_MT = None
+    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220813_RA.ict'
+    filename_COMA = ['../Data/2022-08-13/n2o-co_2022-08-13_f0000.txt']    
+    cur_day = datetime(2022,8,13)
 
 # set font sizes
 plt.rc('axes', labelsize=12) # xaxis and yaxis labels

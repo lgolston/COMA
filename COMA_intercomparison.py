@@ -2,7 +2,10 @@
 """
 Compare COLD2, ACOS, and COMA CO measurements
 
-Add correlations
+Add correlations:
+import statsmodels.api as sm
+model = sm.OLS(y_WS_TriSonica,sm.add_constant(x_WS_WIMWV))
+results = model.fit()
 """
 
 # %% header
@@ -13,7 +16,7 @@ from datetime import datetime, timedelta
 import matplotlib.dates as mdates
 from load_flight_functions import read_COMA
 
-case = 'RF04'
+case = 'RF07'
 to_plot = 'CO' # CO, CO-H2O, corr
 
 # %% list file names
@@ -45,23 +48,35 @@ elif case == 'Transit5': # Misawa to Osan
     filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220727_RA.ict'
     filename_COMA = ['../Data/2022-07-27/n2o-co_2022-07-27_f0000.txt']
     cur_day = datetime(2022,7,27)
-elif case == 'RF03': # RF03, Osan
+elif case == 'RF03': # Osan
     filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220802_RA.ict'
     filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220802_RA.ict'
     filename_COMA = ['../Data/2022-08-02/n2o-co_2022-08-02_f0000.txt']
     cur_day = datetime(2022,8,2)
-elif case == 'RF04': # RF04, Osan
+elif case == 'RF04': # Osan
     filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220804_RA.ict'
     filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220804_RA.ict'
     filename_COMA = ['../Data/2022-08-04/n2o-co_2022-08-04_f0000.txt']
     filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220804_RA.ict'
     cur_day = datetime(2022,8,4)
-elif case == 'RF05': # RF05, Osan
+elif case == 'RF05': # Osan
     filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220806_RA.ict'
     filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220806_RA.ict'
     filename_COMA = ['../Data/2022-08-06/n2o-co_2022-08-06_f0000.txt']
     filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220806_RA.ict'
     cur_day = datetime(2022,8,6)
+elif case == 'RF06': # Osan
+    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220812_RA.ict'
+    filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220812_RA.ict'
+    filename_COMA = ['../Data/2022-08-12/n2o-co_2022-08-12_f0000.txt']
+    filename_DLH = None
+    cur_day = datetime(2022,8,12)
+elif case == 'RF07': # Osan
+    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220813_RA.ict'
+    filename_COLD2 = None
+    filename_COMA = ['../Data/2022-08-13/n2o-co_2022-08-13_f0000.txt']
+    filename_DLH = None
+    cur_day = datetime(2022,8,13)
 
 # %% Plot CO time series from COMA, ACOS, COLD2
 if to_plot == 'CO':
