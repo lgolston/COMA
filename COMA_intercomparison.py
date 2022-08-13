@@ -1,11 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Compare COLD2, ACOS, and COMA CO measurements
-
-Add correlations:
-import statsmodels.api as sm
-model = sm.OLS(y_WS_TriSonica,sm.add_constant(x_WS_WIMWV))
-results = model.fit()
 """
 
 # %% header
@@ -15,9 +10,10 @@ import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import matplotlib.dates as mdates
 from load_flight_functions import read_COMA
+import statsmodels.api as sm
 
-case = 'RF07'
-to_plot = 'CO' # CO, CO-H2O, corr
+case = 'RF05'
+to_plot = 'corr' # CO, CO-H2O, corr
 
 # %% list file names
 filename_DLH = None
@@ -143,19 +139,30 @@ if to_plot == 'CO-H2O':
 # COMA CO vs COLD2
 # COMA H2O vs DLH H2O
 
-def sync_ab(df_a,df_b):
+def sync_ab(df_a,df_b):   
+    # clear missing, ULOD, and LLOD flagged values
+    # (not relevant for non-ICARTT COMA data file = df_a)
+    tmp = df_b.iloc[:,1]
+    tmp[tmp<-600] = np.nan
+    df_b.iloc[:,1] = tmp
+    
+    # create common timestamp
     a_1Hz = df_a.groupby(pd.Grouper(key="time", freq="1s")).mean()
     b_1Hz = df_b.groupby(pd.Grouper(key="time", freq="1s")).mean()
     sync_data = pd.merge(a_1Hz, b_1Hz, how='inner', on=['time'])
-    return sync_data
+    sync_data = sync_data.dropna()
+
+    # linear regression
+    col_names = sync_data.columns
+    model = sm.OLS(sync_data[col_names[1]],sm.add_constant(sync_data[col_names[0]]))
+    results = model.fit()
+    return sync_data, results
 
 if to_plot == 'corr':
     fig, ax = plt.subplots(1, 3, figsize=(12,4))
     
     COMA = read_COMA(filename_COMA)
     ix_8 = np.ravel(np.where(COMA["      MIU_VALVE"]==8)) # inlet
-    #COMA['time'][ix_8]
-    #COMA["      [CO]d_ppm"][ix_8]*1000
     
     # load ACOS
     if filename_ACOS:
@@ -164,9 +171,11 @@ if to_plot == 'corr':
         
         df_a = pd.DataFrame({'time': COMA['time'][ix_8], 'CO_COMA': COMA["      [CO]d_ppm"][ix_8]*1000})
         df_b = pd.DataFrame({'time': ACOS['time'], 'CO_ACOS': ACOS['ACOS_CO_PPB']})
-        sync_data = sync_ab(df_a,df_b)
+        sync_data, results = sync_ab(df_a,df_b)
         ax[0].plot(sync_data['CO_COMA'],sync_data['CO_ACOS'],'k.')
-    
+        ax[0].text(0.05,0.93,'y = ' + "{:.3f}".format(results.params[1]) + 'x + ' + "{:.3f}".format(results.params[0]),transform=ax[0].transAxes)
+        ax[0].text(0.05,0.87,'R2 = ' + "{:.3f}".format(results.rsquared),transform=ax[0].transAxes)
+        
     # load COLD2
     if filename_COLD2:
         COLD2 = pd.read_csv(filename_COLD2,sep=',',header=32)
@@ -174,9 +183,11 @@ if to_plot == 'corr':
         
         df_a = pd.DataFrame({'time': COMA['time'][ix_8], 'CO_COMA': COMA["      [CO]d_ppm"][ix_8]*1000})
         df_b = pd.DataFrame({'time': COLD2['time'], 'CO_COLD2': COLD2[' CO_COLD2_ppbv']})
-        sync_data = sync_ab(df_a,df_b)
+        sync_data, results = sync_ab(df_a,df_b)
         ax[1].plot(sync_data['CO_COMA'],sync_data['CO_COLD2'],'k.')
-    
+        ax[1].text(0.05,0.93,'y = ' + "{:.3f}".format(results.params[1]) + 'x + ' + "{:.3f}".format(results.params[0]),transform=ax[1].transAxes)
+        ax[1].text(0.05,0.87,'R2 = ' + "{:.3f}".format(results.rsquared),transform=ax[1].transAxes)
+        
     # load DLH
     if filename_DLH:
         DLH = pd.read_csv(filename_DLH,sep=',',header=35)
@@ -184,9 +195,11 @@ if to_plot == 'corr':
 
         df_a = pd.DataFrame({'time': COMA['time'][ix_8], 'H2O_COMA': COMA["      [H2O]_ppm"][ix_8]})
         df_b = pd.DataFrame({'time': DLH['time'], 'H2O_DLH': DLH['H2O_DLH']})
-        sync_data = sync_ab(df_a,df_b)
+        sync_data, results = sync_ab(df_a,df_b)
         ax[2].plot(sync_data['H2O_COMA'],sync_data['H2O_DLH'],'k.')
-    
+        ax[2].text(0.05,0.93,'y = ' + "{:.3f}".format(results.params[1]) + 'x + ' + "{:.3f}".format(results.params[0]),transform=ax[2].transAxes)
+        ax[2].text(0.05,0.87,'R2 = ' + "{:.3f}".format(results.rsquared),transform=ax[2].transAxes)
+        
     ax[0].set_xlabel('COMA CO, ppbv')
     ax[0].set_ylabel('ACOS CO, ppbv')
     
