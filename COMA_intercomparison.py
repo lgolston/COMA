@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 Compare COLD2, ACOS, and COMA CO measurements
+
+Add:
+- Correlation DLH H2O and CO
+- Intercomparison DLH H2O and COMA H2O
+- Any other N2O measurements?
 """
 
 # %% header
