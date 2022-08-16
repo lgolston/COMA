@@ -17,8 +17,8 @@ from load_flight_functions import read_COMA
 from load_flight_functions import read_MMS
 
 # EDIT THESE
-case = '2022-08-13'
-focus = 'flight_N2O' # lab, flight_CO, flight_N2O
+case = '2022-08-15'
+focus = 'flight_CO' # lab, flight_CO, flight_N2O
 
 if case == '2021-08-06': # FCF
     filename_COMA = ['../Data/2021-08-06/n2o-co_2021-08-06_f0002.txt']
@@ -97,6 +97,11 @@ elif case == '2022-08-13': # RF07
     filename_COMA = ['../Data/2022-08-13/n2o-co_2022-08-13_f0000.txt']
     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220813_RA.ict'
     cur_day = datetime(2022,8,13)
+elif case == '2022-08-15': # RF08
+    filename_COMA = ['../Data/2022-08-15/n2o-co_2022-08-15_f0000.txt',
+                     '../Data/2022-08-15/n2o-co_2022-08-15_f0001.txt']
+    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220815_RA.ict'
+    cur_day = datetime(2022,8,15)
     
 # %% data
 # read COMA data, combining multiple files if needed

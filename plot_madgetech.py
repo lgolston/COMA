@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
 # select files to analyze
-case = '2022-08-12'
+case = '2022-08-15'
 
 if case == '2022-08-04': #RF04
     filename_MT = '../Data/2022-08-04/8.4.2022 flight Madgetech.xlsx'
@@ -35,11 +35,17 @@ elif case == '2022-08-12': #RF06
     filename_COMA = ['../Data/2022-08-12/n2o-co_2022-08-12_f0000.txt']    
     cur_day = datetime(2022,8,12)
 elif case == '2022-08-13': #RF07
-    filename_MT = None
+    filename_MT = '../Data/2022-08-13/8.13.2022 flight Madgetech.xlsx'
     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220813_RA.ict'
     filename_COMA = ['../Data/2022-08-13/n2o-co_2022-08-13_f0000.txt']    
     cur_day = datetime(2022,8,13)
-
+elif case == '2022-08-15': #RF08
+    filename_MT = '../Data/2022-08-15/8.15.2022 flight Madgetech.xlsx'
+    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220815_RA.ict'
+    filename_COMA = ['../Data/2022-08-15/n2o-co_2022-08-15_f0000.txt',
+                     '../Data/2022-08-15/n2o-co_2022-08-15_f0001.txt']    
+    cur_day = datetime(2022,8,15)
+    
 # set font sizes
 plt.rc('axes', labelsize=12) # xaxis and yaxis labels
 plt.rc('xtick', labelsize=12) # xtick labels

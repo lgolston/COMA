@@ -12,8 +12,8 @@ import matplotlib.dates as mdates
 from load_flight_functions import read_COMA
 import statsmodels.api as sm
 
-case = 'RF05'
-to_plot = 'corr' # CO, CO-H2O, corr
+case = 'RF07'
+to_plot = 'CO' # CO, CO-H2O, corr
 
 # %% list file names
 filename_DLH = None
@@ -65,13 +65,13 @@ elif case == 'RF06': # Osan
     filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220812_RA.ict'
     filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220812_RA.ict'
     filename_COMA = ['../Data/2022-08-12/n2o-co_2022-08-12_f0000.txt']
-    filename_DLH = None
+    filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220812_RA.ict'
     cur_day = datetime(2022,8,12)
 elif case == 'RF07': # Osan
     filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220813_RA.ict'
-    filename_COLD2 = None
+    filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220813_RA.ict'
     filename_COMA = ['../Data/2022-08-13/n2o-co_2022-08-13_f0000.txt']
-    filename_DLH = None
+    filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220813_RA.ict'
     cur_day = datetime(2022,8,13)
 
 # %% Plot CO time series from COMA, ACOS, COLD2
