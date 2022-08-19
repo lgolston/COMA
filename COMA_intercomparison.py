@@ -13,7 +13,7 @@ from load_flight_functions import read_COMA
 import statsmodels.api as sm
 
 case = 'RF09'
-to_plot = 'CO-H2O' # CO, CO-H2O, corr
+to_plot = 'CO' # CO, CO-H2O, corr
 
 # %% list file names
 filename_DLH = None
@@ -82,7 +82,7 @@ elif case == 'RF08': # Osan
     cur_day = datetime(2022,8,15)
 elif case == 'RF09': # Osan
     filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220816_RA.ict'
-    filename_COLD2 = None
+    filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220816_RA.ict'
     filename_COMA = ['../Data/2022-08-16/n2o-co_2022-08-16_f0000.txt']
     filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220816_RA.ict'
     cur_day = datetime(2022,8,16)
