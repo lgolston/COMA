@@ -17,39 +17,41 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
 # select files to analyze
-case = '2022-08-16'
+case = 'RF11'
 
-if case == '2022-08-04': #RF04
+if case == 'RF04': #RF04 (first flight with MadgeTech installed)
     filename_MT = '../Data/2022-08-04/8.4.2022 flight Madgetech.xlsx'
     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220804_RA.ict'
     filename_COMA = ['../Data/2022-08-04/n2o-co_2022-08-04_f0000.txt']
-    cur_day = datetime(2022,8,4)
-elif case == '2022-08-06': #RF05
+elif case == 'RF05': #RF05
     filename_MT = '../Data/2022-08-06/8.6.2022 flight Madgetech.xlsx'
     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220804_RA.ict'
     filename_COMA = ['../Data/2022-08-06/n2o-co_2022-08-06_f0000.txt']    
-    cur_day = datetime(2022,8,6)
-elif case == '2022-08-12': #RF06
+elif case == 'RF06': #RF06
     filename_MT = '../Data/2022-08-12/8.12.2022 flight Madgetech.xlsx'
     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220812_RA.ict'
     filename_COMA = ['../Data/2022-08-12/n2o-co_2022-08-12_f0000.txt']    
-    cur_day = datetime(2022,8,12)
-elif case == '2022-08-13': #RF07
+elif case == 'RF07': #RF07
     filename_MT = '../Data/2022-08-13/8.13.2022 flight Madgetech.xlsx'
     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220813_RA.ict'
     filename_COMA = ['../Data/2022-08-13/n2o-co_2022-08-13_f0000.txt']    
-    cur_day = datetime(2022,8,13)
-elif case == '2022-08-15': #RF08
+elif case == 'RF08': #RF08
     filename_MT = '../Data/2022-08-15/8.15.2022 flight Madgetech.xlsx'
     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220815_RA.ict'
     filename_COMA = ['../Data/2022-08-15/n2o-co_2022-08-15_f0000.txt',
                      '../Data/2022-08-15/n2o-co_2022-08-15_f0001.txt']    
-    cur_day = datetime(2022,8,15)
-elif case == '2022-08-16': #RF09
+elif case == 'RF09': #RF09
     filename_MT = '../Data/2022-08-16/8.16.2022 flight Madgetech.xlsx'
     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220816_RA.ict'
     filename_COMA = ['../Data/2022-08-16/n2o-co_2022-08-16_f0000.txt']    
-    cur_day = datetime(2022,8,16)
+elif case == 'RF10': #RF10
+    filename_MT = '../Data/2022-08-18/8.18.2022 flight Madgetech.xlsx'
+    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220819_RA.ict'
+    filename_COMA = ['../Data/2022-08-18/n2o-co_2022-08-18_f0000.txt']    
+elif case == 'RF11': #RF11
+    filename_MT = '../Data/2022-08-21/8.21.2022 flight Madgetech.xlsx'
+    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220821_RA.ict'
+    filename_COMA = ['../Data/2022-08-21/n2o-co_2022-08-21_f0000.txt']  
     
 # set font sizes
 plt.rc('axes', labelsize=12) # xaxis and yaxis labels
@@ -71,7 +73,7 @@ ix_2 = np.ravel(np.where(COMA["      MIU_VALVE"]==2)) # low cal
 ix_1 = np.ravel(np.where(COMA["      MIU_VALVE"]==1)) # flush
 
 # load MMS
-MMS = read_MMS(filename_MMS,cur_day)
+MMS = read_MMS(filename_MMS)
 
 # %% plot data
 fig1, ax = plt.subplots(2, 1, figsize=(8,5.5),sharex=True)

@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 Load different file types ACCLIP:
-- COMA
-- MMS
-- IWG1
-
+- COMA (from analyzer)
+- MMS (from NASA LaRC archive)
+- IWG1 (from Mission Tools Suite)
 """
 
 # %% load libraries
@@ -43,13 +42,13 @@ def read_COMA(filename_COMA):
 
 
 # %% read MMS data
-def read_MMS(filename_MMS,cur_day):
+def read_MMS(filename):
     """
-   Function to read the COMA/LGR data
+   Function to read the MMS data
     """
     
     # parse variables
-    MMS = pd.read_csv(filename_MMS,sep=',',header=52)
+    MMS = pd.read_csv(filename,sep=',',header=52)
     MMS_P = MMS[' P_MMS']*0.01 # static pressure (hPa)
     MMS_T = MMS[' T_MMS']*0.01 # static temperature (K)
     MMS_TAS = MMS[' TAS_MMS']*0.01 # platform true air speed (m/s)
@@ -77,6 +76,9 @@ def read_MMS(filename_MMS,cur_day):
     MMS_LAT[MMS_LAT<-500] = np.nan # clean up
     MMS_LON[MMS_LON<-500] = np.nan
     MMS_ALT[MMS_ALT<-500] = np.nan
+    
+    # create timestamp
+    cur_day = datetime.strptime(filename[-15:-7],"%Y%m%d") # get date from end of file name
     MMS_time = [cur_day+timedelta(seconds=t) for t in MMS['TIME_START']]
     
     # save to DataFrame
