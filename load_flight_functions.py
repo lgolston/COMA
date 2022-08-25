@@ -117,14 +117,19 @@ def sync_data(MMS,COMA):
     
     # index MIU valves
     #ix_8 = np.ravel(np.where( (LGR["      MIU_VALVE"]==8) & (LGR["      GasP_torr"]>52.45) & (LGR["      GasP_torr"]<52.65)) ) # Inlet
-    ix_8 = np.ravel(np.where(COMA["      MIU_VALVE"]==8)) # inlet
-    ix_7 = np.ravel(np.where(COMA["      MIU_VALVE"]==7)) # inlet (lab)
-    ix_3 = np.ravel(np.where(COMA["      MIU_VALVE"]==3)) # high cal
-    ix_2 = np.ravel(np.where(COMA["      MIU_VALVE"]==2)) # low cal
-    ix_1 = np.ravel(np.where(COMA["      MIU_VALVE"]==1)) # flush
-    
-    indices = ix_8 # use only inlet data
+    MIU = COMA["      MIU_VALVE"]   
     COMA_time = COMA['time']
+    
+    # handle purge air settings
+    if COMA_time[0] <= datetime(2022,8,15):
+        # use only inlet data
+        indices = np.ravel(np.where(MIU==8))
+    else:
+        # starting 2022-08-16, MIU sequence no longer set to cycle through purge
+        # account for this by excluding 20 s of data after the high cal
+        # [NOTE: the command below also excludes 20 s data before the low cal.
+        # revise to handle this]
+        indices = np.ravel(np.where((MIU==8) & (MIU.shift(20)==8)))
     
     #indices = np.union1d(ix_1,ix_8) # use both inlet and flush data here
     COMA_subset = pd.DataFrame({'time': COMA_time,

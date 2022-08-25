@@ -9,7 +9,7 @@ MMS from data archive (https://www-air.larc.nasa.gov/cgi-bin/ArcView/acclip)
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from datetime import datetime
+from datetime import datetime, timedelta
 import matplotlib.dates as mdates
 
 from load_flight_functions import V_to_T
@@ -17,7 +17,7 @@ from load_flight_functions import read_COMA
 from load_flight_functions import read_MMS
 
 # EDIT THESE
-case = 'RF12'
+case = 'RF13'
 focus = 'flight_CO' # lab, flight_CO, flight_N2O
 
 if case == '2021-08-06': # FCF
@@ -121,10 +121,17 @@ elif case == 'RF11': # RF11
 elif case == 'RF12': # RF12
     filename_COMA = ['../Data/2022-08-23/n2o-co_2022-08-23_f0000.txt']
     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220823_RA.ict'
+
+elif case == 'RF13': # RF13
+    filename_COMA = ['../Data/2022-08-24/n2o-co_2022-08-24_f0002.txt']
+    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220825_RA.ict'
     
 # %% data
 # read COMA data, combining multiple files if needed
 COMA = read_COMA(filename_COMA)
+
+if case == 'RF13': # fix clock setting on this day
+    COMA['time'] = COMA['time'] + timedelta(hours=6)
 
 # index MIU valves
 #ix_8 = np.ravel(np.where( (LGR["      MIU_VALVE"]==8) & (LGR["      GasP_torr"]>52.45) & (LGR["      GasP_torr"]<52.65)) ) # Inlet

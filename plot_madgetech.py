@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
 # select files to analyze
-case = 'RF11'
+case = 'RF12'
 
 if case == 'RF04': #RF04 (first flight with MadgeTech installed)
     filename_MT = '../Data/2022-08-04/8.4.2022 flight Madgetech.xlsx'
@@ -52,6 +52,10 @@ elif case == 'RF11': #RF11
     filename_MT = '../Data/2022-08-21/8.21.2022 flight Madgetech.xlsx'
     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220821_RA.ict'
     filename_COMA = ['../Data/2022-08-21/n2o-co_2022-08-21_f0000.txt']  
+elif case == 'RF12': #RF12 [need to fix time offset in MadgeTech file]
+    filename_MT = '../Data/2022-08-23/8.23.2022 flight Madgetech.xlsx'
+    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220823_RA.ict'
+    filename_COMA = ['../Data/2022-08-23/n2o-co_2022-08-23_f0000.txt']  
     
 # set font sizes
 plt.rc('axes', labelsize=12) # xaxis and yaxis labels

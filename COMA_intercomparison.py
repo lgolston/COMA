@@ -12,7 +12,7 @@ import matplotlib.dates as mdates
 from load_flight_functions import read_COMA
 import statsmodels.api as sm
 
-case = 'RF11'
+case = 'RF12'
 to_plot = 'CO' # CO, CO-H2O, or corr
 
 # %% list file names
@@ -91,18 +91,22 @@ elif case == 'RF09': # Osan
     filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220816_RA.ict'
     
 elif case == 'RF10': # Osan
-    #filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220818_RB.ict' #(?)
-    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220819_RA.ict'
+    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220819_RB.ict'
     filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220819_RA.ict'
     filename_COMA = ['../Data/2022-08-18/n2o-co_2022-08-18_f0000.txt']
     filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220819_RA.ict'
 
 elif case == 'RF11': # Osan
-    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220821_RA.ict'
+    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220821_RB.ict'
     filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220821_RA.ict'
     filename_COMA = ['../Data/2022-08-21/n2o-co_2022-08-21_f0000.txt']
     filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220821_RA.ict'
 
+elif case == 'RF12': # Osan
+    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220823_RC.ict'
+    filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220823_RA.ict'
+    filename_COMA = ['../Data/2022-08-23/n2o-co_2022-08-23_f0000.txt']
+    filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220823_RA.ict'
 
 # %% ICARTT file loading functions
 def read_ACOS_ict(filename):
