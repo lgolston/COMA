@@ -16,12 +16,18 @@ from load_flight_functions import read_COMA
 from load_flight_functions import read_MMS
 
 # EDIT THESE
-case = 'RF10'
+case = 'RF13'
 
 if case == 'RF10': # RF10 (instrument start before midnight; takeoff on 2022-08-19 UTC)
-    filename_COMA = ['../Data/2022-08-18/n2o-co_2022-08-18_f0000.txt']
+    #filename_COMA = ['../Data/2022-08-18/n2o-co_2022-08-18_f0000.txt']
     filename_MMS_WB = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220819_RA.ict'
     filename_GV = '../Data/_OtherData_/ACCLIP-CORE_GV_20220818_RA.ict'
+    fig_title = 'WB-RF10 and GV-RF08'
+elif case == 'RF13': # RF13
+    #filename_COMA = ['../Data/2022-08-24/n2o-co_2022-08-24_f0002.txt']
+    filename_MMS_WB = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220825_RA.ict'
+    filename_GV = '../Data/_OtherData_/ACCLIP-CORE_GV_20220824_RA.ict'
+    fig_title = 'WB-RF13 and GV-RF11'
 
 MMS = read_MMS(filename_MMS_WB)
 
@@ -41,11 +47,10 @@ GV = read_GV_ict(filename_GV)
 # %% 3d plot
 fig, ax = plt.subplots(3, 1, figsize=(10,8),sharex=True)
 
-ax[0].plot(MMS['time'],MMS['LAT'],'.',label='MMS WB57')
+ax[0].plot(MMS['time'],MMS['LAT'],'.',label='WB57')
 ax[0].plot(GV['time'],GV['LATC'],'.',label='GV')
 #ax[0].plot(GV['time'],GV['GGLAT'],'.')
 ax[0].grid()
-ax[0].set_ylim(30,40)
 ax[0].set_ylabel('Latitude')
 ax[0].legend(loc='lower left')
 
@@ -58,18 +63,27 @@ ax[1].set_ylabel('Longitude')
 ax[2].plot(MMS['time'],MMS['ALT'],'.')
 ax[2].plot(GV['time'],GV['ALT'],'.')
 ax[2].grid()
-ax[2].set_ylim(0,20000)
 ax[2].set_ylabel('Altitude, m')
 
-ax[0].set_xlim(datetime(2022,8,19,0),datetime(2022,8,19,7))
+# RF10 settings
+#ax[0].set_ylim(30,40)
+#ax[2].set_ylim(0,20000)
+#ax[0].set_xlim(datetime(2022,8,19,0),datetime(2022,8,19,7))
+
+# RF13 settings
+ax[0].set_ylim(27,38)
+#ax[2].set_ylim(0,20000)
+ax[0].set_xlim(datetime(2022,8,25,0),datetime(2022,8,25,7))
+
 ax[0].xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
-ax[0].set_title('RF10 WB-57 and GV')
+ax[0].set_title(fig_title)
 fig.tight_layout()
 
 #fig.savefig('fig1.png',dpi=300)
 
 
-# %% 3D
+# %% 3D flight tracks
+"""
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
 
@@ -82,4 +96,4 @@ p2 = ax.scatter(MMS['LON'],MMS['LAT'],MMS['ALT'])#c=MMS['time']
 #cb = plt.colorbar(p1)
 #cb.ax.set_yticklabels(pd.to_datetime(cb.get_ticks()).strftime(date_format='%H:%M'))
 #cb.set_label('Time, UTC')
-
+"""
