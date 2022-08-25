@@ -12,12 +12,12 @@ import pandas as pd
 import numpy as np
 from load_flight_functions import read_MMS
 from load_flight_functions import read_COMA
-from datetime import datetime
+from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
 # select files to analyze
-case = 'RF12'
+case = 'RF13'
 
 if case == 'RF04': #RF04 (first flight with MadgeTech installed)
     filename_MT = '../Data/2022-08-04/8.4.2022 flight Madgetech.xlsx'
@@ -56,6 +56,10 @@ elif case == 'RF12': #RF12 [need to fix time offset in MadgeTech file]
     filename_MT = '../Data/2022-08-23/8.23.2022 flight Madgetech.xlsx'
     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220823_RA.ict'
     filename_COMA = ['../Data/2022-08-23/n2o-co_2022-08-23_f0000.txt']  
+elif case == 'RF13': # RF13
+    filename_MT = '../Data/2022-08-25/8.25.2022 flight Madgetech.xlsx'
+    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220825_RA.ict'
+    filename_COMA = ['../Data/2022-08-24/n2o-co_2022-08-24_f0002.txt']
     
 # set font sizes
 plt.rc('axes', labelsize=12) # xaxis and yaxis labels
@@ -76,6 +80,9 @@ ix_3 = np.ravel(np.where(COMA["      MIU_VALVE"]==3)) # high cal
 ix_2 = np.ravel(np.where(COMA["      MIU_VALVE"]==2)) # low cal
 ix_1 = np.ravel(np.where(COMA["      MIU_VALVE"]==1)) # flush
 
+if case == 'RF13': # fix clock setting on this day
+    COMA['time'] = COMA['time'] + timedelta(hours=6)
+    
 # load MMS
 MMS = read_MMS(filename_MMS)
 
