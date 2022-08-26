@@ -35,12 +35,11 @@ elif case == '2022-08-06':
     t1 = datetime(2022,8,6,7,9)
 
 # read COMA data
-COMA = read_COMA(filename_COMA)
+COMA, inlet_ix = read_COMA(filename_COMA)
 
 # filter to inlet air (valve 8), between takeoff (t0) and landing (t1)
-ix_flight = np.ravel( np.where((COMA["      MIU_VALVE"]==8) & 
-                               (COMA["time"]>t0) & 
-                               (COMA["time"]<t1)) )
+ix_flight = np.ravel( np.where( (COMA["time"]>t0) & (COMA["time"]<t1)) )
+ix = np.intersect1d(inlet_ix,ix_flight)
 
 # %% output data
 # convert timestamp to seconds after midnight
@@ -53,10 +52,10 @@ N2O = COMA["     [N2O]d_ppm"]*1000
 H2O = COMA["      [H2O]_ppm"]
 
 # create DataFrame with desired variables
-df = pd.DataFrame({'time': time_midnight[ix_flight],
-                    'CO_ppbv': CO[ix_flight],
-                    'N2O_ppbv': N2O[ix_flight], 
-                    'H2O_ppmv': H2O[ix_flight]})
+df = pd.DataFrame({'time': time_midnight[ix],
+                    'CO_ppbv': CO[ix],
+                    'N2O_ppbv': N2O[ix], 
+                    'H2O_ppmv': H2O[ix]})
 
 # loop that saves string formatted (commas, decimal places) data
 # create new file; overwrites if needed

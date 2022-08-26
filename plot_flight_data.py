@@ -128,13 +128,12 @@ elif case == 'RF13': # RF13
     
 # %% data
 # read COMA data, combining multiple files if needed
-COMA = read_COMA(filename_COMA)
+COMA, inlet_ix= read_COMA(filename_COMA)
 
 if case == 'RF13': # fix clock setting on this day
     COMA['time'] = COMA['time'] + timedelta(hours=6)
 
 # index MIU valves
-#ix_8 = np.ravel(np.where( (LGR["      MIU_VALVE"]==8) & (LGR["      GasP_torr"]>52.45) & (LGR["      GasP_torr"]<52.65)) ) # Inlet
 ix_8 = np.ravel(np.where(COMA["      MIU_VALVE"]==8)) # inlet
 ix_7 = np.ravel(np.where(COMA["      MIU_VALVE"]==7)) # inlet (lab)
 ix_3 = np.ravel(np.where(COMA["      MIU_VALVE"]==3)) # high cal
@@ -313,7 +312,7 @@ if focus != 'lab':
     MMS_sync = MMS.groupby(pd.Grouper(key="time", freq="1s")).mean()
     
     # handle COMA data
-    indices = ix_8 # use only inlet data
+    indices = inlet_ix # use only inlet data
     #indices = np.union1d(ix_1,ix_8) # use both inlet and flush data here
     COMA_df = pd.DataFrame({'time': COMA['time'][indices], 'CO_dry': COMA["      [CO]d_ppm"][indices]*1000, 
                             'N2O_dry': COMA["     [N2O]d_ppm"][indices]*1000, 'amb_T': COMA["         AmbT_C"]})

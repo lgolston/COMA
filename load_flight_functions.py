@@ -24,6 +24,7 @@ def read_COMA(filename_COMA):
     """
    Function to read the COMA/LGR data
     """
+    # read file, combining multiple if necessary
     for count, fname in enumerate(filename_COMA):
         if count == 0:
             COMA = pd.read_csv(filename_COMA[0],sep=',',header=1)
@@ -31,14 +32,30 @@ def read_COMA(filename_COMA):
             COMA2 = pd.read_csv(fname,sep=',',header=1)
             COMA = pd.concat([COMA,COMA2],ignore_index=True)
 
+    # parse timestamp
     COMA_time = COMA["                     Time"]
     COMA_time = [datetime.strptime(tstamp,"  %m/%d/%Y %H:%M:%S.%f") for tstamp in COMA_time]
     COMA_time = pd.DataFrame(COMA_time)
     COMA_time = COMA_time[0]
-    
     COMA['time'] = COMA_time
     
-    return COMA
+    # basic quality control
+    #ix_8 = np.ravel(np.where( (LGR["      MIU_VALVE"]==8) & (LGR["      GasP_torr"]>52.45) & (LGR["      GasP_torr"]<52.65)) ) # Inlet
+    #indices = np.union1d(ix_1,ix_8) # use both inlet and flush data here
+    MIU = COMA["      MIU_VALVE"]
+    cellP = COMA["      GasP_torr"]
+    
+    # handle purge air settings
+    if COMA_time[0] <= datetime(2022,8,15):
+        # use only inlet data
+        inlet_ix = np.ravel( np.where((MIU==8) & (cellP>50)) )
+    else:
+        # starting 2022-08-16, MIU sequence no longer set to cycle through purge
+        # account for this by excluding 20 s of data after the high cal
+        inlet_ix = np.ravel( np.where((MIU==8) & (MIU.shift(30)==8) & (cellP>50)) )
+    
+    # return files
+    return COMA, inlet_ix
 
 
 # %% read MMS data
@@ -101,6 +118,7 @@ def read_IWG1(filename_IWG1,cur_day):
     IWG1_lon = IWG1[' iLon']
     IWG1_alt_GPS = IWG1[' gAlt']
     IWG1_alt_baro = IWG1[' alt204']
+    return IWG1 
     
     # IWG1['Ground Speed']
     # IWG1['True Airspeed']
@@ -108,33 +126,17 @@ def read_IWG1(filename_IWG1,cur_day):
     
     
 # %% time-sync the data with COMA
-def sync_data(MMS,COMA):
+def sync_data(MMS,COMA,inlet_ix):
     """
    Time sync the data
     """
-    
+    # MMS
     MMS_1s_avg = MMS.groupby(pd.Grouper(key="time", freq="1s")).mean()
     
-    # index MIU valves
-    #ix_8 = np.ravel(np.where( (LGR["      MIU_VALVE"]==8) & (LGR["      GasP_torr"]>52.45) & (LGR["      GasP_torr"]<52.65)) ) # Inlet
-    MIU = COMA["      MIU_VALVE"]   
-    COMA_time = COMA['time']
-    
-    # handle purge air settings
-    if COMA_time[0] <= datetime(2022,8,15):
-        # use only inlet data
-        indices = np.ravel(np.where(MIU==8))
-    else:
-        # starting 2022-08-16, MIU sequence no longer set to cycle through purge
-        # account for this by excluding 20 s of data after the high cal
-        # [NOTE: the command below also excludes 20 s data before the low cal.
-        # revise to handle this]
-        indices = np.ravel(np.where((MIU==8) & (MIU.shift(20)==8)))
-    
-    #indices = np.union1d(ix_1,ix_8) # use both inlet and flush data here
-    COMA_subset = pd.DataFrame({'time': COMA_time,
-                                'CO_dry': COMA["      [CO]d_ppm"][indices]*1000, 
-                                'N2O_dry': COMA["     [N2O]d_ppm"][indices]*1000,
+    # COMA    
+    COMA_subset = pd.DataFrame({'time': COMA['time'],
+                                'CO_dry': COMA["      [CO]d_ppm"][inlet_ix]*1000, 
+                                'N2O_dry': COMA["     [N2O]d_ppm"][inlet_ix]*1000,
                                 'AmbT_C': COMA["         AmbT_C"],
                                 'GasT_C': COMA["         GasT_C"],
                                 'GasP_torr': COMA["      GasP_torr"],

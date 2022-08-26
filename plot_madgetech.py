@@ -60,7 +60,7 @@ elif case == 'RF13': # RF13
     filename_MT = '../Data/2022-08-25/8.25.2022 flight Madgetech.xlsx'
     filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220825_RA.ict'
     filename_COMA = ['../Data/2022-08-24/n2o-co_2022-08-24_f0002.txt']
-    
+
 # set font sizes
 plt.rc('axes', labelsize=12) # xaxis and yaxis labels
 plt.rc('xtick', labelsize=12) # xtick labels
@@ -72,7 +72,7 @@ MT = pd.read_excel(filename_MT,sheet_name=sheet,header=6)
 #MT_time = [datetime.strptime(tstamp,"%Y-%m-%d %H:%M:%S") for tstamp in MT['Date']]
 
 # load COMA file
-COMA = read_COMA(filename_COMA)
+COMA, inlet_ix = read_COMA(filename_COMA)
 
 ix_8 = np.ravel(np.where(COMA["      MIU_VALVE"]==8)) # inlet
 ix_7 = np.ravel(np.where(COMA["      MIU_VALVE"]==7)) # inlet (lab)

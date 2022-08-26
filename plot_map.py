@@ -49,9 +49,9 @@ for case in ['RF10']:
         filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220819_RA.ict'
 
 
-    COMA = read_COMA(filename_COMA)
+    COMA, inlet_ix = read_COMA(filename_COMA)
     MMS = read_MMS(filename_MMS)
-    synced_data = sync_data(MMS,COMA)
+    synced_data = sync_data(MMS,COMA,inlet_ix)
 
     # plot map
     #sc1 = ax.scatter(synced_data['LON'],synced_data['LAT'],c=synced_data['CO_dry'],vmin=20, vmax=80, s = 15)

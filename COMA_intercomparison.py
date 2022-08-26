@@ -13,7 +13,7 @@ from load_flight_functions import read_COMA
 import statsmodels.api as sm
 
 case = 'RF12'
-to_plot = 'CO' # CO, CO-H2O, or corr
+to_plot = 'corr' # CO, CO-H2O, or corr
 
 # %% list file names
 if case == 'Transit1': # Ellington to Seattle
@@ -146,9 +146,8 @@ if to_plot == 'CO':
     
     # load COMA
     if filename_COMA:
-        COMA = read_COMA(filename_COMA)
-        ix_8 = np.ravel(np.where(COMA["      MIU_VALVE"]==8)) # inlet
-        plt.plot(COMA['time'][ix_8],COMA["      [CO]d_ppm"][ix_8]*1000,'b.',label='COMA')
+        COMA, inlet_ix = read_COMA(filename_COMA)
+        plt.plot(COMA['time'][inlet_ix],COMA["      [CO]d_ppm"][inlet_ix]*1000,'b.',label='COMA')
     
     ax.set_ylabel('CO, ppb')
     ax.set_ylim([-10,300])
@@ -171,9 +170,8 @@ if to_plot == 'CO-H2O':
     
     # load COMA
     if filename_COMA:
-        COMA = read_COMA(filename_COMA)
-        ix_8 = np.ravel(np.where(COMA["      MIU_VALVE"]==8)) # inlet
-        ax.plot(COMA['time'][ix_8],COMA["      [CO]d_ppm"][ix_8]*1000,'b.',label='COMA')
+        COMA, inlet_ix = read_COMA(filename_COMA)
+        ax.plot(COMA['time'][inlet_ix],COMA["      [CO]d_ppm"][inlet_ix]*1000,'b.',label='COMA')
         #ax_twin.plot(COMA['time'][ix_8],COMA["      [H2O]_ppm"][ix_8]*1000,'y.',label='COMA-H2O')
 
     ax_twin.set_ylabel('DLH water vapor mixing ratio, ppmv') 
@@ -200,8 +198,8 @@ def sync_ab(df_a,df_b):
     df_b.iloc[:,1] = tmp
     
     # create common timestamp
-    a_1Hz = df_a.groupby(pd.Grouper(key="time", freq="1s")).mean()
-    b_1Hz = df_b.groupby(pd.Grouper(key="time", freq="1s")).mean()
+    a_1Hz = df_a.groupby(pd.Grouper(key="time", freq="5s")).mean()
+    b_1Hz = df_b.groupby(pd.Grouper(key="time", freq="5s")).mean()
     sync_data = pd.merge(a_1Hz, b_1Hz, how='inner', on=['time'])
     sync_data = sync_data.dropna()
 
@@ -214,14 +212,14 @@ def sync_ab(df_a,df_b):
 if to_plot == 'corr':
     fig, ax = plt.subplots(1, 3, figsize=(12,4))
     
-    COMA = read_COMA(filename_COMA)
-    ix_8 = np.ravel(np.where(COMA["      MIU_VALVE"]==8)) # inlet
+    # re-load COMA
+    COMA, inlet_ix = read_COMA(filename_COMA)
     
     # load ACOS
     if filename_ACOS:
         ACOS = read_ACOS_ict(filename_ACOS)
         
-        df_a = pd.DataFrame({'time': COMA['time'][ix_8], 'CO_COMA': COMA["      [CO]d_ppm"][ix_8]*1000})
+        df_a = pd.DataFrame({'time': COMA['time'][inlet_ix], 'CO_COMA': COMA["      [CO]d_ppm"][inlet_ix]*1000})
         df_b = pd.DataFrame({'time': ACOS['time'], 'CO_ACOS': ACOS['ACOS_CO_PPB']})
         sync_data, results = sync_ab(df_a,df_b)
         ax[0].plot(sync_data['CO_COMA'],sync_data['CO_ACOS'],'k.')
@@ -232,7 +230,7 @@ if to_plot == 'corr':
     if filename_COLD2:
         COLD2 = read_COLD2_ict(filename_COLD2)
         
-        df_a = pd.DataFrame({'time': COMA['time'][ix_8], 'CO_COMA': COMA["      [CO]d_ppm"][ix_8]*1000})
+        df_a = pd.DataFrame({'time': COMA['time'][inlet_ix], 'CO_COMA': COMA["      [CO]d_ppm"][inlet_ix]*1000})
         df_b = pd.DataFrame({'time': COLD2['time'], 'CO_COLD2': COLD2[' CO_COLD2_ppbv']})
         sync_data, results = sync_ab(df_a,df_b)
         ax[1].plot(sync_data['CO_COMA'],sync_data['CO_COLD2'],'k.')
@@ -243,7 +241,7 @@ if to_plot == 'corr':
     if filename_DLH:
         DLH = read_DLH_ict(filename_DLH)
 
-        df_a = pd.DataFrame({'time': COMA['time'][ix_8], 'H2O_COMA': COMA["      [H2O]_ppm"][ix_8]})
+        df_a = pd.DataFrame({'time': COMA['time'][inlet_ix], 'H2O_COMA': COMA["      [H2O]_ppm"][inlet_ix]})
         df_b = pd.DataFrame({'time': DLH['time'], 'H2O_DLH': DLH['H2O_DLH']})
         sync_data, results = sync_ab(df_a,df_b)
         ax[2].plot(sync_data['H2O_COMA'],sync_data['H2O_DLH'],'k.')
@@ -271,3 +269,13 @@ if to_plot == 'corr':
     ax[2].plot([0,30000],[0,30000],'k:')
     
     fig.tight_layout()
+
+# %% debugging
+"""
+MIU = COMA["      MIU_VALVE"]
+fig, ax = plt.subplots(1, 1, figsize=(8,4))
+ax_twin = ax.twinx()
+ax.plot(MIU,'b.')
+ax_twin.plot( ((MIU==8) & (MIU.shift(30)==8)) ,'k.')
+ax_twin.set_ylim(-0.5,1.5) # shift to prevent dots from overlapping
+"""
