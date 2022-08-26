@@ -16,7 +16,7 @@ from load_flight_functions import read_COMA
 from load_flight_functions import read_MMS
 
 # EDIT THESE
-case = 'RF13'
+case = 'RF10'
 
 if case == 'RF10': # RF10 (instrument start before midnight; takeoff on 2022-08-19 UTC)
     filename_COMA = ['../Data/2022-08-18/n2o-co_2022-08-18_f0000.txt']
@@ -29,8 +29,9 @@ elif case == 'RF13': # RF13
     filename_GV = '../Data/_OtherData_/ACCLIP-CORE_GV_20220824_RA.ict'
     fig_title = 'WB-RF13 and GV-RF11'
 
+# load files
 COMA, inlet_ix = read_COMA(filename_COMA)
-if case == 'RF13':
+if case == 'RF13':  # correct six hour offset
     COMA['time'] = COMA['time'] + timedelta(hours=6)
 
 MMS = read_MMS(filename_MMS_WB)
@@ -43,12 +44,13 @@ def read_GV_ict(filename):
 
 GV = read_GV_ict(filename_GV)
 
+# %%  times series comparison of latitude, longitude, altitude
+# relevant GV variables:
 #ALT
 #LATC and #LONC
 #GGLAT and GGLON; GGALT
 #PALT
 
-# %% 3D plot
 fig, ax = plt.subplots(3, 1, figsize=(10,8),sharex=True)
 
 ax[0].plot(MMS['time'],MMS['LAT'],'.',label='WB57')
@@ -84,16 +86,41 @@ fig.tight_layout()
 
 #fig.savefig('fig1.png',dpi=300)
 
-# %% comparison
+# %% CO and N2O comparison
+#COA_ARI
+#CO_ARI
+#CO_PIC2401
+#N2OA_ARI
+#N2O_ARI
+#COCAL_ARI
+#COCAL_PIC2401
+
 fig, ax = plt.subplots(2, 1, figsize=(10,8),sharex=True)
-ax[0].plot(COMA['time'][inlet_ix],COMA["      [CO]d_ppm"][inlet_ix],'.')
-ax[1].plot(COMA['time'][inlet_ix],COMA["     [N2O]d_ppm"][inlet_ix],'.')
+ax[0].plot(COMA['time'][inlet_ix],COMA["      [CO]d_ppm"][inlet_ix]*1000,'b.',label='COMA')
+ax[0].plot(GV['time'],GV["CO_ARI"],'k.',label='GV ARI')
+ax[0].plot(GV['time'],GV['CO_PIC2401']*1000,'g.',label='GV PIC2401')#,markersize=1
+ax[0].set_ylabel('CO, ppb')
+ax[0].legend()
+
+ax[1].plot(COMA['time'][inlet_ix],COMA["     [N2O]d_ppm"][inlet_ix]*1000,'b.',label='COMA')
+ax[1].plot(GV['time'],GV["N2O_ARI"],'k.',label='ARI')
+ax[1].set_ylabel('N2O, ppb')
 
 #RF10
-
+if case == 'RF10':
+    ax[0].set_ylim(140,320)
+    ax[1].set_ylim(320,340)
+    ax[0].set_xlim(datetime(2022,8,19,4,57),datetime(2022,8,19,5,30))
+    plt.suptitle('RF10')
 
 #RF13
-ax[0].set_xlim(datetime(2022,8,25,0),datetime(2022,8,25,7))
+if case == 'RF13':
+    ax[0].set_ylim(65,180)
+    ax[1].set_ylim(320,340)
+    ax[0].set_xlim(datetime(2022,8,25,2,10),datetime(2022,8,25,2,30))
+    plt.suptitle('RF13')
+    
+fig.tight_layout()
 
 # %% 3D flight tracks
 """
