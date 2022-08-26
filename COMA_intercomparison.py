@@ -12,7 +12,7 @@ import matplotlib.dates as mdates
 from load_flight_functions import read_COMA
 import statsmodels.api as sm
 
-case = 'RF13'
+case = 'RF10'
 to_plot = 'CO' # CO, CO-H2O, or corr
 
 # %% list file names
@@ -142,26 +142,34 @@ COMA, inlet_ix = read_COMA(filename_COMA)
 if case == 'RF13': # fix clock setting on this day
     COMA['time'] = COMA['time'] + timedelta(hours=6)
     
-    
+# set plot style
+plt.rc('axes', labelsize=11) # xaxis and yaxis labels
+plt.rc('xtick', labelsize=11) # xtick labels
+plt.rc('ytick', labelsize=11) # ytick labels
+plt.rc('legend', fontsize=11) # ytick labels
+
 # %% Plot CO time series from COMA, ACOS, COLD2
 if to_plot == 'CO':
     fig, ax = plt.subplots(1, 1, figsize=(8,4))
     
-    # plot COMA
-    plt.plot(COMA['time'][inlet_ix],COMA["      [CO]d_ppm"][inlet_ix]*1000,'b.',label='COMA')
-     
+    # ict files for each are 1 Hz data
+    
     # load and plot ACOS
     if filename_ACOS:
         ACOS = read_ACOS_ict(filename_ACOS)
-        plt.plot(ACOS['time'],ACOS['ACOS_CO_PPB'],'.m',label='ACOS')
+        plt.plot(ACOS['time'],ACOS['ACOS_CO_PPB'],'.m',label='ACOS',markersize=2)
     
+    # plot COMA
+    plt.plot(COMA['time'][inlet_ix],COMA["      [CO]d_ppm"][inlet_ix]*1000,'b.',label='COMA',markersize=2)
+     
     # load and plot COLD2
     if filename_COLD2:
         COLD2 = read_COLD2_ict(filename_COLD2)
-        plt.plot(COLD2['time'],COLD2[' CO_COLD2_ppbv'],'.g',label='COLD2')
+        plt.plot(COLD2['time'],COLD2[' CO_COLD2_ppbv'],'.g',label='COLD2',markersize=2)
     
     ax.set_ylabel('CO, ppb')
-    ax.set_ylim([-10,300])
+    ax.set_ylim([-10,400])
+    #ax.set_ylim([-10,300])
     ax.grid('on')
     ax.legend()
     ax.set_title(case)
@@ -264,13 +272,13 @@ if to_plot == 'corr':
     ax[2].set_xlabel('COMA H2O, ppmv')
     ax[2].set_ylabel('DLH H2O, ppmv')
     
-    ax[0].plot([0,200],[0,200],'k:')
-    ax[0].set_xlim([0,200])
-    ax[0].set_ylim([0,200])
+    ax[0].plot([0,350],[0,350],'k:')
+    ax[0].set_xlim([0,350])
+    ax[0].set_ylim([0,350])
     
-    ax[1].plot([0,200],[0,200],'k:')
-    ax[1].set_xlim([0,200])
-    ax[1].set_ylim([0,200])
+    ax[1].plot([0,350],[0,350],'k:')
+    ax[1].set_xlim([0,350])
+    ax[1].set_ylim([0,350])
     
     ax[2].plot([0,30000],[0,30000],'k:')
     

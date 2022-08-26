@@ -16,7 +16,7 @@ from load_flight_functions import read_COMA
 from load_flight_functions import read_MMS
 
 # EDIT THESE
-case = 'RF10'
+case = 'RF13'
 
 if case == 'RF10': # RF10 (instrument start before midnight; takeoff on 2022-08-19 UTC)
     filename_COMA = ['../Data/2022-08-18/n2o-co_2022-08-18_f0000.txt']
@@ -44,6 +44,12 @@ def read_GV_ict(filename):
 
 GV = read_GV_ict(filename_GV)
 
+# set plot style
+plt.rc('axes', labelsize=12) # xaxis and yaxis labels
+plt.rc('xtick', labelsize=12) # xtick labels
+plt.rc('ytick', labelsize=12) # ytick labels
+plt.rc('legend', fontsize=12) # ytick labels
+
 # %%  times series comparison of latitude, longitude, altitude
 # relevant GV variables:
 #ALT
@@ -51,7 +57,7 @@ GV = read_GV_ict(filename_GV)
 #GGLAT and GGLON; GGALT
 #PALT
 
-fig, ax = plt.subplots(3, 1, figsize=(10,8),sharex=True)
+fig1, ax = plt.subplots(3, 1, figsize=(10,8),sharex=True)
 
 ax[0].plot(MMS['time'],MMS['LAT'],'.',label='WB57')
 ax[0].plot(GV['time'],GV['LATC'],'.',label='GV')
@@ -82,9 +88,7 @@ elif case == 'RF13':
 
 ax[0].xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 ax[0].set_title(fig_title)
-fig.tight_layout()
-
-#fig.savefig('fig1.png',dpi=300)
+fig1.tight_layout()
 
 # %% CO and N2O comparison
 #COA_ARI
@@ -95,7 +99,7 @@ fig.tight_layout()
 #COCAL_ARI
 #COCAL_PIC2401
 
-fig, ax = plt.subplots(2, 1, figsize=(10,8),sharex=True)
+fig2, ax = plt.subplots(2, 1, figsize=(10,8),sharex=True)
 ax[0].plot(COMA['time'][inlet_ix],COMA["      [CO]d_ppm"][inlet_ix]*1000,'b.',label='COMA')
 ax[0].plot(GV['time'],GV["CO_ARI"],'k.',label='GV ARI')
 ax[0].plot(GV['time'],GV['CO_PIC2401']*1000,'g.',label='GV PIC2401')#,markersize=1
@@ -106,21 +110,26 @@ ax[1].plot(COMA['time'][inlet_ix],COMA["     [N2O]d_ppm"][inlet_ix]*1000,'b.',la
 ax[1].plot(GV['time'],GV["N2O_ARI"],'k.',label='ARI')
 ax[1].set_ylabel('N2O, ppb')
 
+ax[0].xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+
 #RF10
 if case == 'RF10':
     ax[0].set_ylim(140,320)
     ax[1].set_ylim(320,340)
     ax[0].set_xlim(datetime(2022,8,19,4,57),datetime(2022,8,19,5,30))
-    plt.suptitle('RF10')
+    plt.suptitle(fig_title)
 
 #RF13
 if case == 'RF13':
     ax[0].set_ylim(65,180)
     ax[1].set_ylim(320,340)
     ax[0].set_xlim(datetime(2022,8,25,2,10),datetime(2022,8,25,2,30))
-    plt.suptitle('RF13')
+    plt.suptitle(fig_title)
     
-fig.tight_layout()
+fig2.tight_layout()
+
+#fig1.savefig('fig1.png',dpi=300)
+#fig2.savefig('fig2.png',dpi=300)
 
 # %% 3D flight tracks
 """

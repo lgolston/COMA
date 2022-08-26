@@ -17,7 +17,7 @@ from load_flight_functions import read_COMA
 from load_flight_functions import read_MMS
 
 # EDIT THESE
-case = 'RF14'
+case = 'RF10'
 focus = 'flight_CO' # lab, flight_CO, flight_N2O
 
 if case == '2021-08-06': # FCF
@@ -145,9 +145,9 @@ ix_2 = np.ravel(np.where(COMA["      MIU_VALVE"]==2)) # low cal
 ix_1 = np.ravel(np.where(COMA["      MIU_VALVE"]==1)) # flush
 
 # %% plot data
-plt.rc('axes', labelsize=6) # xaxis and yaxis labels
-plt.rc('xtick', labelsize=6) # xtick labels
-plt.rc('ytick', labelsize=6) # ytick labels
+plt.rc('axes', labelsize=8) # xaxis and yaxis labels
+plt.rc('xtick', labelsize=8) # xtick labels
+plt.rc('ytick', labelsize=8) # ytick labels
 fig, ax = plt.subplots(3, 4, figsize=(9,3.5),dpi=200,sharex=True)
 
 # choose index
@@ -327,8 +327,13 @@ if focus != 'lab':
 
     # %% altitude vs time scatterplot
     fig3, ax3 = plt.subplots(1, 1, figsize=(6,3.5),dpi=200)
-    #ax3[0].scatter(sync_data.index,sync_data['alt'],c=sync_data['CO_dry'],vmin=20, vmax=80, s = 15)
-    ax3.scatter(sync_data.index,sync_data['ALT'],c=sync_data.index, s = 15)
+    
+    #sc = ax3.scatter(sync_data.index,sync_data['ALT'],c=sync_data['CO_dry'],vmin=0, vmax=300, s = 15, cmap='rainbow') # color by CO
+    #cb = plt.colorbar(sc)
+    #cb.set_label('CO, ppb')
+    
+    ax3.scatter(sync_data.index,sync_data['ALT'],c=sync_data.index, s = 15) # color by time
+    
     ax3.grid()
     ax3.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
     ax3.set_xlabel('Time (UTC)')
