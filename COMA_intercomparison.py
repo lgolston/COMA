@@ -12,8 +12,8 @@ import matplotlib.dates as mdates
 from load_flight_functions import read_COMA
 import statsmodels.api as sm
 
-case = 'RF12'
-to_plot = 'corr' # CO, CO-H2O, or corr
+case = 'RF13'
+to_plot = 'CO' # CO, CO-H2O, or corr
 
 # %% list file names
 if case == 'Transit1': # Ellington to Seattle
@@ -108,6 +108,12 @@ elif case == 'RF12': # Osan
     filename_COMA = ['../Data/2022-08-23/n2o-co_2022-08-23_f0000.txt']
     filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220823_RA.ict'
 
+elif case == 'RF13': # Osan
+    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220825_RA.ict'
+    filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220825_RA.ict'
+    filename_COMA = ['../Data/2022-08-24/n2o-co_2022-08-24_f0002.txt']
+    filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220825_RA.ict'
+    
 # %% ICARTT file loading functions
 def read_ACOS_ict(filename):
     # e.g. ACCLIP-ACOS-1Hz_WB57_20220816_RA.ict
@@ -130,24 +136,29 @@ def read_DLH_ict(filename):
     DLH['time'] = [cur_day+timedelta(seconds=t) for t in DLH['Time_Start']]
     return DLH
 
+# load COMA file
+COMA, inlet_ix = read_COMA(filename_COMA)
+
+if case == 'RF13': # fix clock setting on this day
+    COMA['time'] = COMA['time'] + timedelta(hours=6)
+    
+    
 # %% Plot CO time series from COMA, ACOS, COLD2
 if to_plot == 'CO':
     fig, ax = plt.subplots(1, 1, figsize=(8,4))
     
-    # load ACOS
+    # plot COMA
+    plt.plot(COMA['time'][inlet_ix],COMA["      [CO]d_ppm"][inlet_ix]*1000,'b.',label='COMA')
+     
+    # load and plot ACOS
     if filename_ACOS:
         ACOS = read_ACOS_ict(filename_ACOS)
         plt.plot(ACOS['time'],ACOS['ACOS_CO_PPB'],'.m',label='ACOS')
     
-    # load COLD2
+    # load and plot COLD2
     if filename_COLD2:
         COLD2 = read_COLD2_ict(filename_COLD2)
         plt.plot(COLD2['time'],COLD2[' CO_COLD2_ppbv'],'.g',label='COLD2')
-    
-    # load COMA
-    if filename_COMA:
-        COMA, inlet_ix = read_COMA(filename_COMA)
-        plt.plot(COMA['time'][inlet_ix],COMA["      [CO]d_ppm"][inlet_ix]*1000,'b.',label='COMA')
     
     ax.set_ylabel('CO, ppb')
     ax.set_ylim([-10,300])
@@ -168,11 +179,9 @@ if to_plot == 'CO-H2O':
         ax_twin.plot(DLH['time'],DLH['H2O_DLH'],'.k',label='DLH')
         #ax_twin.plot(DLH_time,DLH['RHw_DLH'],'.k',label='DLH')
     
-    # load COMA
-    if filename_COMA:
-        COMA, inlet_ix = read_COMA(filename_COMA)
-        ax.plot(COMA['time'][inlet_ix],COMA["      [CO]d_ppm"][inlet_ix]*1000,'b.',label='COMA')
-        #ax_twin.plot(COMA['time'][ix_8],COMA["      [H2O]_ppm"][ix_8]*1000,'y.',label='COMA-H2O')
+    # plot COMA
+    ax.plot(COMA['time'][inlet_ix],COMA["      [CO]d_ppm"][inlet_ix]*1000,'b.',label='COMA')
+    #ax_twin.plot(COMA['time'][ix_8],COMA["      [H2O]_ppm"][ix_8]*1000,'y.',label='COMA-H2O')
 
     ax_twin.set_ylabel('DLH water vapor mixing ratio, ppmv') 
     ax_twin.set_yscale('log')
@@ -211,10 +220,7 @@ def sync_ab(df_a,df_b):
 
 if to_plot == 'corr':
     fig, ax = plt.subplots(1, 3, figsize=(12,4))
-    
-    # re-load COMA
-    COMA, inlet_ix = read_COMA(filename_COMA)
-    
+        
     # load ACOS
     if filename_ACOS:
         ACOS = read_ACOS_ict(filename_ACOS)
@@ -269,6 +275,8 @@ if to_plot == 'corr':
     ax[2].plot([0,30000],[0,30000],'k:')
     
     fig.tight_layout()
+    
+    #fig.savefig('fig1.png',dpi=300)
 
 # %% debugging
 """

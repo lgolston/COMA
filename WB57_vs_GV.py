@@ -19,15 +19,19 @@ from load_flight_functions import read_MMS
 case = 'RF13'
 
 if case == 'RF10': # RF10 (instrument start before midnight; takeoff on 2022-08-19 UTC)
-    #filename_COMA = ['../Data/2022-08-18/n2o-co_2022-08-18_f0000.txt']
+    filename_COMA = ['../Data/2022-08-18/n2o-co_2022-08-18_f0000.txt']
     filename_MMS_WB = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220819_RA.ict'
     filename_GV = '../Data/_OtherData_/ACCLIP-CORE_GV_20220818_RA.ict'
     fig_title = 'WB-RF10 and GV-RF08'
 elif case == 'RF13': # RF13
-    #filename_COMA = ['../Data/2022-08-24/n2o-co_2022-08-24_f0002.txt']
+    filename_COMA = ['../Data/2022-08-24/n2o-co_2022-08-24_f0002.txt']
     filename_MMS_WB = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220825_RA.ict'
     filename_GV = '../Data/_OtherData_/ACCLIP-CORE_GV_20220824_RA.ict'
     fig_title = 'WB-RF13 and GV-RF11'
+
+COMA, inlet_ix = read_COMA(filename_COMA)
+if case == 'RF13':
+    COMA['time'] = COMA['time'] + timedelta(hours=6)
 
 MMS = read_MMS(filename_MMS_WB)
 
@@ -44,7 +48,7 @@ GV = read_GV_ict(filename_GV)
 #GGLAT and GGLON; GGALT
 #PALT
 
-# %% 3d plot
+# %% 3D plot
 fig, ax = plt.subplots(3, 1, figsize=(10,8),sharex=True)
 
 ax[0].plot(MMS['time'],MMS['LAT'],'.',label='WB57')
@@ -66,14 +70,13 @@ ax[2].grid()
 ax[2].set_ylabel('Altitude, m')
 
 # RF10 settings
-#ax[0].set_ylim(30,40)
-#ax[2].set_ylim(0,20000)
-#ax[0].set_xlim(datetime(2022,8,19,0),datetime(2022,8,19,7))
-
-# RF13 settings
-ax[0].set_ylim(27,38)
-#ax[2].set_ylim(0,20000)
-ax[0].set_xlim(datetime(2022,8,25,0),datetime(2022,8,25,7))
+if case == 'RF10':
+    ax[0].set_ylim(30,40)
+    ax[2].set_ylim(0,20000)
+    ax[0].set_xlim(datetime(2022,8,19,0),datetime(2022,8,19,7))
+elif case == 'RF13':
+    ax[0].set_ylim(27,38)
+    ax[0].set_xlim(datetime(2022,8,25,0),datetime(2022,8,25,7))
 
 ax[0].xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 ax[0].set_title(fig_title)
@@ -81,6 +84,16 @@ fig.tight_layout()
 
 #fig.savefig('fig1.png',dpi=300)
 
+# %% comparison
+fig, ax = plt.subplots(2, 1, figsize=(10,8),sharex=True)
+ax[0].plot(COMA['time'][inlet_ix],COMA["      [CO]d_ppm"][inlet_ix],'.')
+ax[1].plot(COMA['time'][inlet_ix],COMA["     [N2O]d_ppm"][inlet_ix],'.')
+
+#RF10
+
+
+#RF13
+ax[0].set_xlim(datetime(2022,8,25,0),datetime(2022,8,25,7))
 
 # %% 3D flight tracks
 """
