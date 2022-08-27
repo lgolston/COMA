@@ -17,7 +17,7 @@ from load_flight_functions import read_COMA
 from load_flight_functions import read_MMS
 
 # EDIT THESE
-case = 'RF10'
+case = 'RF05'
 focus = 'flight_CO' # lab, flight_CO, flight_N2O
 
 if case == '2021-08-06': # FCF
@@ -328,11 +328,13 @@ if focus != 'lab':
     # %% altitude vs time scatterplot
     fig3, ax3 = plt.subplots(1, 1, figsize=(6,3.5),dpi=200)
     
-    #sc = ax3.scatter(sync_data.index,sync_data['ALT'],c=sync_data['CO_dry'],vmin=0, vmax=300, s = 15, cmap='rainbow') # color by CO
-    #cb = plt.colorbar(sc)
-    #cb.set_label('CO, ppb')
+    # OPTION 1: color by CO
+    sc = ax3.scatter(sync_data.index,sync_data['ALT'],c=sync_data['CO_dry'],vmin=20, vmax=250, s = 15, cmap='rainbow') # color by CO
+    cb = plt.colorbar(sc)
+    cb.set_label('CO, ppb')
     
-    ax3.scatter(sync_data.index,sync_data['ALT'],c=sync_data.index, s = 15) # color by time
+    # OPTION 2: color by time
+    #ax3.scatter(sync_data.index,sync_data['ALT'],c=sync_data.index, s = 15)
     
     ax3.grid()
     ax3.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
@@ -349,11 +351,20 @@ if focus != 'lab':
     ax4 = plt.axes(projection = projection)
     ax4.add_feature(cf.COASTLINE)
     ax4.add_feature(cf.BORDERS)
-
     plate = ccrs.PlateCarree()
     
-    sc1 = ax4.scatter(sync_data['LON'].values,sync_data['LAT'].values,c=sync_data.index, s = 15, transform=plate)
+    # OPTION 1: color by CO
+    sc1 = ax4.scatter(sync_data['LON'].values,sync_data['LAT'].values,c=sync_data['CO_dry'], 
+                      vmin=20, vmax=250, cmap='rainbow', s = 15, transform=plate)
     
+    # OPTION 2: color by time
+    #sc1 = ax4.scatter(sync_data['LON'].values,sync_data['LAT'].values,c=sync_data.index, s = 15, transform=plate)
+    #cb1 = plt.colorbar(sc1)
+    #cb1.ax.set_yticklabels(pd.to_datetime(cb1.get_ticks()).strftime(date_format='%H:%M'))
+    #cb1.set_label('Time, UTC', fontsize=10)
+    #cb1.ax.tick_params(labelsize=10)
+    
+    # handle transit flights
     if case == '2022-07-21-A':
         ax4.set_extent([-125, -90, 23, 53], crs=plate) # Transit 1
     elif case == '2022-07-21-B':
@@ -366,11 +377,7 @@ if focus != 'lab':
         ax4.set_extent([122, 144, 30, 45], crs=plate) # Transit 5
     elif case == '2022-08-02':
         ax4.set_extent([110, 145, 15, 44], crs=plate) # RF03 (first flight Osan)
-    
-    cb1 = plt.colorbar(sc1)
-    cb1.ax.set_yticklabels(pd.to_datetime(cb1.get_ticks()).strftime(date_format='%H:%M'))
-    cb1.set_label('Time, UTC', fontsize=10)
-    cb1.ax.tick_params(labelsize=10)
+     
     fig4.tight_layout()
     
     # %% vertical profile
