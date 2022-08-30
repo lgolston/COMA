@@ -16,7 +16,7 @@ from load_flight_functions import read_COMA
 from load_flight_functions import read_MMS
 
 # EDIT THESE
-case = 'RF13'
+case = 'RF10'
 
 if case == 'RF10': # RF10 (instrument start before midnight; takeoff on 2022-08-19 UTC)
     filename_COMA = ['../Data/2022-08-18/n2o-co_2022-08-18_f0000.txt']
@@ -73,7 +73,7 @@ ax[1].set_ylabel('Longitude')
 #ax[1].plot(GV['time'],GV['GGLON'],'.')
 
 ax[2].plot(MMS['time'],MMS['ALT'],'.')
-ax[2].plot(GV['time'],GV['ALT'],'.')
+ax[2].plot(GV['time'],GV['GGALT'],'.')
 ax[2].grid()
 ax[2].set_ylabel('Altitude, m')
 
