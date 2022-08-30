@@ -12,8 +12,13 @@ import matplotlib.dates as mdates
 from load_flight_functions import read_COMA
 import statsmodels.api as sm
 
-case = 'RF15'
-to_plot = 'CO' # CO, CO-H2O, or corr
+case = 'RF12'
+
+# set plot style
+plt.rc('axes', labelsize=11) # xaxis and yaxis labels
+plt.rc('xtick', labelsize=11) # xtick labels
+plt.rc('ytick', labelsize=11) # ytick labels
+plt.rc('legend', fontsize=11) # ytick labels
 
 # %% list file names
 if case == 'Transit1': # Ellington to Seattle
@@ -124,9 +129,9 @@ elif case == 'RF15': # Osan
     filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220829_RA.ict'
     filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220829_RA.ict'
     filename_COMA = ['../Data/2022-08-29/n2o-co_2022-08-29_f0000.txt']
-    filename_DLH = None
+    filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220829_RA.ict'
     
-# %% ICARTT file loading functions
+# %% create helper function (for loading ICARTT files, linear regression)
 def read_ACOS_ict(filename):
     # e.g. ACCLIP-ACOS-1Hz_WB57_20220816_RA.ict
     cur_day = datetime.strptime(filename[-15:-7],"%Y%m%d") # get date from end of file name
@@ -148,77 +153,6 @@ def read_DLH_ict(filename):
     DLH['time'] = [cur_day+timedelta(seconds=t) for t in DLH['Time_Start']]
     return DLH
 
-# load COMA file
-COMA, inlet_ix = read_COMA(filename_COMA)
-
-if case == 'RF13': # fix clock setting on this day
-    COMA['time'] = COMA['time'] + timedelta(hours=6)
-    
-# set plot style
-plt.rc('axes', labelsize=11) # xaxis and yaxis labels
-plt.rc('xtick', labelsize=11) # xtick labels
-plt.rc('ytick', labelsize=11) # ytick labels
-plt.rc('legend', fontsize=11) # ytick labels
-
-# %% Plot CO time series from COMA, ACOS, COLD2
-if to_plot == 'CO':
-    fig, ax = plt.subplots(1, 1, figsize=(8,4))
-    
-    # ict files for each are 1 Hz data
-    
-    # load and plot ACOS
-    if filename_ACOS:
-        ACOS = read_ACOS_ict(filename_ACOS)
-        plt.plot(ACOS['time'],ACOS['ACOS_CO_PPB'],'.m',label='ACOS',markersize=2)
-    
-    # plot COMA
-    plt.plot(COMA['time'][inlet_ix],COMA["      [CO]d_ppm"][inlet_ix]*1000,'b.',label='COMA',markersize=2)
-     
-    # load and plot COLD2
-    if filename_COLD2:
-        COLD2 = read_COLD2_ict(filename_COLD2)
-        plt.plot(COLD2['time'],COLD2[' CO_COLD2_ppbv'],'.g',label='COLD2',markersize=2)
-    
-    ax.set_ylabel('CO, ppb')
-    ax.set_ylim([-10,400])
-    #ax.set_ylim([-10,300])
-    ax.grid('on')
-    ax.legend()
-    ax.set_title(case)
-    ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
-    fig.tight_layout()
-    
-# %% Plot CO time series and DLH H2O
-if to_plot == 'CO-H2O':
-    fig, ax = plt.subplots(1, 1, figsize=(8,4))
-    ax_twin = ax.twinx()
-    
-    # load DLH
-    if filename_DLH:
-        DLH = read_DLH_ict(filename_DLH)
-        ax_twin.plot(DLH['time'],DLH['H2O_DLH'],'.k',label='DLH')
-        #ax_twin.plot(DLH_time,DLH['RHw_DLH'],'.k',label='DLH')
-    
-    # plot COMA
-    ax.plot(COMA['time'][inlet_ix],COMA["      [CO]d_ppm"][inlet_ix]*1000,'b.',label='COMA')
-    #ax_twin.plot(COMA['time'][ix_8],COMA["      [H2O]_ppm"][ix_8]*1000,'y.',label='COMA-H2O')
-
-    ax_twin.set_ylabel('DLH water vapor mixing ratio, ppmv') 
-    ax_twin.set_yscale('log')
-
-    ax.set_ylim(0,500)
-    ax.set_ylabel('CO, ppb',color='b')
-    ax.tick_params(axis='y', colors='blue')
-    ax.grid('on')
-    ax.set_title(case)
-    ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
-    fig.tight_layout()
-   
-# %% correlation plots
-# COMA CO vs ACOS
-# COMA CO vs COLD2
-# COMA H2O vs DLH H2O
-
 def sync_ab(df_a,df_b):   
     # clear missing, ULOD, and LLOD flagged values
     # (not relevant for non-ICARTT COMA data file = df_a)
@@ -238,65 +172,127 @@ def sync_ab(df_a,df_b):
     results = model.fit()
     return sync_data, results
 
-if to_plot == 'corr':
-    fig, ax = plt.subplots(1, 3, figsize=(12,4))
-        
-    # load ACOS
-    if filename_ACOS:
-        ACOS = read_ACOS_ict(filename_ACOS)
-        
-        df_a = pd.DataFrame({'time': COMA['time'][inlet_ix], 'CO_COMA': COMA["      [CO]d_ppm"][inlet_ix]*1000})
-        df_b = pd.DataFrame({'time': ACOS['time'], 'CO_ACOS': ACOS['ACOS_CO_PPB']})
-        sync_data, results = sync_ab(df_a,df_b)
-        ax[0].plot(sync_data['CO_COMA'],sync_data['CO_ACOS'],'k.')
-        ax[0].text(0.05,0.93,'y = ' + "{:.3f}".format(results.params[1]) + 'x + ' + "{:.3f}".format(results.params[0]),transform=ax[0].transAxes)
-        ax[0].text(0.05,0.87,'R2 = ' + "{:.3f}".format(results.rsquared),transform=ax[0].transAxes)
-        
-    # load COLD2
-    if filename_COLD2:
-        COLD2 = read_COLD2_ict(filename_COLD2)
-        
-        df_a = pd.DataFrame({'time': COMA['time'][inlet_ix], 'CO_COMA': COMA["      [CO]d_ppm"][inlet_ix]*1000})
-        df_b = pd.DataFrame({'time': COLD2['time'], 'CO_COLD2': COLD2[' CO_COLD2_ppbv']})
-        sync_data, results = sync_ab(df_a,df_b)
-        ax[1].plot(sync_data['CO_COMA'],sync_data['CO_COLD2'],'k.')
-        ax[1].text(0.05,0.93,'y = ' + "{:.3f}".format(results.params[1]) + 'x + ' + "{:.3f}".format(results.params[0]),transform=ax[1].transAxes)
-        ax[1].text(0.05,0.87,'R2 = ' + "{:.3f}".format(results.rsquared),transform=ax[1].transAxes)
-        
-    # load DLH
-    if filename_DLH:
-        DLH = read_DLH_ict(filename_DLH)
+# %% load COMA file (used in all plot types below)
+COMA, inlet_ix = read_COMA(filename_COMA)
 
-        df_a = pd.DataFrame({'time': COMA['time'][inlet_ix], 'H2O_COMA': COMA["      [H2O]_ppm"][inlet_ix]})
-        df_b = pd.DataFrame({'time': DLH['time'], 'H2O_DLH': DLH['H2O_DLH']})
-        sync_data, results = sync_ab(df_a,df_b)
-        ax[2].plot(sync_data['H2O_COMA'],sync_data['H2O_DLH'],'k.')
-        ax[2].text(0.05,0.93,'y = ' + "{:.3f}".format(results.params[1]) + 'x + ' + "{:.3f}".format(results.params[0]),transform=ax[2].transAxes)
-        ax[2].text(0.05,0.87,'R2 = ' + "{:.3f}".format(results.rsquared),transform=ax[2].transAxes)
+if case == 'RF13': # fix clock setting on this day
+    COMA['time'] = COMA['time'] + timedelta(hours=6)
     
-    # format plots
-    ax[0].set_xlabel('COMA CO, ppbv')
-    ax[0].set_ylabel('ACOS CO, ppbv')
+# %% Plot CO time series from COMA, ACOS, COLD2
+fig, ax = plt.subplots(1, 1, figsize=(8,4))
+
+# ict files for each are 1 Hz data
+# load and plot ACOS
+if filename_ACOS:
+    ACOS = read_ACOS_ict(filename_ACOS)
+    plt.plot(ACOS['time'],ACOS['ACOS_CO_PPB'],'.m',label='ACOS',markersize=2)
     
-    ax[1].set_xlabel('COMA CO, ppbv')
-    ax[1].set_ylabel('COLD2 CO, ppbv')
+# plot COMA
+plt.plot(COMA['time'][inlet_ix],COMA["      [CO]d_ppm"][inlet_ix]*1000,'b.',label='COMA',markersize=2)
+     
+# load and plot COLD2
+if filename_COLD2:
+    COLD2 = read_COLD2_ict(filename_COLD2)
+    plt.plot(COLD2['time'],COLD2[' CO_COLD2_ppbv'],'.g',label='COLD2',markersize=2)
     
-    ax[2].set_xlabel('COMA H2O, ppmv')
-    ax[2].set_ylabel('DLH H2O, ppmv')
+ax.set_ylabel('CO, ppb')
+ax.set_ylim([-10,400])
+#ax.set_ylim([-10,300])
+ax.grid('on')
+ax.legend()
+ax.set_title(case)
+ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+fig.tight_layout()
+
+# %% correlation plots
+# COMA CO vs ACOS
+# COMA CO vs COLD2
+fig, ax = plt.subplots(1, 2, figsize=(9,4))
+        
+# load ACOS
+if filename_ACOS:
+    ACOS = read_ACOS_ict(filename_ACOS)
+        
+    df_a = pd.DataFrame({'time': COMA['time'][inlet_ix], 'CO_COMA': COMA["      [CO]d_ppm"][inlet_ix]*1000})
+    df_b = pd.DataFrame({'time': ACOS['time'], 'CO_ACOS': ACOS['ACOS_CO_PPB']})
+    sync_data, results = sync_ab(df_a,df_b)
+    ax[0].plot(sync_data['CO_COMA'],sync_data['CO_ACOS'],'k.')
+    ax[0].text(0.05,0.93,'y = ' + "{:.3f}".format(results.params[1]) + 'x + ' + "{:.3f}".format(results.params[0]),transform=ax[0].transAxes)
+    ax[0].text(0.05,0.87,'R2 = ' + "{:.3f}".format(results.rsquared),transform=ax[0].transAxes)
     
-    ax[0].plot([0,350],[0,350],'k:')
-    ax[0].set_xlim([0,350])
-    ax[0].set_ylim([0,350])
+# load COLD2
+if filename_COLD2:
+    COLD2 = read_COLD2_ict(filename_COLD2)
+        
+    df_a = pd.DataFrame({'time': COMA['time'][inlet_ix], 'CO_COMA': COMA["      [CO]d_ppm"][inlet_ix]*1000})
+    df_b = pd.DataFrame({'time': COLD2['time'], 'CO_COLD2': COLD2[' CO_COLD2_ppbv']})
+    sync_data, results = sync_ab(df_a,df_b)
+    ax[1].plot(sync_data['CO_COMA'],sync_data['CO_COLD2'],'k.')
+    ax[1].text(0.05,0.93,'y = ' + "{:.3f}".format(results.params[1]) + 'x + ' + "{:.3f}".format(results.params[0]),transform=ax[1].transAxes)
+    ax[1].text(0.05,0.87,'R2 = ' + "{:.3f}".format(results.rsquared),transform=ax[1].transAxes)
     
-    ax[1].plot([0,350],[0,350],'k:')
-    ax[1].set_xlim([0,350])
-    ax[1].set_ylim([0,350])
+# format plots
+ax[0].set_xlabel('COMA CO, ppbv')
+ax[0].set_ylabel('ACOS CO, ppbv')
     
-    ax[2].plot([0,30000],[0,30000],'k:')
+ax[1].set_xlabel('COMA CO, ppbv')
+ax[1].set_ylabel('COLD2 CO, ppbv')
+        
+ax[0].plot([0,350],[0,350],'k:')
+ax[0].set_xlim([0,350])
+ax[0].set_ylim([0,350])
     
-    fig.tight_layout()
+ax[1].plot([0,350],[0,350],'k:')
+ax[1].set_xlim([0,350])
+ax[1].set_ylim([0,350])
     
-    #fig.savefig('fig1.png',dpi=300)
+fig.tight_layout()
+
+#fig.savefig('fig1.png',dpi=300)
+
+# %% Plot CO time series and DLH H2O
+fig, ax = plt.subplots(2, 1, figsize=(10,6), sharex=True)
+ax_twin = ax[0].twinx()
+
+# plot COMA
+ax[0].plot(COMA['time'][inlet_ix],COMA["      [CO]d_ppm"][inlet_ix]*1000,'b.',label='COMA')
+ax[1].plot(COMA['time'][inlet_ix],COMA["      [H2O]_ppm"][inlet_ix],'b.',label='COMA')
+
+# load and plot DLH
+if filename_DLH:
+    DLH = read_DLH_ict(filename_DLH)
+    ax_twin.plot(DLH['time'],DLH['H2O_DLH'],'.k',label='DLH')
+    ax[1].plot(DLH['time'],DLH['H2O_DLH'],'.k',label='DLH')
+
+ax_twin.set_ylabel('Water vapor mixing ratio, ppmv')
+ax_twin.set_yscale('log')
+
+ax[1].set_ylabel('Water vapor mixing ratio, ppmv') 
+
+ax[0].set_ylim(0,500)
+ax[0].set_ylabel('CO, ppb',color='b')
+ax[0].tick_params(axis='y', colors='blue')
+ax[0].grid('on')
+ax[0].set_title(case)
+ax[0].xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+fig.tight_layout()
+
+"""
+# load DLH
+if filename_DLH:
+    DLH = read_DLH_ict(filename_DLH)
+
+    df_a = pd.DataFrame({'time': COMA['time'][inlet_ix], 'H2O_COMA': COMA["      [H2O]_ppm"][inlet_ix]})
+    df_b = pd.DataFrame({'time': DLH['time'], 'H2O_DLH': DLH['H2O_DLH']})
+    sync_data, results = sync_ab(df_a,df_b)
+    ax[2].plot(sync_data['H2O_COMA'],sync_data['H2O_DLH'],'k.')
+    ax[2].text(0.05,0.93,'y = ' + "{:.3f}".format(results.params[1]) + 'x + ' + "{:.3f}".format(results.params[0]),transform=ax[2].transAxes)
+    ax[2].text(0.05,0.87,'R2 = ' + "{:.3f}".format(results.rsquared),transform=ax[2].transAxes)
+
+ax[2].set_xlabel('COMA H2O, ppmv')
+ax[2].set_ylabel('DLH H2O, ppmv')
+ax[2].plot([0,30000],[0,30000],'k:')
+"""    
 
 # %% debugging
 """
