@@ -12,7 +12,7 @@ import matplotlib.dates as mdates
 from load_flight_functions import read_COMA
 import statsmodels.api as sm
 
-case = 'RF12'
+case = 'RF17'
 
 # set plot style
 plt.rc('axes', labelsize=11) # xaxis and yaxis labels
@@ -130,6 +130,18 @@ elif case == 'RF15': # Osan
     filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220829_RA.ict'
     filename_COMA = ['../Data/2022-08-29/n2o-co_2022-08-29_f0000.txt']
     filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220829_RA.ict'
+
+elif case == 'RF16': # Osan
+    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220831_RA.ict'
+    filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220831_RA.ict'
+    filename_COMA = ['../Data/2022-08-31/n2o-co_2022-08-31_f0000.txt']
+    filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220831_RA.ict'
+
+elif case == 'RF17': # Osan
+    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220901_RA.ict'
+    filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220901_RA.ict'
+    filename_COMA = ['../Data/2022-09-01/n2o-co_2022-09-01_f0000.txt']
+    filename_DLH = None
     
 # %% create helper function (for loading ICARTT files, linear regression)
 def read_ACOS_ict(filename):
