@@ -17,7 +17,7 @@ from load_flight_functions import read_COMA
 from load_flight_functions import read_MMS
 
 # EDIT THESE
-case = 'RF17'
+case = 'RF10'
 focus = 'flight_CO' # lab, flight_CO, flight_N2O
 
 if case == '2021-08-06': # FCF
@@ -397,7 +397,7 @@ if focus != 'lab':
     
     if focus == 'flight_CO':
             sc2 = plt.scatter(sync_data['CO_dry'],sync_data['ALT'],c=sync_data.index,s=8)
-            plt.xlim(15,200)
+            plt.xlim(15,300)
             plt.xlabel('CO, ppb')
     elif focus == 'flight_N2O':
             sc2 = plt.scatter(sync_data['N2O_dry'],sync_data['ALT'],c=sync_data.index,s=8)

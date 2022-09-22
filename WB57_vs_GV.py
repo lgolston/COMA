@@ -11,7 +11,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import matplotlib.dates as mdates
-
+from functools import reduce
 from load_flight_functions import read_COMA
 from load_flight_functions import read_MMS
 
@@ -43,6 +43,12 @@ def read_GV_ict(filename):
     return GV
 
 GV = read_GV_ict(filename_GV)
+
+# sync COMA and MMS
+MMS_sync = MMS.groupby(pd.Grouper(key="time", freq='1s')).mean()
+COMA_sync = COMA.groupby(pd.Grouper(key="time", freq='1s')).mean()
+df = [MMS_sync, COMA_sync]
+sync_data = reduce(lambda  left,right: pd.merge(left,right,on=['time'],how='inner'), df).fillna(np.nan)
 
 # set plot style
 plt.rc('axes', labelsize=12) # xaxis and yaxis labels
@@ -100,23 +106,37 @@ fig1.tight_layout()
 #COCAL_PIC2401
 
 fig2, ax = plt.subplots(2, 1, figsize=(10,8),sharex=True)
-ax[0].plot(COMA['time'][inlet_ix],COMA["      [CO]d_ppm"][inlet_ix]*1000,'b.',label='COMA')
-ax[0].plot(GV['time'],GV["CO_ARI"],'k.',label='GV ARI')
-ax[0].plot(GV['time'],GV['CO_PIC2401']*1000,'g.',label='GV PIC2401')#,markersize=1
+#ax[0].plot(COMA['time'][inlet_ix],COMA["      [CO]d_ppm"][inlet_ix]*1000,'b.',label='COMA')
+#ax[0].plot(GV['time'],GV["CO_ARI"],'k.',label='GV ARI')
+#ax[0].plot(GV['time'],GV['CO_PIC2401']*1000,'g.',label='GV PIC2401')#,markersize=1
+
+ix_timeWB = np.where((sync_data.index>datetime(2022,8,19,4,57)) & (sync_data.index<datetime(2022,8,19,5,30)))
+ix_timeWB = np.ravel(ix_timeWB)
+ix_timeGV = np.where((GV['time']>datetime(2022,8,19,4,55)) & (GV['time']<datetime(2022,8,19,5,22)))
+ix_timeGV = np.ravel(ix_timeGV)
+
+ax[0].plot(sync_data["LAT"][ix_timeWB],sync_data["      [CO]d_ppm"][ix_timeWB]*1000,'.',label='WB COMA')
+ax[0].plot(GV['GGLAT'][ix_timeGV],GV["CO_ARI"][ix_timeGV],'k.',label='GV ARI')
+ax[0].plot(GV['GGLAT'][ix_timeGV],GV['CO_PIC2401'][ix_timeGV]*1000,'g.',label='GV PIC2401')#,markersize=1
+
 ax[0].set_ylabel('CO, ppb')
 ax[0].legend()
 
-ax[1].plot(COMA['time'][inlet_ix],COMA["     [N2O]d_ppm"][inlet_ix]*1000,'b.',label='COMA')
-ax[1].plot(GV['time'],GV["N2O_ARI"],'k.',label='ARI')
-ax[1].set_ylabel('N2O, ppb')
+#ax[1].plot(COMA['time'][inlet_ix],COMA["     [N2O]d_ppm"][inlet_ix]*1000,'b.',label='COMA')
+#ax[1].plot(GV['time'],GV["N2O_ARI"],'k.',label='ARI')
 
-ax[0].xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+ax[1].plot(sync_data["LAT"][ix_timeWB],sync_data["     [N2O]d_ppm"][ix_timeWB]*1000,'.')
+ax[1].plot(GV['GGLAT'][ix_timeGV],GV["N2O_ARI"][ix_timeGV],'k.',label='ARI')
+
+ax[1].set_ylabel('N2O, ppb')
+ax[1].set_xlabel('Latitude')
+#ax[1].xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 
 #RF10
 if case == 'RF10':
     ax[0].set_ylim(140,320)
     ax[1].set_ylim(320,340)
-    ax[0].set_xlim(datetime(2022,8,19,4,57),datetime(2022,8,19,5,30))
+    #ax[0].set_xlim(datetime(2022,8,19,4,57),datetime(2022,8,19,5,30))
     plt.suptitle(fig_title)
 
 #RF13

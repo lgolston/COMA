@@ -39,7 +39,7 @@ for case in [1,2]:
     
     # index MIU valves
     if case == 1:
-        ix_7 = np.ravel(np.where(LGR["      MIU_VALVE"]>-10)) # MIU was not used
+        ix_7 = np.ravel(np.where(LGR["      MIU_VALVE"]>-10)) # select all; MIU was not used
         ix = ix_7
     if case == 2:
         ix_8 = np.ravel(np.where(LGR["      MIU_VALVE"]==8)) # inlet
@@ -51,10 +51,14 @@ for case in [1,2]:
         
         # filter to peak position of 807 +/- 1
         # and not super volatile
-        ix = np.ravel(np.where((LGR["          Peak0"]>807) &
-                               (LGR["          Peak0"]<812) &
+        ix = np.ravel(np.where((LGR["          Peak0"]>800) &
+                               (LGR["          Peak0"]<820) &
                                (LGR["          Peak0"].rolling(10,center=True).std() < 2) &
                                (LGR["      MIU_VALVE"].rolling(window=15).min()==7)))
+        #ix = np.ravel(np.where((LGR["          Peak0"]>807) &
+        #                       (LGR["          Peak0"]<812) &
+        #                       (LGR["          Peak0"].rolling(10,center=True).std() < 2) &
+        #                       (LGR["      MIU_VALVE"].rolling(window=15).min()==7)))
         
     # apply calibration
     CO_cal = LGR["      [CO]d_ppm"]*1000
@@ -62,12 +66,17 @@ for case in [1,2]:
     N2O_cal = LGR["     [N2O]d_ppm"]*1000
     N2O_cal = N2O_cal*1.099 + 6.333
     
+    # examine
+    #plt.plot(LGR_time,CO_cal,'.')
+    #plt.plot(LGR_time,LGR["          Peak0"],'.')
+    #plt.plot(LGR_time,LGR["      GasP_torr"],'.')
+    
     #if case == 2:
     #    CO_cal, N2O_cal = calc_cal(LGR_time,LGR["      [CO]d_ppm"],LGR["     [N2O]d_ppm"],ix_2,ix_3)
     
     # %% drift plot
     to_plot = 'CO'
-            
+    
     x = LGR_time[ix] # FILTER
     if to_plot == 'CO':
         y = CO_cal[ix]

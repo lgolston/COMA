@@ -12,7 +12,7 @@ import matplotlib.dates as mdates
 from load_flight_functions import read_COMA
 import statsmodels.api as sm
 
-case = 'RF17'
+case = 'RF15'
 
 # set plot style
 plt.rc('axes', labelsize=11) # xaxis and yaxis labels
@@ -141,7 +141,7 @@ elif case == 'RF17': # Osan
     filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220901_RA.ict'
     filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220901_RA.ict'
     filename_COMA = ['../Data/2022-09-01/n2o-co_2022-09-01_f0000.txt']
-    filename_DLH = None
+    filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220901_RA.ict'
     
 # %% create helper function (for loading ICARTT files, linear regression)
 def read_ACOS_ict(filename):
@@ -191,7 +191,7 @@ if case == 'RF13': # fix clock setting on this day
     COMA['time'] = COMA['time'] + timedelta(hours=6)
     
 # %% Plot CO time series from COMA, ACOS, COLD2
-fig, ax = plt.subplots(1, 1, figsize=(8,4))
+fig1, ax = plt.subplots(1, 1, figsize=(8,4))
 
 # ict files for each are 1 Hz data
 # load and plot ACOS
@@ -214,12 +214,12 @@ ax.grid('on')
 ax.legend()
 ax.set_title(case)
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
-fig.tight_layout()
+fig1.tight_layout()
 
 # %% correlation plots
 # COMA CO vs ACOS
 # COMA CO vs COLD2
-fig, ax = plt.subplots(1, 2, figsize=(9,4))
+fig2, ax = plt.subplots(1, 2, figsize=(9,4))
         
 # load ACOS
 if filename_ACOS:
@@ -257,13 +257,13 @@ ax[0].set_ylim([0,350])
 ax[1].plot([0,350],[0,350],'k:')
 ax[1].set_xlim([0,350])
 ax[1].set_ylim([0,350])
-    
-fig.tight_layout()
+
+fig2.tight_layout()
 
 #fig.savefig('fig1.png',dpi=300)
 
 # %% Plot CO time series and DLH H2O
-fig, ax = plt.subplots(2, 1, figsize=(10,6), sharex=True)
+fig3, ax = plt.subplots(2, 1, figsize=(10,6), sharex=True)
 ax_twin = ax[0].twinx()
 
 # plot COMA
@@ -287,7 +287,7 @@ ax[0].tick_params(axis='y', colors='blue')
 ax[0].grid('on')
 ax[0].set_title(case)
 ax[0].xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
-fig.tight_layout()
+fig3.tight_layout()
 
 """
 # load DLH

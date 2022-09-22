@@ -106,7 +106,7 @@ MMS = read_MMS(filename_MMS)
 fig1, ax = plt.subplots(2, 1, figsize=(8,5.5),sharex=True)
 #ax[0].plot(MT['Date'],MT['Thermocouple 5 (°C)'],'r.') # RF04 (before column given name)
 ax[0].plot(MT['Date'],MT['InletSolen (°C)'],'r.') # RF05
-#ax[0].plot(MT['Date'],MT['Ambient Temperature 1 (°C)'])
+ax[0].plot(MT['Date'],MT['Ambient Temperature 1 (°C)'])
 #ax[0].plot(MT['Date'],MT['PowrSupply (°C)'])
 #ax[0].plot(MT['Date'],MT['Ext Front (°C)'])
 #ax[0].plot(MT['Date'],MT['Lsr_I_tran (°C)'])
