@@ -13,12 +13,15 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
+import matplotlib
 import matplotlib.dates as mdates
 from calculate_linear_cal_fun import calc_cal
-from load_flight_functions import read_COMA
+from load_flight_functions import read_COMA, read_MMS
+from functools import reduce
+import matplotlib.cm as cm
 
 # EDIT THESE
-case = '2022-08-12'
+case = 'RF09'
 
 if case == '2021-08-06': # FCF
     filename_COMA = '../Data/2021-08-06/n2o-co_2021-08-06_f0002.txt'
@@ -40,15 +43,26 @@ elif case == '2022-08-06': # RF05
     filename_COMA = ['../Data/2022-08-05/n2o-co_2022-08-05_f0000_no_10s_cal.txt',
                      '../Data/2022-08-06/n2o-co_2022-08-06_f0000_no_10s_cal.txt',
                      '../Data/2022-08-06/n2o-co_2022-08-06_f0001.txt']
+    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220806_RA.ict'
 elif case == '2022-08-12': # RF06
     filename_COMA = ['../Data/2022-08-11/n2o-co_2022-08-11_f0001.txt',
                      '../Data/2022-08-12/n2o-co_2022-08-12_f0000.txt']
 
-# %% data
-# read COMA data
-COMA = read_COMA(filename_COMA)
+elif case == 'RF08':
+    filename_COMA = ['../Data/2022-08-15/n2o-co_2022-08-15_f0000.txt',
+                     '../Data/2022-08-15/n2o-co_2022-08-15_f0001.txt',
+                     '../Data/2022-08-15/n2o-co_2022-08-15_f0002.txt']
+elif case == 'RF09': # RF09
+    filename_COMA = ['../Data/2022-08-15/n2o-co_2022-08-15_f0003.txt',
+                     '../Data/2022-08-16/n2o-co_2022-08-16_f0000.txt',
+                     '../Data/2022-08-16/n2o-co_2022-08-16_f0001.txt']
 
-CO_cal, N2O_cal = calc_cal(COMA,'NOAA')
+# %% data
+# read COMA and MMS data
+COMA, inlet_ix = read_COMA(filename_COMA)
+#MMS = read_MMS(filename_MMS)
+
+CO_cal, N2O_cal = calc_cal(COMA,'Matheson')
 
 # %% plot calibration results
 cmap = plt.get_cmap("tab20")
@@ -61,7 +75,12 @@ fig, ax = plt.subplots(1, 4, figsize=(7,2),dpi=200)
 
 x=list(range(len(CO_cal)))
 
-ax[0].errorbar(x, y=CO_cal['low_mean'], yerr=2 * CO_cal['low_std'],ls='none',fmt='kx',markersize=3)
+norm = matplotlib.colors.Normalize(vmin=0, vmax=30, clip=True)
+mapper = cm.ScalarMappable(norm=norm, cmap=cm.viridis)
+
+for ii in range(len(CO_cal)):
+    c = mapper.to_rgba(CO_cal['cell_T'][ii])
+    ax[0].errorbar(x[ii], y=CO_cal['low_mean'][ii], yerr=2 * CO_cal['low_std'][ii],ls='none',fmt='kx',markersize=3,color=c)
 
 ax[0].set_xlabel('Cycle #')
 ax[0].set_ylabel('CO, ppb')

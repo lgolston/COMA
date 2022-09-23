@@ -208,7 +208,7 @@ if filename_COLD2:
     plt.plot(COLD2['time'],COLD2[' CO_COLD2_ppbv'],'.g',label='COLD2',markersize=2)
     
 ax.set_ylabel('CO, ppb')
-ax.set_ylim([-10,400])
+ax.set_ylim([-10,200])
 #ax.set_ylim([-10,300])
 ax.grid('on')
 ax.legend()
@@ -249,14 +249,16 @@ ax[0].set_ylabel('ACOS CO, ppbv')
     
 ax[1].set_xlabel('COMA CO, ppbv')
 ax[1].set_ylabel('COLD2 CO, ppbv')
-        
-ax[0].plot([0,350],[0,350],'k:')
-ax[0].set_xlim([0,350])
-ax[0].set_ylim([0,350])
-    
-ax[1].plot([0,350],[0,350],'k:')
-ax[1].set_xlim([0,350])
-ax[1].set_ylim([0,350])
+
+xlim = 200
+ylim = 200
+ax[0].plot([0,xlim],[0,ylim],'k:')
+ax[0].set_xlim([0,xlim])
+ax[0].set_ylim([0,ylim])
+
+ax[1].plot([0,xlim],[0,ylim],'k:')
+ax[1].set_xlim([0,xlim])
+ax[1].set_ylim([0,ylim])
 
 fig2.tight_layout()
 

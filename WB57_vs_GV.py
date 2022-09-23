@@ -16,7 +16,7 @@ from load_flight_functions import read_COMA
 from load_flight_functions import read_MMS
 
 # EDIT THESE
-case = 'RF10'
+case = 'RF13'
 
 if case == 'RF10': # RF10 (instrument start before midnight; takeoff on 2022-08-19 UTC)
     filename_COMA = ['../Data/2022-08-18/n2o-co_2022-08-18_f0000.txt']
@@ -110,10 +110,11 @@ fig2, ax = plt.subplots(2, 1, figsize=(10,8),sharex=True)
 #ax[0].plot(GV['time'],GV["CO_ARI"],'k.',label='GV ARI')
 #ax[0].plot(GV['time'],GV['CO_PIC2401']*1000,'g.',label='GV PIC2401')#,markersize=1
 
-ix_timeWB = np.where((sync_data.index>datetime(2022,8,19,4,57)) & (sync_data.index<datetime(2022,8,19,5,30)))
-ix_timeWB = np.ravel(ix_timeWB)
-ix_timeGV = np.where((GV['time']>datetime(2022,8,19,4,55)) & (GV['time']<datetime(2022,8,19,5,22)))
-ix_timeGV = np.ravel(ix_timeGV)
+#ix_timeWB = np.ravel(np.where((sync_data.index>datetime(2022,8,19,4,57)) & (sync_data.index<datetime(2022,8,19,5,30))))
+#ix_timeGV = np.ravel(np.where((GV['time']>datetime(2022,8,19,4,55)) & (GV['time']<datetime(2022,8,19,5,22))))
+
+ix_timeWB = np.ravel(np.where((sync_data.index>datetime(2022,8,25,2,12)) & (sync_data.index<datetime(2022,8,25,2,40))))
+ix_timeGV = np.ravel(np.where((GV['time']>datetime(2022,8,25,2,10)) & (GV['time']<datetime(2022,8,25,2,30))))
 
 ax[0].plot(sync_data["LAT"][ix_timeWB],sync_data["      [CO]d_ppm"][ix_timeWB]*1000,'.',label='WB COMA')
 ax[0].plot(GV['GGLAT'][ix_timeGV],GV["CO_ARI"][ix_timeGV],'k.',label='GV ARI')
@@ -143,7 +144,7 @@ if case == 'RF10':
 if case == 'RF13':
     ax[0].set_ylim(65,180)
     ax[1].set_ylim(320,340)
-    ax[0].set_xlim(datetime(2022,8,25,2,10),datetime(2022,8,25,2,30))
+    #ax[0].set_xlim(datetime(2022,8,25,2,10),datetime(2022,8,25,2,30))
     plt.suptitle(fig_title)
     
 fig2.tight_layout()

@@ -47,9 +47,9 @@ for case in range(1, 4):
         filename_GEOS = '../Data/_OtherData_/GEOSFP_CO_ACCLIP-20210817.txt'
     
     # load files
-    COMA = read_COMA(filename_COMA)
-    MMS = read_MMS(filename_MMS,cur_day)
-    synced_data = sync_data(MMS,COMA)
+    COMA, inlet_ix = read_COMA(filename_COMA)
+    MMS = read_MMS(filename_MMS)
+    synced_data = sync_data(MMS,COMA, inlet_ix)
     if case == 0:
         GEOS = pd.DataFrame(data={'Time(UTC_Sec)': [np.nan], 'GEOS_CO(ppb)': [np.nan]})
     else:
