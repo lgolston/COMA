@@ -31,11 +31,11 @@ if case == 'RF13': # fix clock setting on this day
     COMA['time'] = COMA['time'] + timedelta(hours=6)
 
 # index MIU valves
-ix_8 = np.ravel(np.where(COMA["      MIU_VALVE"]==8)) # inlet
-ix_7 = np.ravel(np.where(COMA["      MIU_VALVE"]==7)) # inlet (lab)
-ix_3 = np.ravel(np.where(COMA["      MIU_VALVE"]==3)) # high cal
-ix_2 = np.ravel(np.where(COMA["      MIU_VALVE"]==2)) # low cal
-ix_1 = np.ravel(np.where(COMA["      MIU_VALVE"]==1)) # flush
+ix_8 = np.ravel(np.where(COMA["MIU_VALVE"]==8)) # inlet
+ix_7 = np.ravel(np.where(COMA["MIU_VALVE"]==7)) # inlet (lab)
+ix_3 = np.ravel(np.where(COMA["MIU_VALVE"]==3)) # high cal
+ix_2 = np.ravel(np.where(COMA["MIU_VALVE"]==2)) # low cal
+ix_1 = np.ravel(np.where(COMA["MIU_VALVE"]==1)) # flush
 
 # %% plot data
 plt.rc('axes', labelsize=8) # xaxis and yaxis labels
@@ -44,69 +44,69 @@ plt.rc('ytick', labelsize=8) # ytick labels
 fig, ax = plt.subplots(3, 4, figsize=(9,3.5),dpi=200,sharex=True)
 
 # 1. CO
-ax[0,0].plot(COMA['time'][ix_8],COMA["      [CO]d_ppm"][ix_8]*1000,'b.',markersize=2)
-ax[0,0].plot(COMA['time'][ix_2],COMA["      [CO]d_ppm"][ix_2]*1000,'y.',markersize=2)
-ax[0,0].plot(COMA['time'][ix_3],COMA["      [CO]d_ppm"][ix_3]*1000,'m.',markersize=2)
+ax[0,0].plot(COMA['time'][ix_8],COMA["[CO]d_ppm"][ix_8]*1000,'b.',markersize=2)
+ax[0,0].plot(COMA['time'][ix_2],COMA["[CO]d_ppm"][ix_2]*1000,'y.',markersize=2)
+ax[0,0].plot(COMA['time'][ix_3],COMA["[CO]d_ppm"][ix_3]*1000,'m.',markersize=2)
 ax[0,0].set_ylabel('CO (dry), ppbv')
 ax[0,0].set_ylim(0,200)
 
 # 2. N2O
-ax[1,0].plot(COMA['time'][ix_8],COMA["     [N2O]d_ppm"][ix_8]*1000,'b.',markersize=2)
-ax[1,0].plot(COMA['time'][ix_2],COMA["     [N2O]d_ppm"][ix_2]*1000,'y.',markersize=2)
-ax[1,0].plot(COMA['time'][ix_3],COMA["     [N2O]d_ppm"][ix_3]*1000,'m.',markersize=2)
+ax[1,0].plot(COMA['time'][ix_8],COMA["[N2O]d_ppm"][ix_8]*1000,'b.',markersize=2)
+ax[1,0].plot(COMA['time'][ix_2],COMA["[N2O]d_ppm"][ix_2]*1000,'y.',markersize=2)
+ax[1,0].plot(COMA['time'][ix_3],COMA["[N2O]d_ppm"][ix_3]*1000,'m.',markersize=2)
 ax[1,0].set_ylim(0,200)
 ax[1,0].set_ylabel('$\mathregular{N_2O (dry), ppbv}$')
 ax[1,0].set_ylim(200,350)
 
 # 3. H2O
-ax[2,0].plot(COMA['time'],COMA["      [H2O]_ppm"],'k.',markersize=2)
+ax[2,0].plot(COMA['time'],COMA["[H2O]_ppm"],'k.',markersize=2)
 ax[2,0].set_ylabel('$\mathregular{H_2O, ppmv}$')
 ax[2,0].set_yscale('log')
 
 # 4. laser temperature
-laserT = V_to_T(COMA["           AIN6"])
+laserT = V_to_T(COMA["AIN6"])
 ax[0,1].plot(COMA['time'],laserT,'k.',markersize=2) # laser temp
 ax[0,1].set_ylabel('Laser T, C')
 
 # 5. supercool temperature
-supercoolT = V_to_T(COMA["           AIN5"])
+supercoolT = V_to_T(COMA["AIN5"])
 ax[1,1].plot(COMA['time'],supercoolT,'k.',markersize=2)
 ax[1,1].set_ylabel('Supercool T, C')
 
 # 6. laser control voltage
-ax[2,1].plot(COMA['time'],COMA["         LTC0_v"],'k.',markersize=2)
+ax[2,1].plot(COMA['time'],COMA["LTC0_v"],'k.',markersize=2)
 ax[2,1].set_ylabel('LTC0_v')
 
 # 7. Peak0
-ax[0,2].plot(COMA['time'],COMA["          Peak0"],'k.',markersize=2)
+ax[0,2].plot(COMA['time'],COMA["Peak0"],'k.',markersize=2)
 ax[0,2].set_ylabel('Peak0')
 ax[0,2].set_ylim(790,820)
 
 # 8. line centers
-ax[1,2].plot(COMA['time'],COMA["  12COa_0000_CT"],'k.',markersize=2)
+ax[1,2].plot(COMA['time'],COMA["12COa_0000_CT"],'k.',markersize=2)
 ax[1,2].set_ylim(-11,-9.5)
 ax[1,2].set_ylabel('12COa_0000_CT')
 
 # 9. gas and ambient temperatures
-ax[2,2].plot(COMA['time'],COMA["         GasT_C"],'-',markersize=2)
-ax[2,2].plot(COMA['time'],COMA["         AmbT_C"],'-',markersize=2)
+ax[2,2].plot(COMA['time'],COMA["GasT_C"],'-',markersize=2)
+ax[2,2].plot(COMA['time'],COMA["AmbT_C"],'-',markersize=2)
 ax[2,2].legend(['Gas_T','Amb_T'],edgecolor='none',facecolor='none',fontsize='xx-small')
 ax[2,2].set_ylabel('Temperatures, C')
 
 # 10. cell pressure
-ax[0,3].plot(COMA['time'][ix_8],COMA["      GasP_torr"][ix_8],'b.',markersize=2)
-ax[0,3].plot(COMA['time'][ix_2],COMA["      GasP_torr"][ix_2],'y.',markersize=2)
-ax[0,3].plot(COMA['time'][ix_3],COMA["      GasP_torr"][ix_3],'m.',markersize=2)
-ax[0,3].plot(COMA['time'][ix_1],COMA["      GasP_torr"][ix_1],'g.',markersize=2)
-#x[0,3].plot(COMA['time'],COMA["      GasP_torr"],'k.',markersize=2)
+ax[0,3].plot(COMA['time'][ix_8],COMA["GasP_torr"][ix_8],'b.',markersize=2)
+ax[0,3].plot(COMA['time'][ix_2],COMA["GasP_torr"][ix_2],'y.',markersize=2)
+ax[0,3].plot(COMA['time'][ix_3],COMA["GasP_torr"][ix_3],'m.',markersize=2)
+ax[0,3].plot(COMA['time'][ix_1],COMA["GasP_torr"][ix_1],'g.',markersize=2)
+#x[0,3].plot(COMA['time'],COMA["GasP_torr"],'k.',markersize=2)
 ax[0,3].set_ylabel('$\mathregular{Gas P, torr}$')
 
 # 11. Gnd
-ax[1,3].plot(COMA['time'],COMA["            Gnd"],'k.',markersize=2)
+ax[1,3].plot(COMA['time'],COMA["Gnd"],'k.',markersize=2)
 ax[1,3].set_ylabel('Gnd')
 
 # 12. chi-squared
-ax[2,3].plot(COMA['time'],COMA["         CHISQ0"],'k.',markersize=2)
+ax[2,3].plot(COMA['time'],COMA["CHISQ0"],'k.',markersize=2)
 ax[2,3].set_ylabel('CHISQ0')
 ax[2,3].set_yscale('log')
 
@@ -128,14 +128,14 @@ if focus != 'lab':
     fig2, ax2 = plt.subplots(1, 2, figsize=(6,3),dpi=200)
     
     df_lowcal = pd.DataFrame({'time': COMA['time'][ix_2],
-                              'CO_dry': COMA["      [CO]d_ppm"][ix_2]*1000,
-                              'N2O_dry': COMA["     [N2O]d_ppm"][ix_2]*1000,
-                              'H2O': COMA["      [H2O]_ppm"][ix_2]})
+                              'CO_dry': COMA["[CO]d_ppm"][ix_2]*1000,
+                              'N2O_dry': COMA["[N2O]d_ppm"][ix_2]*1000,
+                              'H2O': COMA["[H2O]_ppm"][ix_2]})
     df_lowcal['groups'] = (df_lowcal.index.to_series().diff()>5).cumsum()
     df_highcal = pd.DataFrame({'time': COMA['time'][ix_3],
-                               'CO_dry': COMA["      [CO]d_ppm"][ix_3]*1000,
-                               'N2O_dry': COMA["     [N2O]d_ppm"][ix_3]*1000,
-                               'H2O': COMA["      [H2O]_ppm"][ix_3]})
+                               'CO_dry': COMA["[CO]d_ppm"][ix_3]*1000,
+                               'N2O_dry': COMA["[N2O]d_ppm"][ix_3]*1000,
+                               'H2O': COMA["[H2O]_ppm"][ix_3]})
     df_highcal['groups'] = (df_highcal.index.to_series().diff()>5).cumsum()
     #df_flush = pd.DataFrame({'time': LGR_time[ix_1], 'CO_dry': LGR["      [CO]d_ppm"][ix_1]*1000})
     #df_flush['groups'] = (df_flush.index.to_series().diff()>5).cumsum()
@@ -206,8 +206,8 @@ if focus != 'lab':
     # handle COMA data
     indices = inlet_ix # use only inlet data
     #indices = np.union1d(ix_1,ix_8) # use both inlet and flush data here
-    COMA_df = pd.DataFrame({'time': COMA['time'][indices], 'CO_dry': COMA["      [CO]d_ppm"][indices]*1000, 
-                            'N2O_dry': COMA["     [N2O]d_ppm"][indices]*1000, 'amb_T': COMA["         AmbT_C"]})
+    COMA_df = pd.DataFrame({'time': COMA['time'][indices], 'CO_dry': COMA["[CO]d_ppm"][indices]*1000, 
+                            'N2O_dry': COMA["[N2O]d_ppm"][indices]*1000, 'amb_T': COMA["AmbT_C"]})
     COMA_df_sync = COMA_df.groupby(pd.Grouper(key="time", freq="1s")).mean()
     
     # time-sync the data with COMA

@@ -9,7 +9,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import matplotlib.dates as mdates
-from load_flight_functions import read_COMA
+
+from load_data_functions import read_COMA
+from load_data_functions import return_filenames
+
 import statsmodels.api as sm
 
 case = 'RF15'
@@ -21,127 +24,7 @@ plt.rc('ytick', labelsize=11) # ytick labels
 plt.rc('legend', fontsize=11) # ytick labels
 
 # %% list file names
-if case == 'Transit1': # Ellington to Seattle
-    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220721_RA_1.ict'
-    filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220721_RA_L1.ict'
-    filename_COMA = ['../Data/2022-07-21/n2o-co_2022-07-21_f0000.txt',
-                     '../Data/2022-07-21/n2o-co_2022-07-21_f0001.txt']
-    filename_DLH = None
-    
-elif case == 'Transit2': # Seattle to Anchorage
-    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220721_RA_2.ict'
-    filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220721_RA_L2.ict'
-    filename_COMA = ['../Data/2022-07-21/n2o-co_2022-07-21_f0002.txt']
-    filename_DLH = None
-    
-elif case == 'Transit3': # Anchorage to Adak
-    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220724_RA.ict'
-    filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220724_RA.ict'
-    filename_COMA = ['../Data/2022-07-24/n2o-co_2022-07-24_f0000.txt']
-    filename_DLH = None
-    
-elif case == 'Transit4': # Adak to Misawa
-    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220725_RA.ict'
-    filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220725_RA.ict'
-    filename_COMA = ['../Data/2022-07-25/n2o-co_2022-07-25_f0000.txt']
-    filename_DLH = None
-    
-elif case == 'Transit5': # Misawa to Osan
-    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220727_RA.ict'
-    filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220727_RA.ict'
-    filename_COMA = ['../Data/2022-07-27/n2o-co_2022-07-27_f0000.txt']
-    filename_DLH = None
-    
-elif case == 'RF03': # Osan
-    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220802_RA.ict'
-    filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220802_RA.ict'
-    filename_COMA = ['../Data/2022-08-02/n2o-co_2022-08-02_f0000.txt']
-    filename_DLH = None
-    
-elif case == 'RF04': # Osan
-    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220804_RA.ict'
-    filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220804_RA.ict'
-    filename_COMA = ['../Data/2022-08-04/n2o-co_2022-08-04_f0000.txt']
-    filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220804_RA.ict'
-    
-elif case == 'RF05': # Osan
-    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220806_RA.ict'
-    filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220806_RA.ict'
-    filename_COMA = ['../Data/2022-08-06/n2o-co_2022-08-06_f0000.txt']
-    filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220806_RA.ict'
-    
-elif case == 'RF06': # Osan
-    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220812_RA.ict'
-    filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220812_RA.ict'
-    filename_COMA = ['../Data/2022-08-12/n2o-co_2022-08-12_f0000.txt']
-    filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220812_RA.ict'
-    
-elif case == 'RF07': # Osan
-    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220813_RA.ict'
-    filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220813_RA.ict'
-    filename_COMA = ['../Data/2022-08-13/n2o-co_2022-08-13_f0000.txt']
-    filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220813_RA.ict'
-    
-elif case == 'RF08': # Osan
-    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220815_RA.ict'
-    filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220815_RA.ict'
-    filename_COMA = ['../Data/2022-08-15/n2o-co_2022-08-15_f0000.txt',
-                     '../Data/2022-08-15/n2o-co_2022-08-15_f0001.txt']
-    filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220815_RA.ict'
-    
-elif case == 'RF09': # Osan
-    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220816_RA.ict'
-    filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220816_RA.ict'
-    filename_COMA = ['../Data/2022-08-16/n2o-co_2022-08-16_f0000.txt']
-    filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220816_RA.ict'
-    
-elif case == 'RF10': # Osan
-    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220819_RB.ict'
-    filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220819_RA.ict'
-    filename_COMA = ['../Data/2022-08-18/n2o-co_2022-08-18_f0000.txt']
-    filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220819_RA.ict'
-
-elif case == 'RF11': # Osan
-    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220821_RB.ict'
-    filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220821_RA.ict'
-    filename_COMA = ['../Data/2022-08-21/n2o-co_2022-08-21_f0000.txt']
-    filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220821_RA.ict'
-
-elif case == 'RF12': # Osan
-    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220823_RC.ict'
-    filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220823_RA.ict'
-    filename_COMA = ['../Data/2022-08-23/n2o-co_2022-08-23_f0000.txt']
-    filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220823_RA.ict'
-
-elif case == 'RF13': # Osan
-    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220825_RA.ict'
-    filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220825_RA.ict'
-    filename_COMA = ['../Data/2022-08-24/n2o-co_2022-08-24_f0002.txt']
-    filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220825_RA.ict'
-
-elif case == 'RF14': # Osan
-    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220826_RA.ict'
-    filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220826_RA.ict'
-    filename_COMA = ['../Data/2022-08-26/n2o-co_2022-08-26_f0000.txt']
-    filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220826_RA.ict'
-
-elif case == 'RF15': # Osan
-    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220829_RA.ict'
-    filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220829_RA.ict'
-    filename_COMA = ['../Data/2022-08-29/n2o-co_2022-08-29_f0000.txt']
-    filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220829_RA.ict'
-
-elif case == 'RF16': # Osan
-    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220831_RA.ict'
-    filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220831_RA.ict'
-    filename_COMA = ['../Data/2022-08-31/n2o-co_2022-08-31_f0000.txt']
-    filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220831_RA.ict'
-
-elif case == 'RF17': # Osan
-    filename_ACOS = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220901_RA.ict'
-    filename_COLD2 = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220901_RA.ict'
-    filename_COMA = ['../Data/2022-09-01/n2o-co_2022-09-01_f0000.txt']
-    filename_DLH = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220901_RA.ict'
+filenames = return_filenames(case)
     
 # %% create helper function (for loading ICARTT files, linear regression)
 def read_ACOS_ict(filename):
@@ -185,7 +68,7 @@ def sync_ab(df_a,df_b):
     return sync_data, results
 
 # %% load COMA file (used in all plot types below)
-COMA, inlet_ix = read_COMA(filename_COMA)
+COMA, inlet_ix = read_COMA(filenames['COMA_raw'])
 
 if case == 'RF13': # fix clock setting on this day
     COMA['time'] = COMA['time'] + timedelta(hours=6)
@@ -195,16 +78,16 @@ fig1, ax = plt.subplots(1, 1, figsize=(8,4))
 
 # ict files for each are 1 Hz data
 # load and plot ACOS
-if filename_ACOS:
-    ACOS = read_ACOS_ict(filename_ACOS)
+if len(filenames['ACOS'])>0:
+    ACOS = read_ACOS_ict(filenames['ACOS'])
     plt.plot(ACOS['time'],ACOS['ACOS_CO_PPB'],'.m',label='ACOS',markersize=2)
     
 # plot COMA
-plt.plot(COMA['time'][inlet_ix],COMA["      [CO]d_ppm"][inlet_ix]*1000,'b.',label='COMA',markersize=2)
+plt.plot(COMA['time'][inlet_ix],COMA["[CO]d_ppm"][inlet_ix]*1000,'b.',label='COMA',markersize=2)
      
 # load and plot COLD2
-if filename_COLD2:
-    COLD2 = read_COLD2_ict(filename_COLD2)
+if len(filenames['COLD2'])>0:
+    COLD2 = read_COLD2_ict(filenames['COLD2'])
     plt.plot(COLD2['time'],COLD2[' CO_COLD2_ppbv'],'.g',label='COLD2',markersize=2)
     
 ax.set_ylabel('CO, ppb')
@@ -222,10 +105,10 @@ fig1.tight_layout()
 fig2, ax = plt.subplots(1, 2, figsize=(9,4))
         
 # load ACOS
-if filename_ACOS:
-    ACOS = read_ACOS_ict(filename_ACOS)
+if len(filenames['ACOS'])>0:
+    ACOS = read_ACOS_ict(filenames['ACOS'])
         
-    df_a = pd.DataFrame({'time': COMA['time'][inlet_ix], 'CO_COMA': COMA["      [CO]d_ppm"][inlet_ix]*1000})
+    df_a = pd.DataFrame({'time': COMA['time'][inlet_ix], 'CO_COMA': COMA["[CO]d_ppm"][inlet_ix]*1000})
     df_b = pd.DataFrame({'time': ACOS['time'], 'CO_ACOS': ACOS['ACOS_CO_PPB']})
     sync_data, results = sync_ab(df_a,df_b)
     ax[0].plot(sync_data['CO_COMA'],sync_data['CO_ACOS'],'k.')
@@ -233,10 +116,10 @@ if filename_ACOS:
     ax[0].text(0.05,0.87,'R2 = ' + "{:.3f}".format(results.rsquared),transform=ax[0].transAxes)
     
 # load COLD2
-if filename_COLD2:
-    COLD2 = read_COLD2_ict(filename_COLD2)
+if len(filenames['COLD2'])>0:
+    COLD2 = read_COLD2_ict(filenames['COLD2'])
         
-    df_a = pd.DataFrame({'time': COMA['time'][inlet_ix], 'CO_COMA': COMA["      [CO]d_ppm"][inlet_ix]*1000})
+    df_a = pd.DataFrame({'time': COMA['time'][inlet_ix], 'CO_COMA': COMA["[CO]d_ppm"][inlet_ix]*1000})
     df_b = pd.DataFrame({'time': COLD2['time'], 'CO_COLD2': COLD2[' CO_COLD2_ppbv']})
     sync_data, results = sync_ab(df_a,df_b)
     ax[1].plot(sync_data['CO_COMA'],sync_data['CO_COLD2'],'k.')
@@ -269,12 +152,12 @@ fig3, ax = plt.subplots(2, 1, figsize=(10,6), sharex=True)
 ax_twin = ax[0].twinx()
 
 # plot COMA
-ax[0].plot(COMA['time'][inlet_ix],COMA["      [CO]d_ppm"][inlet_ix]*1000,'b.',label='COMA')
-ax[1].plot(COMA['time'][inlet_ix],COMA["      [H2O]_ppm"][inlet_ix],'b.',label='COMA')
+ax[0].plot(COMA['time'][inlet_ix],COMA["[CO]d_ppm"][inlet_ix]*1000,'b.',label='COMA')
+ax[1].plot(COMA['time'][inlet_ix],COMA["[H2O]_ppm"][inlet_ix],'b.',label='COMA')
 
 # load and plot DLH
-if filename_DLH:
-    DLH = read_DLH_ict(filename_DLH)
+if len(filenames['DLH'])>0:
+    DLH = read_DLH_ict(filenames['DLH'])
     ax_twin.plot(DLH['time'],DLH['H2O_DLH'],'.k',label='DLH')
     ax[1].plot(DLH['time'],DLH['H2O_DLH'],'.k',label='DLH')
 

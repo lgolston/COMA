@@ -29,14 +29,14 @@ def read_COMA(filename_COMA):
     # read file, combining multiple if necessary
     for count, fname in enumerate(filename_COMA):
         if count == 0:
-            COMA = pd.read_csv(filename_COMA[0],sep=',',header=1)
+            COMA = pd.read_csv(filename_COMA[0],sep=',',header=1,skipinitialspace=True)
         else:
-            COMA2 = pd.read_csv(fname,sep=',',header=1)
+            COMA2 = pd.read_csv(fname,sep=',',header=1,skipinitialspace=True)
             COMA = pd.concat([COMA,COMA2],ignore_index=True)
 
     # parse timestamp
-    COMA_time = COMA["                     Time"]
-    COMA_time = [datetime.strptime(tstamp,"  %m/%d/%Y %H:%M:%S.%f") for tstamp in COMA_time]
+    COMA_time = COMA["Time"]
+    COMA_time = [datetime.strptime(tstamp,"%m/%d/%Y %H:%M:%S.%f") for tstamp in COMA_time]
     COMA_time = pd.DataFrame(COMA_time)
     COMA_time = COMA_time[0]
     COMA['time'] = COMA_time
@@ -44,8 +44,8 @@ def read_COMA(filename_COMA):
     # basic quality control
     #ix_8 = np.ravel(np.where( (LGR["      MIU_VALVE"]==8) & (LGR["      GasP_torr"]>52.45) & (LGR["      GasP_torr"]<52.65)) ) # Inlet
     #indices = np.union1d(ix_1,ix_8) # use both inlet and flush data here
-    MIU = COMA["      MIU_VALVE"]
-    cellP = COMA["      GasP_torr"]
+    MIU = COMA["MIU_VALVE"]
+    cellP = COMA["GasP_torr"]
     
     # handle purge air settings
     if COMA_time[0] <= datetime(2022,8,15):
@@ -211,84 +211,144 @@ def return_filenames(case):
     elif case == 'Transit1': # Ellington to Seattle
         filenames['COMA_raw'] = ['../Data/2022-07-21/n2o-co_2022-07-21_f0000.txt',
                          '../Data/2022-07-21/n2o-co_2022-07-21_f0001.txt']
-        filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220721_RA_1.ict'
+        filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220721_RA_1.ict'
+        filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220721_RA_1.ict'
+        filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220721_RA_L1.ict'
+        filenames['DLH'] = None
         
     elif case == 'Transit2': # Seattle to Anchorage
         filenames['COMA_raw'] = ['../Data/2022-07-21/n2o-co_2022-07-21_f0002.txt']
         filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220721_RA_2.ict'
-        
+        filenames['ACOS'] = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220721_RA_2.ict'
+        filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220721_RA_L2.ict'
+        filenames['DLH'] = None
+    
     elif case == 'Transit3': # Anchorage to Adak
         filenames['COMA_raw'] = ['../Data/2022-07-24/n2o-co_2022-07-24_f0000.txt']
         filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220724_RA.ict'
-        
+        filenames['ACOS'] = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220724_RA.ict'
+        filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220724_RA.ict'
+        filenames['DLH'] = None
+            
     elif case == 'Transit4': # Adak to Misawa
         filenames['COMA_raw'] = ['../Data/2022-07-25/n2o-co_2022-07-25_f0000.txt']
         filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220725_RA.ict'
-    
+        filenames['ACOS'] = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220725_RA.ict'
+        filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220725_RA.ict'
+        filenames['DLH'] = None
+        
     elif case == 'Transit5': # Misawa to Osan
         filenames['COMA_raw'] = ['../Data/2022-07-27/n2o-co_2022-07-27_f0000.txt']
-        filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220727_RA.ict'
+        filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220727_RA.ict'
+        filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220727_RA.ict'
+        filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220727_RA.ict'
+        filenames['DLH'] = None
     
     elif case == 'RF03': # RF03
         filenames['COMA_raw'] = ['../Data/2022-08-02/n2o-co_2022-08-02_f0000.txt']
-        filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220802_RA.ict'
-    
+        filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220802_RA.ict'
+        filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220802_RA.ict'
+        filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220802_RA.ict'
+        filenames['DLH'] = None
+        
     elif case == 'RF04': # RF04
         filenames['COMA_raw'] = ['../Data/2022-08-04/n2o-co_2022-08-04_f0000.txt']
-        filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220804_RA.ict'
-    
+        filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220804_RA.ict'
+        filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220804_RA.ict'
+        filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220804_RA.ict'
+        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220804_RA.ict'
+        
     elif case == 'RF05': # RF05
         filenames['COMA_raw'] = ['../Data/2022-08-06/n2o-co_2022-08-06_f0000_no_10s_cal.txt']
-        filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220806_RA.ict'
-    
+        filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220806_RA.ict'
+        filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220806_RA.ict'
+        filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220806_RA.ict'
+        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220806_RA.ict'
+        
     elif case == 'RF06': # RF06
         filenames['COMA_raw'] = ['../Data/2022-08-12/n2o-co_2022-08-12_f0000.txt']
-        filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220812_RA.ict'
+        filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220812_RA.ict'
+        filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220812_RA.ict'
+        filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220812_RA.ict'
+        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220812_RA.ict'    
     
     elif case == 'RF07': # RF07
         filenames['COMA_raw'] = ['../Data/2022-08-13/n2o-co_2022-08-13_f0000.txt']
-        filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220813_RA.ict'
-    
+        filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220813_RA.ict'
+        filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220813_RA.ict'
+        filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220813_RA.ict'
+        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220813_RA.ict'
+        
     elif case == 'RF08': # RF08
         filenames['COMA_raw'] = ['../Data/2022-08-15/n2o-co_2022-08-15_f0000.txt',
                          '../Data/2022-08-15/n2o-co_2022-08-15_f0001.txt']
-        filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220815_RA.ict'
+        filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220815_RA.ict'
+        filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220815_RA.ict'
+        filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220815_RA.ict'
+        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220815_RA.ict'
         
     elif case == 'RF09': # RF09
         filenames['COMA_raw'] = ['../Data/2022-08-16/n2o-co_2022-08-16_f0000.txt']
-        filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220816_RA.ict'
-        
+        filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220816_RA.ict'
+        filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220816_RA.ict'
+        filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220816_RA.ict'
+        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220816_RA.ict'
+            
     elif case == 'RF10': # RF10 (instrument start before midnight; takeoff on 2022-08-19 UTC)
         filenames['COMA_raw'] = ['../Data/2022-08-18/n2o-co_2022-08-18_f0000.txt']
-        filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220819_RA.ict'
+        filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220819_RA.ict'
+        filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220819_RB.ict'
+        filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220819_RA.ict'
+        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220819_RA.ict'
     
     elif case == 'RF11': # RF11
         filenames['COMA_raw'] = ['../Data/2022-08-21/n2o-co_2022-08-21_f0000.txt']
-        filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220821_RA.ict'
-    
+        filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220821_RA.ict'
+        filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220821_RB.ict'
+        filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220821_RA.ict'
+        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220821_RA.ict'
+        
     elif case == 'RF12': # RF12
         filenames['COMA_raw'] = ['../Data/2022-08-23/n2o-co_2022-08-23_f0000.txt']
-        filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220823_RA.ict'
-    
+        filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220823_RA.ict'
+        filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220823_RC.ict'
+        filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220823_RA.ict'
+        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220823_RA.ict'
+        
     elif case == 'RF13': # RF13
         filenames['COMA_raw'] = ['../Data/2022-08-24/n2o-co_2022-08-24_f0002.txt'] # six hour offset
-        filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220825_RA.ict'
-    
+        filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220825_RA.ict'
+        filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220825_RA.ict'
+        filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220825_RA.ict'
+        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220825_RA.ict'
+        
     elif case == 'RF14': # RF14
         filenames['COMA_raw'] = ['../Data/2022-08-26/n2o-co_2022-08-26_f0000.txt']
-        filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220826_RA.ict'
-    
+        filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220826_RA.ict'
+        filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220826_RA.ict'
+        filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220826_RA.ict'
+        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220826_RA.ict'
+        
     elif case == 'RF15': # RF15
         filenames['COMA_raw'] = ['../Data/2022-08-29/n2o-co_2022-08-29_f0000.txt']
-        filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220829_RA.ict'
+        filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220829_RA.ict'
+        filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220829_RA.ict'
+        filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220829_RA.ict'
+        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220829_RA.ict'
     
     elif case == 'RF16': # RF16
         filenames['COMA_raw'] = ['../Data/2022-08-31/n2o-co_2022-08-31_f0000.txt']
-        filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220831_RA.ict'
+        filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220831_RA.ict'
+        filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220831_RA.ict'
+        filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220831_RA.ict'
+        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220831_RA.ict'
     
     elif case == 'RF17': # RF17
         filenames['COMA_raw'] = ['../Data/2022-09-01/n2o-co_2022-09-01_f0000.txt']
-        filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220901_RA.ict'
+        filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220901_RA.ict'
+        filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220901_RA.ict'
+        filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220901_RA.ict'
+        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220901_RA.ict'
         
     else:
         print('case not recognized')
