@@ -12,139 +12,20 @@ import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import matplotlib.dates as mdates
 
-from load_flight_functions import V_to_T
-from load_flight_functions import read_COMA
-from load_flight_functions import read_MMS
+from load_data_functions import V_to_T
+from load_data_functions import read_COMA
+from load_data_functions import read_MMS
+from load_data_functions import return_filenames
 
 # EDIT THESE
 case = 'RF10'
 focus = 'flight_CO' # lab, flight_CO, flight_N2O
 
-if case == '2021-08-06': # FCF
-    filename_COMA = ['../Data/2021-08-06/n2o-co_2021-08-06_f0002.txt']
-    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20210806_RA.ict'
-    filename_WB57 = '../Data/_OtherData_/NP_WB57_20210806_R0.ict'
-
-elif case == '2021-08-10': # Test Flight 1
-    filename_COMA = ['../Data/2021-08-10/n2o-co_2021-08-10_f0003.txt']
-    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20210810_RA.ict'
-    filename_WB57 = '../Data/_OtherData_/NP_WB57_20210810_R0.ict'
-    
-elif case == '2021-08-16': # Test Flight 2
-    filename_COMA = ['../Data/2021-08-16/n2o-co_2021-08-16_f0002.txt']
-    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20210816_RA.ict'
-    filename_WB57 = '../Data/_OtherData_/NP_WB57_20210816_R0.ict'
-    
-elif case == '2021-08-17': # Test Flight 3
-    filename_COMA = ['../Data/2021-08-17/n2o-co_2021-08-17_f0002.txt']
-    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20210817_RA.ict'
-    filename_WB57 = '../Data/_OtherData_/NP_WB57_20210817_R0.ict'
-    
-elif case == '2021-08-17': # lab breathing air
-    #filename_COMA = '../Data/2021-08-06/n2o-co_2021-08-06_f0000.txt' # chop 3am part
-    #filename_COMA = '../Data/2021-08-10/n2o-co_2021-08-10_f0000.txt'
-    #filename_COMA = '../Data/2021-08-16/n2o-co_2021-08-16_f0000.txt'
-    filename_COMA = ['../Data/2021-08-17/n2o-co_2021-08-17_f0000.txt']
-    
-elif case == '2022-05-20':
-    filename_COMA = ['../Data/2022-05-20/n2o-co_2022-05-20_f0000.txt']
-    
-elif case == '2022-07-14': # FCF Houston integration 2022
-    filename_COMA = ['../Data/2022-07-14/n2o-co_2022-07-14_f0002.txt']
-    
-elif case == '2022-07-16': # science flight 1 Houston
-    filename_COMA = ['../Data/2022-07-16/n2o-co_2022-07-16_f0002.txt']
-    
-elif case == '2022-07-18': # science flight 2 Houston
-    filename_COMA = ['../Data/2022-07-18/n2o-co_2022-07-18_f0002.txt',
-                     '../Data/2022-07-18/n2o-co_2022-07-18_f0003.txt']
-    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220718_RA.ict'
-    
-elif case == '2022-07-21-A': # Ellington to Seattle
-    filename_COMA = ['../Data/2022-07-21/n2o-co_2022-07-21_f0000.txt',
-                     '../Data/2022-07-21/n2o-co_2022-07-21_f0001.txt']
-    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220721_RA_1.ict'
-    
-elif case == '2022-07-21-B': # Seattle to Anchorage
-    filename_COMA = ['../Data/2022-07-21/n2o-co_2022-07-21_f0002.txt']
-    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220721_RA_2.ict'
-    
-elif case == '2022-07-24': # Anchorage to Adak
-    filename_COMA = ['../Data/2022-07-24/n2o-co_2022-07-24_f0000.txt']
-    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220724_RA.ict'
-    
-elif case == '2022-07-25': # Adak to Misawa
-    filename_COMA = ['../Data/2022-07-25/n2o-co_2022-07-25_f0000.txt']
-    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220725_RA.ict'
-
-elif case == '2022-07-27': # Misawa to Osan
-    filename_COMA = ['../Data/2022-07-27/n2o-co_2022-07-27_f0000.txt']
-    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220727_RA.ict'
-
-elif case == 'RF03': # RF03
-    filename_COMA = ['../Data/2022-08-02/n2o-co_2022-08-02_f0000.txt']
-    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220802_RA.ict'
-
-elif case == 'RF04': # RF04
-    filename_COMA = ['../Data/2022-08-04/n2o-co_2022-08-04_f0000.txt']
-    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220804_RA.ict'
-
-elif case == 'RF05': # RF05
-    filename_COMA = ['../Data/2022-08-06/n2o-co_2022-08-06_f0000_no_10s_cal.txt']
-    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220806_RA.ict'
-
-elif case == 'RF06': # RF06
-    filename_COMA = ['../Data/2022-08-12/n2o-co_2022-08-12_f0000.txt']
-    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220812_RA.ict'
-
-elif case == 'RF07': # RF07
-    filename_COMA = ['../Data/2022-08-13/n2o-co_2022-08-13_f0000.txt']
-    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220813_RA.ict'
-
-elif case == 'RF08': # RF08
-    filename_COMA = ['../Data/2022-08-15/n2o-co_2022-08-15_f0000.txt',
-                     '../Data/2022-08-15/n2o-co_2022-08-15_f0001.txt']
-    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220815_RA.ict'
-    
-elif case == 'RF09': # RF09
-    filename_COMA = ['../Data/2022-08-16/n2o-co_2022-08-16_f0000.txt']
-    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220816_RA.ict'
-    
-elif case == 'RF10': # RF10 (instrument start before midnight; takeoff on 2022-08-19 UTC)
-    filename_COMA = ['../Data/2022-08-18/n2o-co_2022-08-18_f0000.txt']
-    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220819_RA.ict'
-
-elif case == 'RF11': # RF11
-    filename_COMA = ['../Data/2022-08-21/n2o-co_2022-08-21_f0000.txt']
-    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220821_RA.ict'
-
-elif case == 'RF12': # RF12
-    filename_COMA = ['../Data/2022-08-23/n2o-co_2022-08-23_f0000.txt']
-    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220823_RA.ict'
-
-elif case == 'RF13': # RF13
-    filename_COMA = ['../Data/2022-08-24/n2o-co_2022-08-24_f0002.txt'] # six hour offset
-    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220825_RA.ict'
-
-elif case == 'RF14': # RF14
-    filename_COMA = ['../Data/2022-08-26/n2o-co_2022-08-26_f0000.txt']
-    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220826_RA.ict'
-
-elif case == 'RF15': # RF15
-    filename_COMA = ['../Data/2022-08-29/n2o-co_2022-08-29_f0000.txt']
-    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220829_RA.ict'
-
-elif case == 'RF16': # RF16
-    filename_COMA = ['../Data/2022-08-31/n2o-co_2022-08-31_f0000.txt']
-    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220831_RA.ict'
-
-elif case == 'RF17': # RF17
-    filename_COMA = ['../Data/2022-09-01/n2o-co_2022-09-01_f0000.txt']
-    filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220901_RA.ict'
-
 # %% data
 # read COMA data, combining multiple files if needed
-COMA, inlet_ix= read_COMA(filename_COMA)
+filenames = return_filenames(case)
+
+COMA, inlet_ix = read_COMA(filenames['COMA_raw'])
 
 if case == 'RF13': # fix clock setting on this day
     COMA['time'] = COMA['time'] + timedelta(hours=6)
@@ -161,11 +42,6 @@ plt.rc('axes', labelsize=8) # xaxis and yaxis labels
 plt.rc('xtick', labelsize=8) # xtick labels
 plt.rc('ytick', labelsize=8) # ytick labels
 fig, ax = plt.subplots(3, 4, figsize=(9,3.5),dpi=200,sharex=True)
-
-# choose index
-#ix = ix_8
-#ix = LGR_time.index
-#ix = np.concatenate((ix_2,ix_3))
 
 # 1. CO
 ax[0,0].plot(COMA['time'][ix_8],COMA["      [CO]d_ppm"][ix_8]*1000,'b.',markersize=2)
@@ -324,7 +200,7 @@ if focus != 'lab':
     import cartopy.feature as cf
     
     # %% load MMS and WB57 data
-    MMS = read_MMS(filename_MMS)
+    MMS = read_MMS(filenames['MMS'])
     MMS_sync = MMS.groupby(pd.Grouper(key="time", freq="1s")).mean()
     
     # handle COMA data
