@@ -41,13 +41,6 @@ def read_COLD2_ict(filename):
     COLD2['time'] = [cur_day+timedelta(seconds=t) for t in COLD2['Time_Start']]
     return COLD2
 
-def read_DLH_ict(filename):
-    # e.g. ACCLIP-DLH-H2O_WB57_20220816_RA.ict
-    cur_day = datetime.strptime(filename[-15:-7],"%Y%m%d")
-    DLH = pd.read_csv(filename,sep=',',header=35)
-    DLH['time'] = [cur_day+timedelta(seconds=t) for t in DLH['Time_Start']]
-    return DLH
-
 def sync_ab(df_a,df_b):   
     # clear missing, ULOD, and LLOD flagged values
     # (not relevant for non-ICARTT COMA data file = df_a)
@@ -146,57 +139,3 @@ ax[1].set_ylim([0,ylim])
 fig2.tight_layout()
 
 #fig.savefig('fig1.png',dpi=300)
-
-# %% Plot CO time series and DLH H2O
-fig3, ax = plt.subplots(2, 1, figsize=(10,6), sharex=True)
-ax_twin = ax[0].twinx()
-
-# plot COMA
-ax[0].plot(COMA['time'][inlet_ix],COMA["[CO]d_ppm"][inlet_ix]*1000,'b.',label='COMA')
-ax[1].plot(COMA['time'][inlet_ix],COMA["[H2O]_ppm"][inlet_ix],'b.',label='COMA')
-
-# load and plot DLH
-if len(filenames['DLH'])>0:
-    DLH = read_DLH_ict(filenames['DLH'])
-    ax_twin.plot(DLH['time'],DLH['H2O_DLH'],'.k',label='DLH')
-    ax[1].plot(DLH['time'],DLH['H2O_DLH'],'.k',label='DLH')
-
-ax_twin.set_ylabel('Water vapor mixing ratio, ppmv')
-ax_twin.set_yscale('log')
-
-ax[1].set_ylabel('Water vapor mixing ratio, ppmv') 
-
-ax[0].set_ylim(0,500)
-ax[0].set_ylabel('CO, ppb',color='b')
-ax[0].tick_params(axis='y', colors='blue')
-ax[0].grid('on')
-ax[0].set_title(case)
-ax[0].xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
-fig3.tight_layout()
-
-"""
-# load DLH
-if filename_DLH:
-    DLH = read_DLH_ict(filename_DLH)
-
-    df_a = pd.DataFrame({'time': COMA['time'][inlet_ix], 'H2O_COMA': COMA["      [H2O]_ppm"][inlet_ix]})
-    df_b = pd.DataFrame({'time': DLH['time'], 'H2O_DLH': DLH['H2O_DLH']})
-    sync_data, results = sync_ab(df_a,df_b)
-    ax[2].plot(sync_data['H2O_COMA'],sync_data['H2O_DLH'],'k.')
-    ax[2].text(0.05,0.93,'y = ' + "{:.3f}".format(results.params[1]) + 'x + ' + "{:.3f}".format(results.params[0]),transform=ax[2].transAxes)
-    ax[2].text(0.05,0.87,'R2 = ' + "{:.3f}".format(results.rsquared),transform=ax[2].transAxes)
-
-ax[2].set_xlabel('COMA H2O, ppmv')
-ax[2].set_ylabel('DLH H2O, ppmv')
-ax[2].plot([0,30000],[0,30000],'k:')
-"""    
-
-# %% debugging
-"""
-MIU = COMA["      MIU_VALVE"]
-fig, ax = plt.subplots(1, 1, figsize=(8,4))
-ax_twin = ax.twinx()
-ax.plot(MIU,'b.')
-ax_twin.plot( ((MIU==8) & (MIU.shift(30)==8)) ,'k.')
-ax_twin.set_ylim(-0.5,1.5) # shift to prevent dots from overlapping
-"""
