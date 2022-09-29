@@ -8,6 +8,12 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 import matplotlib.dates as mdates
 
+# set font size
+plt.rcParams['axes.labelsize'] = 8
+plt.rcParams['legend.fontsize'] = 8
+plt.rcParams['xtick.labelsize'] = 7
+plt.rcParams['ytick.labelsize'] = 7
+
 # read chamber temperature file (2022-05-19)
 CHAMBER = pd.read_csv('../Data/2022-05-19/COMA_2022_05_19',skiprows = 10,sep='\t',header=None)
 CHAMBER.columns = ['PRESSURE','CHAMBER','CUR S REST','CPU','LASER CUR T','PWR SPLY','LASER BAKING','MID-RIB','EXT SIDE','SECONDS','DATETIME']	
@@ -28,7 +34,7 @@ CHAMBER_TIME = CHAMBER1_TIME + CHAMBER2_TIME
 """
 
 # %% plot
-fig, ax1 = plt.subplots(figsize=(11,6.5))
+fig, ax1 = plt.subplots(figsize=(6.5,3.7))
 ax1.plot(CHAMBER_TIME,CHAMBER['CHAMBER'],label='CHAMBER')
 ax1.plot(CHAMBER_TIME,CHAMBER['CUR S REST'],label='CUR S REST')
 ax1.plot(CHAMBER_TIME,CHAMBER['CPU'],label='CPU')
@@ -40,10 +46,10 @@ ax1.plot(CHAMBER_TIME,CHAMBER['EXT SIDE'],label='EXT SIDE')
 ax1.grid()
 ax1.set_ylim([-20,120])
 ax2 = ax1.twinx()
-ax2.plot(CHAMBER_TIME,CHAMBER['PRESSURE'],'k',label='PRESSURE')
-ax1.legend(loc='upper left')
-ax1.set_ylabel('Temperatures (see legend), degC')
-ax2.set_ylabel('Chamber altitude, ft')
+ax2.plot(CHAMBER_TIME,CHAMBER['PRESSURE']/3280.84,'k',label='PRESSURE') # ft to km
+ax1.legend(loc='upper left',ncol=2)
+ax1.set_ylabel('Temperatures, °C')
+ax2.set_ylabel('Chamber altitude, km')
 ax1.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 ax1.set_xlabel('Time')
 plt.tight_layout()
