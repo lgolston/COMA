@@ -14,11 +14,11 @@ import matplotlib.dates as mdates
 
 from load_data_functions import V_to_T
 from load_data_functions import read_COMA
-from load_data_functions import read_MMS
+from load_data_functions import read_MMS_ict
 from load_data_functions import return_filenames
 
 # EDIT THESE
-case = 'RF10'
+case = 'RF11'
 focus = 'flight_CO' # lab, flight_CO, flight_N2O
 
 # %% data
@@ -155,7 +155,7 @@ if focus != 'lab':
         else:                              # Matheson gas bottle
             ax2[0].set_ylim(170,220)
             ax2[1].set_ylim(800,1000)
-        ax2[0].set_ylabel('CO, ppb')        
+        ax2[0].set_ylabel('CO, ppb')  
         
     elif focus == 'flight_N2O':
         for ct, data in df_lowcal.groupby('groups'):
@@ -200,7 +200,7 @@ if focus != 'lab':
     import cartopy.feature as cf
     
     # %% load MMS and WB57 data
-    MMS = read_MMS(filenames['MMS'])
+    MMS = read_MMS_ict(filenames['MMS'])
     MMS_sync = MMS.groupby(pd.Grouper(key="time", freq="1s")).mean()
     
     # handle COMA data
