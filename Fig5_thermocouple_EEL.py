@@ -54,4 +54,4 @@ ax1.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 ax1.set_xlabel('Time')
 plt.tight_layout()
 
-#plt.savefig('fig_output.png',dpi=200)
+#plt.savefig('fig_output.png',dpi=300)

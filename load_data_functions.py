@@ -12,6 +12,7 @@ Load different file types ACCLIP:
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
+import statsmodels.api as sm
 
 # %% convert laser and supercool voltage to temperature [values from Ian]
 def V_to_T(voltage):
@@ -61,7 +62,7 @@ def read_COMA(filename_COMA):
 
 
 # %% read MMS data
-def read_MMS(filename):
+def read_MMS_ict(filename):
     """
    Function to read the MMS data
     """
@@ -108,6 +109,41 @@ def read_MMS(filename):
 
     return MMS
     
+# %%
+def read_ACOS_ict(filename):
+    # e.g. ACCLIP-ACOS-1Hz_WB57_20220816_RA.ict
+    cur_day = datetime.strptime(filename[-15:-7],"%Y%m%d") # get date from end of file name
+    ACOS = pd.read_csv(filename,sep=',',header=37)
+    ACOS['time'] = [cur_day+timedelta(seconds=t) for t in ACOS['TIME_START']]
+    return ACOS
+
+# %%
+def read_COLD2_ict(filename):
+    # e.g. acclip-COLD2-CO_WB57_20220816_RA.ict
+    cur_day = datetime.strptime(filename[-15:-7],"%Y%m%d")
+    COLD2 = pd.read_csv(filename,sep=',',header=32)
+    COLD2['time'] = [cur_day+timedelta(seconds=t) for t in COLD2['Time_Start']]
+    return COLD2
+
+# %% create helper function (for loading ICARTT files, linear regression)
+def linear_ab(df_a,df_b,avg_time):   
+    # clear missing, ULOD, and LLOD flagged values
+    # (not relevant for non-ICARTT COMA data file = df_a)
+    tmp = df_b.iloc[:,1]
+    tmp[tmp<-600] = np.nan
+    df_b.iloc[:,1] = tmp
+    
+    # create common timestamp
+    a_1Hz = df_a.groupby(pd.Grouper(key="time", freq=avg_time)).mean()
+    b_1Hz = df_b.groupby(pd.Grouper(key="time", freq=avg_time)).mean()
+    sync_data = pd.merge(a_1Hz, b_1Hz, how='inner', on=['time'])
+    sync_data = sync_data.dropna()
+
+    # linear regression
+    col_names = sync_data.columns
+    model = sm.OLS(sync_data[col_names[1]],sm.add_constant(sync_data[col_names[0]]))
+    results = model.fit()
+    return sync_data, results
 
 # %% load WB57 data
 def read_IWG1(filename_IWG1,cur_day):
@@ -126,8 +162,7 @@ def read_IWG1(filename_IWG1,cur_day):
     # IWG1['True Airspeed']
     # IWG1['Indicated Airspeed']
     
-    
-# %% time-sync the data with COMA
+# %% time-sync COMA and MMS data
 def sync_data(MMS,COMA,inlet_ix):
     """
    Time sync the data
@@ -137,19 +172,19 @@ def sync_data(MMS,COMA,inlet_ix):
     
     # COMA    
     COMA_subset = pd.DataFrame({'time': COMA['time'],
-                                'CO_dry': COMA["      [CO]d_ppm"][inlet_ix]*1000, 
-                                'N2O_dry': COMA["     [N2O]d_ppm"][inlet_ix]*1000,
-                                'AmbT_C': COMA["         AmbT_C"],
-                                'GasT_C': COMA["         GasT_C"],
-                                'GasP_torr': COMA["      GasP_torr"],
-                                'Peak0': COMA["          Peak0"],
-                                '12COa_0000_CT': COMA["  12COa_0000_CT"],
-                                'AIN5': COMA["           AIN5"],
-                                'AIN6': COMA["           AIN6"],
-                                'AIN7': COMA["           AIN7"],
-                                'Gnd': COMA["            Gnd"],
-                                'LTC0_v': COMA["         LTC0_v"],
-                                'CHISQ0': COMA["         CHISQ0"]})
+                                'CO_dry': COMA["[CO]d_ppm"][inlet_ix]*1000, 
+                                'N2O_dry': COMA["[N2O]d_ppm"][inlet_ix]*1000,
+                                'AmbT_C': COMA["AmbT_C"],
+                                'GasT_C': COMA["GasT_C"],
+                                'GasP_torr': COMA["GasP_torr"],
+                                'Peak0': COMA["Peak0"],
+                                '12COa_0000_CT': COMA["12COa_0000_CT"],
+                                'AIN5': COMA["AIN5"],
+                                'AIN6': COMA["AIN6"],
+                                'AIN7': COMA["AIN7"],
+                                'Gnd': COMA["Gnd"],
+                                'LTC0_v': COMA["LTC0_v"],
+                                'CHISQ0': COMA["CHISQ0"]})
     
     COMA_1s_avg = COMA_subset.groupby(pd.Grouper(key="time", freq="1s")).mean()
     
