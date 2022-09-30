@@ -10,99 +10,33 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
 from datetime import datetime, timedelta
-import matplotlib.dates as mdates
-from load_flight_functions import read_MMS
+from load_data_functions import read_MMS_ict
+from load_data_functions import return_filenames
 
 # %% loop to load the data
 COMA = []
 
-for ii in range(3,18):
-    if ii == 3: #WB-RF03: 2022-08-02
-        COMA_filename = './ict/acclip-COMA-CON2O_WB57_20220802_RA.ict'
-        MMS_filename = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220802_RA.ict'
-        cur_day = datetime(2022,8,2) # used by COMA reading below (not really necessary)
-        
-    elif ii == 4: #WB-RF04: 2022-08-04
-        COMA_filename = './ict/acclip-COMA-CON2O_WB57_20220804_RA.ict'
-        MMS_filename = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220804_RA.ict'
-        cur_day = datetime(2022,8,4)
-        
-    elif ii == 5: #WB-RF05: 2022-08-06
-        COMA_filename = './ict/acclip-COMA-CON2O_WB57_20220806_RA.ict'
-        MMS_filename = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220806_RA.ict'
-        cur_day = datetime(2022,8,6)
-        
-    elif ii == 6: #WB-RF06: 2022-08-12
-        COMA_filename = './ict/acclip-COMA-CON2O_WB57_20220812_RA.ict'
-        MMS_filename = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220812_RA.ict'
-        cur_day = datetime(2022,8,12)
-        
-    elif ii == 7: #WB-RF07: 2022-08-13
-        COMA_filename = './ict/acclip-COMA-CON2O_WB57_20220813_RA.ict'
-        MMS_filename = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220813_RA.ict'
-        cur_day = datetime(2022,8,13)
-        
-    elif ii == 8: #WB-RF08: 2022-08-15
-        COMA_filename = []
-        MMS_filename = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220815_RA.ict'
-        cur_day = datetime(2022,8,15)
-        
-    elif ii == 9: #WB-RF09: 2022-08-16
-        COMA_filename = './ict/acclip-COMA-CON2O_WB57_20220816_RA.ict'
-        MMS_filename = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220816_RA.ict'
-        cur_day = datetime(2022,8,16)
-        
-    elif ii == 10: #WB-RF10: 2022-08-19
-        COMA_filename = './ict/acclip-COMA-CON2O_WB57_20220819_RA.ict'
-        MMS_filename = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220819_RA.ict'
-        cur_day = datetime(2022,8,19)
-        
-    elif ii == 11: #WB-RF11: 2022-08-21
-        COMA_filename = './ict/acclip-COMA-CON2O_WB57_20220821_RA.ict'
-        MMS_filename = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220821_RA.ict'
-        cur_day = datetime(2022,8,21)
-        
-    elif ii == 12: #WB-RF12: 2022-08-23
-        COMA_filename = './ict/acclip-COMA-CON2O_WB57_20220823_RA.ict'
-        MMS_filename = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220823_RA.ict'
-        cur_day = datetime(2022,8,23)
-        
-    elif ii == 13: #WB-RF13: 2022-08-25
-        COMA_filename = './ict/acclip-COMA-CON2O_WB57_20220825_RA.ict'
-        MMS_filename = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220825_RA.ict'
-        cur_day = datetime(2022,8,25)
-        
-    elif ii == 14: #WB-RF14: 2022-08-26
-        COMA_filename = './ict/acclip-COMA-CON2O_WB57_20220826_RA.ict'
-        MMS_filename = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220826_RA.ict'
-        cur_day = datetime(2022,8,26)
-        
-    elif ii == 15: #WB-RF15: 2022-08-29
-        COMA_filename = './ict/acclip-COMA-CON2O_WB57_20220829_RA.ict'
-        MMS_filename = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220829_RA.ict'
-        cur_day = datetime(2022,8,29)
-        
-    elif ii == 16: #WR-RF16: 2022-08-31
-        COMA_filename = './ict/acclip-COMA-CON2O_WB57_20220831_RA.ict'
-        MMS_filename = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220831_RA.ict'
-        cur_day = datetime(2022,8,31)
-        
-    elif ii == 17: #WB-RF17: 2022-09-01
-        COMA_filename = './ict/acclip-COMA-CON2O_WB57_20220901_RA.ict'
-        MMS_filename = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220901_RA.ict'
-        cur_day = datetime(2022,9,1)
+for ii in [3,5,10]:  #range(3,18):
+    case_name = "RF" + "{:02d}".format(ii)
 
-    if len(COMA_filename)>0:
+    filenames = return_filenames(case_name)
+    
+    filename_COMA = filenames['COMA_ict']
+    filename_MMS = filenames['MMS']
+
+    cur_day = datetime.strptime(filename_COMA[-15:-7],"%Y%m%d") # get date from end of file name
+
+    if len(filename_COMA)>0:
         if len(COMA) == 0:
-            COMA = pd.read_csv(COMA_filename,header=35)
+            COMA = pd.read_csv(filename_COMA,header=35)
             COMA['time'] = [cur_day+timedelta(seconds=t) for t in COMA['Time_Mid']]
             COMA['flightID'] = [ii for t in COMA['Time_Mid']]
-            MMS = read_MMS(MMS_filename)
+            MMS = read_MMS_ict(filename_MMS)
         else:
-            COMA2 = pd.read_csv(COMA_filename,header=35)
+            COMA2 = pd.read_csv(filename_COMA,header=35)
             COMA2['time'] = [cur_day+timedelta(seconds=t) for t in COMA2['Time_Mid']]
             COMA2['flightID'] = [ii for t in COMA2['Time_Mid']]
-            MMS2 = read_MMS(MMS_filename)
+            MMS2 = read_MMS_ict(filename_MMS)
             
             COMA = pd.concat([COMA,COMA2],ignore_index=True)
             MMS = pd.concat([MMS,MMS2],ignore_index=True)

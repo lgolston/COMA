@@ -281,6 +281,7 @@ def return_filenames(case):
     
     elif case == 'RF03': # RF03
         filenames['COMA_raw'] = ['../Data/2022-08-02/n2o-co_2022-08-02_f0000.txt']
+        filenames['COMA_ict'] = './ict/acclip-COMA-CON2O_WB57_20220802_RA.ict'
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220802_RA.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220802_RA.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220802_RA.ict'
@@ -288,6 +289,7 @@ def return_filenames(case):
         
     elif case == 'RF04': # RF04 (first flight with MadgeTech installed)
         filenames['COMA_raw'] = ['../Data/2022-08-04/n2o-co_2022-08-04_f0000.txt']
+        filenames['COMA_ict'] = './ict/acclip-COMA-CON2O_WB57_20220804_RA.ict'
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220804_RA.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220804_RA.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220804_RA.ict'
@@ -296,6 +298,7 @@ def return_filenames(case):
         
     elif case == 'RF05': # RF05
         filenames['COMA_raw'] = ['../Data/2022-08-06/n2o-co_2022-08-06_f0000_no_10s_cal.txt']
+        filenames['COMA_ict'] = './ict/acclip-COMA-CON2O_WB57_20220806_RA.ict'
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220806_RA.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220806_RA.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220806_RA.ict'
@@ -304,6 +307,7 @@ def return_filenames(case):
         
     elif case == 'RF06': # RF06
         filenames['COMA_raw'] = ['../Data/2022-08-12/n2o-co_2022-08-12_f0000.txt']
+        filenames['COMA_ict'] = './ict/acclip-COMA-CON2O_WB57_20220812_RA.ict'
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220812_RA.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220812_RA.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220812_RA.ict'
@@ -312,6 +316,7 @@ def return_filenames(case):
     
     elif case == 'RF07': # RF07
         filenames['COMA_raw'] = ['../Data/2022-08-13/n2o-co_2022-08-13_f0000.txt']
+        filenames['COMA_ict'] = './ict/acclip-COMA-CON2O_WB57_20220813_RA.ict'
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220813_RA.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220813_RA.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220813_RA.ict'
@@ -321,6 +326,7 @@ def return_filenames(case):
     elif case == 'RF08': # RF08
         filenames['COMA_raw'] = ['../Data/2022-08-15/n2o-co_2022-08-15_f0000.txt',
                          '../Data/2022-08-15/n2o-co_2022-08-15_f0001.txt']
+        filenames['COMA_ict'] = './ict/acclip-COMA-CON2O_WB57_20220815_RA.ict'
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220815_RA.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220815_RA.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220815_RA.ict'
@@ -329,6 +335,7 @@ def return_filenames(case):
         
     elif case == 'RF09': # RF09
         filenames['COMA_raw'] = ['../Data/2022-08-16/n2o-co_2022-08-16_f0000.txt']
+        filenames['COMA_ict'] = './ict/acclip-COMA-CON2O_WB57_20220816_RA.ict'
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220816_RA.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220816_RA.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220816_RA.ict'
@@ -337,6 +344,7 @@ def return_filenames(case):
         
     elif case == 'RF10': # RF10 (instrument start before midnight; takeoff on 2022-08-19 UTC)
         filenames['COMA_raw'] = ['../Data/2022-08-18/n2o-co_2022-08-18_f0000.txt']
+        filenames['COMA_ict'] = './ict/acclip-COMA-CON2O_WB57_20220819_RA.ict'
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220819_RA.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220819_RB.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220819_RA.ict'
@@ -345,6 +353,7 @@ def return_filenames(case):
     
     elif case == 'RF11': # RF11
         filenames['COMA_raw'] = ['../Data/2022-08-21/n2o-co_2022-08-21_f0000.txt']
+        filenames['COMA_ict'] = './ict/acclip-COMA-CON2O_WB57_20220821_RA.ict'
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220821_RA.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220821_RB.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220821_RA.ict'
@@ -353,6 +362,7 @@ def return_filenames(case):
         
     elif case == 'RF12': # RF12 [need to fix time offset in MadgeTech file]
         filenames['COMA_raw'] = ['../Data/2022-08-23/n2o-co_2022-08-23_f0000.txt']
+        filenames['COMA_ict'] = './ict/acclip-COMA-CON2O_WB57_20220823_RA.ict'
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220823_RA.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220823_RC.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220823_RA.ict'
@@ -361,6 +371,7 @@ def return_filenames(case):
         
     elif case == 'RF13': # RF13
         filenames['COMA_raw'] = ['../Data/2022-08-24/n2o-co_2022-08-24_f0002.txt'] # six hour offset
+        filenames['COMA_ict'] = './ict/acclip-COMA-CON2O_WB57_20220825_RA.ict'
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220825_RA.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220825_RA.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220825_RA.ict'
@@ -369,6 +380,7 @@ def return_filenames(case):
         
     elif case == 'RF14': # RF14
         filenames['COMA_raw'] = ['../Data/2022-08-26/n2o-co_2022-08-26_f0000.txt']
+        filenames['COMA_ict'] = './ict/acclip-COMA-CON2O_WB57_20220826_RA.ict'
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220826_RA.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220826_RA.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220826_RA.ict'
@@ -377,6 +389,7 @@ def return_filenames(case):
         
     elif case == 'RF15': # RF15
         filenames['COMA_raw'] = ['../Data/2022-08-29/n2o-co_2022-08-29_f0000.txt']
+        filenames['COMA_ict'] = './ict/acclip-COMA-CON2O_WB57_20220829_RA.ict'
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220829_RA.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220829_RA.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220829_RA.ict'
@@ -385,6 +398,7 @@ def return_filenames(case):
     
     elif case == 'RF16': # RF16
         filenames['COMA_raw'] = ['../Data/2022-08-31/n2o-co_2022-08-31_f0000.txt']
+        filenames['COMA_ict'] = './ict/acclip-COMA-CON2O_WB57_20220831_RA.ict'
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220831_RA.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220831_RA.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220831_RA.ict'
@@ -393,6 +407,7 @@ def return_filenames(case):
     
     elif case == 'RF17': # RF17
         filenames['COMA_raw'] = ['../Data/2022-09-01/n2o-co_2022-09-01_f0000.txt']
+        filenames['COMA_ict'] = './ict/acclip-COMA-CON2O_WB57_20220901_RA.ict'
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220901_RA.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220901_RA.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220901_RA.ict'

@@ -106,7 +106,7 @@ for case in [1,2]:
     plt.sca(ax["C"]) # set current axis
     (tau_out, ad, aderr, adn) = allantools.oadev(np.asarray(y_filter),rate=1.0,taus=tau_in)
     plt.loglog(tau_out, ad)
-            
+    
     print(str(tau_out[0]) + ' s deviaton: ' + str(ad[0]))
     print(str(tau_out[19]) + ' s deviaton: ' + str(ad[19]))
 
