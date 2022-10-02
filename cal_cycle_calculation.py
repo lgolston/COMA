@@ -62,7 +62,11 @@ elif case == 'RF09': # RF09
 COMA, inlet_ix = read_COMA(filename_COMA)
 #MMS = read_MMS(filename_MMS)
 
-CO_cal, N2O_cal = calc_cal(COMA,'Matheson')
+ix_low = np.ravel(np.where(COMA["MIU_VALVE"]==2)) # low cal
+ix_high = np.ravel(np.where(COMA["MIU_VALVE"]==3)) # high cal
+
+low_cal = calc_cal(COMA,ix_low,'Matheson')
+high_cal = calc_cal(COMA,ix_high,'Matheson')
 
 # %% plot calibration results
 cmap = plt.get_cmap("tab20")
@@ -73,36 +77,37 @@ plt.rc('ytick', labelsize=6) # ytick labels
 
 fig, ax = plt.subplots(1, 4, figsize=(7,2),dpi=200)
 
-x=list(range(len(CO_cal)))
+x=list(range(len(low_cal)))
 
 norm = matplotlib.colors.Normalize(vmin=0, vmax=30, clip=True)
 mapper = cm.ScalarMappable(norm=norm, cmap=cm.viridis)
 
 # low cal CO
-for ii in range(len(CO_cal)):
-    c = mapper.to_rgba(CO_cal['cell_T'][ii])
-    ax[0].errorbar(x[ii], y=CO_cal['low_mean'][ii], yerr=2 * CO_cal['low_std'][ii],ls='none',fmt='kx',markersize=3,color=c)
+for ii in range(len(low_cal)):
+    c = mapper.to_rgba(low_cal['AmbT_C'][ii])
+    ax[0].errorbar(x[ii], y=low_cal['CO_val'][ii], yerr=2 * low_cal['CO_std'][ii],ls='none',fmt='kx',markersize=3,color=c)
 
 ax[0].set_xlabel('Cycle #')
 ax[0].set_ylabel('CO, ppb')
-#ax[0].set_ylim([46,52])
 
 # high cal CO
-ax[1].errorbar(x=x, y=CO_cal['high_mean'], yerr=2 * CO_cal['high_std'],ls='none',fmt='kx',markersize=3)
+ax[1].errorbar(x=x, y=high_cal['CO_val'], yerr=2 * high_cal['CO_std'],ls='none',fmt='kx',markersize=3)
 ax[1].set_xlabel('Cycle #')
 ax[1].set_ylabel('CO, ppb')
-#ax[1].set_ylim([46,52])
 
 # low cal N2O
-ax[2].errorbar(x=x, y=N2O_cal['low_mean'], yerr=2 * N2O_cal['low_std'],ls='none',fmt='kx',markersize=3)
+ax[2].errorbar(x=x, y=low_cal['N2O_val'], yerr=2 * low_cal['N2O_std'],ls='none',fmt='kx',markersize=3)
 ax[2].set_xlabel('Cycle #')
 ax[2].set_ylabel('N2O, ppb')
-#ax[2].set_ylim([46,52])
 
 # high cal N2O
-ax[3].errorbar(x=x, y=N2O_cal['high_mean'], yerr=2 * N2O_cal['high_std'],ls='none',fmt='kx',markersize=3)
+ax[3].errorbar(x=x, y=high_cal['N2O_val'], yerr=2 * high_cal['N2O_std'],ls='none',fmt='kx',markersize=3)
 ax[3].set_xlabel('Cycle #')
 ax[3].set_ylabel('N2O, ppb')
+
+#ax[0].set_ylim([46,52])
+#ax[1].set_ylim([46,52])
+#ax[2].set_ylim([46,52])
 #ax[3].set_ylim([46,52])
 
 ax[0].grid()
@@ -114,6 +119,7 @@ plt.tight_layout()
 #plt.savefig('fig1.png',dpi=300)
 
 # %% output results
+"""
 print("CO:")
 for ii in range(len(CO_cal)):
     print(pd.to_datetime(CO_cal['time'][ii]).strftime("%m/%d/%Y %H:%M:%S") + 
@@ -121,15 +127,16 @@ for ii in range(len(CO_cal)):
           '  ' + "{:.3f}".format(CO_cal.intercept[ii]) + 
           '  ' + "{:.3f}".format(CO_cal.low_mean[ii]) + 
           '  ' + "{:.3f}".format(CO_cal.high_mean[ii]))
+"""
 
-print()
-print("N2O:")
-for ii in range(len(CO_cal)):
-    print(pd.to_datetime(CO_cal['time'][ii]).strftime("%m/%d/%Y %H:%M:%S") + 
-          ' ' + "{:.3f}".format(N2O_cal.slope[ii]) + 
-          ' ' + "{:.3f}".format(N2O_cal.intercept[ii]) + 
-          '  ' + "{:.3f}".format(N2O_cal.low_mean[ii]) + 
-          '  ' + "{:.3f}".format(N2O_cal.high_mean[ii]))
+#print()
+#print("N2O:")
+#for ii in range(len(CO_cal)):
+#    print(pd.to_datetime(CO_cal['time'][ii]).strftime("%m/%d/%Y %H:%M:%S") + 
+#          ' ' + "{:.3f}".format(N2O_cal.slope[ii]) + 
+#          ' ' + "{:.3f}".format(N2O_cal.intercept[ii]) + 
+#          '  ' + "{:.3f}".format(N2O_cal.low_mean[ii]) + 
+#          '  ' + "{:.3f}".format(N2O_cal.high_mean[ii]))
 
 # print averages
 """

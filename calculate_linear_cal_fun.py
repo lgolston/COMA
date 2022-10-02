@@ -15,23 +15,7 @@ def calc_mean(gas_vals):
     std_val = rolling_std.iloc[-1]  # last value
     return mean_val, std_val
 
-def calc_cal(COMA,cylinder):
-    # set up variables
-    low_CO_mean = np.zeros(20)
-    low_CO_std = np.zeros(20)
-    high_CO_mean = np.zeros(20)
-    high_CO_std = np.zeros(20)
-    low_N2O_mean = np.zeros(20)
-    low_N2O_std = np.zeros(20)
-    high_N2O_mean = np.zeros(20)
-    high_N2O_std = np.zeros(20)
-    CO_time = np.zeros(20)
-    cell_T = np.zeros(20) # for low CO cal (could have separate for low and high cal)
-    
-    #Peak0 = np.zeros(20)
-    #'AIN5'
-    #'Peak0'
-    
+def calc_cal(COMA,ix,cylinder):    
     # handle different gas tanks
     if cylinder == 'NOAA':
         #NOAA low (CC745344)
@@ -51,52 +35,42 @@ def calc_cal(COMA,cylinder):
     else:
         print('Cylinder name not recognized.')
     
-    # process COMA data    
-    #ix_8 = np.ravel(np.where( (COMA["MIU_VALVE"]==8) & (COMA["      GasP_torr"]>52.45) & (COMA["      GasP_torr"]<52.65)) ) # Inlet
-    ix_high = np.ravel(np.where(COMA["MIU_VALVE"]==3)) # high cal
-    ix_low = np.ravel(np.where(COMA["MIU_VALVE"]==2)) # low cal
+    # make DataFrame
+    df_cal = pd.DataFrame({'time': COMA['time'][ix],
+                           '[CO]d_ppb': COMA["[CO]d_ppm"][ix]*1000,
+                           '[N2O]d_ppb': COMA["[N2O]d_ppm"][ix]*1000,
+                           '[H2O]_ppm': COMA['[H2O]_ppm'][ix],
+                           'AmbT_C': COMA['AmbT_C'][ix],
+                           'Peak0': COMA['Peak0'][ix],
+                           'AIN5': COMA['AIN5'][ix],
+                           'AIN6': COMA['AIN6'][ix]
+                           })
+    
+    # group data
+    df_cal['groups'] = (df_cal.index.to_series().diff()>5).cumsum()
+    df_grouped = df_cal.groupby('groups')
+    
+    # set up output variables
+    n = len(df_grouped)
+    feature_list = ['time','CO_val','CO_std','N2O_val','N2O_std',
+                    'H2O','AmbT_C','Peak0','AIN5','AIN6']
+    zero_data = np.zeros( shape = (len(df_grouped), len(feature_list)) )
+    res = pd.DataFrame(zero_data, columns=feature_list)
+    
+    # look through cal cycles
+    for ct, data in df_grouped:
+        CO_series = pd.Series(data['[CO]d_ppb'].values)
+        N2O_series = pd.Series(data['[N2O]d_ppb'].values)
+        
+        res['time'][ct] = data['time'].values[0]
+        res['CO_val'][ct], res['CO_std'][ct] = calc_mean(CO_series)        
+        res['N2O_val'][ct], res['N2O_std'][ct] = calc_mean(N2O_series)
+        res['AmbT_C'][ct] = np.mean(data['AmbT_C'].values)
 
-    CO_raw = COMA["[CO]d_ppm"]
-    N2O_raw = COMA["[N2O]d_ppm"]
-    
-    # make low cal DataFrame
-    df_lowcal = pd.DataFrame({'time': COMA['time'][ix_low],
-                              'CO_dry': CO_raw[ix_low]*1000,
-                              'N2O_dry': N2O_raw[ix_low]*1000,
-                              'cell_T': COMA['AmbT_C'][ix_low]})
-    df_lowcal['groups'] = (df_lowcal.index.to_series().diff()>5).cumsum()
-    
-    # make high cal DataFrame
-    df_highcal = pd.DataFrame({'time': COMA['time'][ix_high],
-                               'CO_dry': CO_raw[ix_high]*1000,
-                               'N2O_dry': N2O_raw[ix_high]*1000,
-                               'cell_T': COMA['AmbT_C'][ix_high]})
-    df_highcal['groups'] = (df_highcal.index.to_series().diff()>5).cumsum()
-    
-    # TODO
-    # 1. avoid creating new dataframes above
-    # 2. create empty arrays based on length of low_cals/high_cals
-    
-    low_cals = df_lowcal.groupby('groups')
-    high_cals = df_highcal.groupby('groups')
-    
-    for ct, data in low_cals:
-        CO_series = pd.Series(data['CO_dry'].values)
-        low_CO_mean[ct], low_CO_std[ct] = calc_mean(CO_series)
-        CO_time[ct] = data['time'].values[0]
-        
-        N2O_series = pd.Series(data['N2O_dry'].values)
-        low_N2O_mean[ct], low_N2O_std[ct] = calc_mean(N2O_series)
-        
-        cell_T[ct] = np.mean(data['cell_T'].values)
+    return res
 
-    for ct, data in high_cals:
-        CO_series = pd.Series(data['CO_dry'].values)
-        high_CO_mean[ct], high_CO_std[ct] = calc_mean(CO_series)
-        
-        N2O_series = pd.Series(data['N2O_dry'].values)
-        high_N2O_mean[ct], high_N2O_std[ct] = calc_mean(N2O_series)
-    
+# %% remove for now: linear regression
+    """
     # number of cycles
     n = sum(low_CO_mean>0)
     rng = range(0,n)
@@ -156,7 +130,7 @@ def calc_cal(COMA,cylinder):
     
         tmp = N2O_raw[starting_index[ii]:starting_index[ii+1]]*1000
         N2O_calibrated[starting_index[ii]:starting_index[ii+1]] = tmp*N2O_slope[ii]+N2O_intercept[ii]
-        
+    
     # calibration outputs
     CO_cal = pd.DataFrame({'low_mean': low_CO_mean[rng],
                            'low_std': low_CO_std[rng],
@@ -177,6 +151,7 @@ def calc_cal(COMA,cylinder):
                             'slope': N2O_slope,
                             'intercept': N2O_intercept})
     return CO_cal, N2O_cal
+    """
 
 # %% test curve fit
 # Exponential fit to determine flush rate and steady state concentration
