@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Main function used by cal_cycle_calculation
+Main function used by Fig9_cal_cycle_calculation
 """
 
 # headers
@@ -51,7 +51,6 @@ def calc_cal(COMA,ix,cylinder):
     df_grouped = df_cal.groupby('groups')
     
     # set up output variables
-    n = len(df_grouped)
     feature_list = ['time','CO_val','CO_std','N2O_val','N2O_std',
                     'H2O','AmbT_C','Peak0','AIN5','AIN6']
     zero_data = np.zeros( shape = (len(df_grouped), len(feature_list)) )
@@ -62,10 +61,15 @@ def calc_cal(COMA,ix,cylinder):
         CO_series = pd.Series(data['[CO]d_ppb'].values)
         N2O_series = pd.Series(data['[N2O]d_ppb'].values)
         
-        res['time'][ct] = data['time'].values[0]
-        res['CO_val'][ct], res['CO_std'][ct] = calc_mean(CO_series)        
-        res['N2O_val'][ct], res['N2O_std'][ct] = calc_mean(N2O_series)
-        res['AmbT_C'][ct] = np.mean(data['AmbT_C'].values)
+        res.loc[ct,'time'] = data['time'].values[0]
+        res.loc[ct,'CO_val'], res.loc[ct,'CO_std'] = calc_mean(CO_series)        
+        res.loc[ct,'N2O_val'], res.loc[ct,'N2O_std'] = calc_mean(N2O_series)
+        res.loc[ct,'AmbT_C'] = np.mean(data['AmbT_C'].values)
+        
+        #res['time'][ct] = data['time'].values[0]
+        #res['CO_val'][ct], res['CO_std'][ct] = calc_mean(CO_series)        
+        #res['N2O_val'][ct], res['N2O_std'][ct] = calc_mean(N2O_series)
+        #res['AmbT_C'][ct] = np.mean(data['AmbT_C'].values)
 
     return res
 

@@ -30,9 +30,9 @@ def read_COMA(filename_COMA):
     # read file, combining multiple if necessary
     for count, fname in enumerate(filename_COMA):
         if count == 0:
-            COMA = pd.read_csv(filename_COMA[0],sep=',',header=1,skipinitialspace=True)
+            COMA = pd.read_csv(filename_COMA[0],sep=',',header=1,skipinitialspace=True,low_memory=False)
         else:
-            COMA2 = pd.read_csv(fname,sep=',',header=1,skipinitialspace=True)
+            COMA2 = pd.read_csv(fname,sep=',',header=1,skipinitialspace=True,low_memory=False)
             COMA = pd.concat([COMA,COMA2],ignore_index=True)
 
     # parse timestamp
