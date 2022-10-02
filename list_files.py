@@ -1,14 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Calculate linear calibration based on the cal cycles
-
-TODO
-- handle tank values from original NOAA tanks; and newer Matheson gas values
-- output raw data from cal_fun and plot
-- have results plot work across multiple days, colored before flight; in-flight; post-flight (or by altitude, gas temperature, etc. to check for dependencies)
-
-Eventually
-- delete cal_cycle_calculation and calculate_linear_cal_fun
+List 2022 files
 
 """
 
