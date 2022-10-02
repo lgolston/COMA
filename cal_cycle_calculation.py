@@ -16,7 +16,7 @@ from datetime import datetime
 import matplotlib
 import matplotlib.dates as mdates
 from calculate_linear_cal_fun import calc_cal
-from load_flight_functions import read_COMA, read_MMS
+from load_data_functions import read_COMA, read_MMS_ict
 from functools import reduce
 import matplotlib.cm as cm
 
@@ -78,6 +78,7 @@ x=list(range(len(CO_cal)))
 norm = matplotlib.colors.Normalize(vmin=0, vmax=30, clip=True)
 mapper = cm.ScalarMappable(norm=norm, cmap=cm.viridis)
 
+# low cal CO
 for ii in range(len(CO_cal)):
     c = mapper.to_rgba(CO_cal['cell_T'][ii])
     ax[0].errorbar(x[ii], y=CO_cal['low_mean'][ii], yerr=2 * CO_cal['low_std'][ii],ls='none',fmt='kx',markersize=3,color=c)
@@ -86,16 +87,19 @@ ax[0].set_xlabel('Cycle #')
 ax[0].set_ylabel('CO, ppb')
 #ax[0].set_ylim([46,52])
 
+# high cal CO
 ax[1].errorbar(x=x, y=CO_cal['high_mean'], yerr=2 * CO_cal['high_std'],ls='none',fmt='kx',markersize=3)
 ax[1].set_xlabel('Cycle #')
 ax[1].set_ylabel('CO, ppb')
 #ax[1].set_ylim([46,52])
 
+# low cal N2O
 ax[2].errorbar(x=x, y=N2O_cal['low_mean'], yerr=2 * N2O_cal['low_std'],ls='none',fmt='kx',markersize=3)
 ax[2].set_xlabel('Cycle #')
 ax[2].set_ylabel('N2O, ppb')
 #ax[2].set_ylim([46,52])
 
+# high cal N2O
 ax[3].errorbar(x=x, y=N2O_cal['high_mean'], yerr=2 * N2O_cal['high_std'],ls='none',fmt='kx',markersize=3)
 ax[3].set_xlabel('Cycle #')
 ax[3].set_ylabel('N2O, ppb')

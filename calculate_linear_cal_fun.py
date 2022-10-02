@@ -29,9 +29,8 @@ def calc_cal(COMA,cylinder):
     cell_T = np.zeros(20) # for low CO cal (could have separate for low and high cal)
     
     #Peak0 = np.zeros(20)
-    #'         AmbT_C'
-    #'           AIN5'
-    #'          Peak0'
+    #'AIN5'
+    #'Peak0'
     
     # handle different gas tanks
     if cylinder == 'NOAA':
@@ -53,53 +52,50 @@ def calc_cal(COMA,cylinder):
         print('Cylinder name not recognized.')
     
     # process COMA data    
-    #ix_8 = np.ravel(np.where( (COMA["      MIU_VALVE"]==8) & (COMA["      GasP_torr"]>52.45) & (COMA["      GasP_torr"]<52.65)) ) # Inlet
-    ix_high = np.ravel(np.where(COMA["      MIU_VALVE"]==3)) # high cal
-    ix_low = np.ravel(np.where(COMA["      MIU_VALVE"]==2)) # low cal
+    #ix_8 = np.ravel(np.where( (COMA["MIU_VALVE"]==8) & (COMA["      GasP_torr"]>52.45) & (COMA["      GasP_torr"]<52.65)) ) # Inlet
+    ix_high = np.ravel(np.where(COMA["MIU_VALVE"]==3)) # high cal
+    ix_low = np.ravel(np.where(COMA["MIU_VALVE"]==2)) # low cal
 
-    CO_raw = COMA["      [CO]d_ppm"]
-    N2O_raw = COMA["     [N2O]d_ppm"]
+    CO_raw = COMA["[CO]d_ppm"]
+    N2O_raw = COMA["[N2O]d_ppm"]
     
     # make low cal DataFrame
     df_lowcal = pd.DataFrame({'time': COMA['time'][ix_low],
                               'CO_dry': CO_raw[ix_low]*1000,
                               'N2O_dry': N2O_raw[ix_low]*1000,
-                              'cell_T': COMA['         AmbT_C'][ix_low]})
+                              'cell_T': COMA['AmbT_C'][ix_low]})
     df_lowcal['groups'] = (df_lowcal.index.to_series().diff()>5).cumsum()
     
     # make high cal DataFrame
     df_highcal = pd.DataFrame({'time': COMA['time'][ix_high],
                                'CO_dry': CO_raw[ix_high]*1000,
                                'N2O_dry': N2O_raw[ix_high]*1000,
-                               'cell_T': COMA['         AmbT_C'][ix_high]})
+                               'cell_T': COMA['AmbT_C'][ix_high]})
     df_highcal['groups'] = (df_highcal.index.to_series().diff()>5).cumsum()
     
-    # loop through data (grouped by individual cal cycle)
-    ii = 0
-    for ct, data in df_lowcal.groupby('groups'):
+    # TODO
+    # 1. avoid creating new dataframes above
+    # 2. create empty arrays based on length of low_cals/high_cals
+    
+    low_cals = df_lowcal.groupby('groups')
+    high_cals = df_highcal.groupby('groups')
+    
+    for ct, data in low_cals:
         CO_series = pd.Series(data['CO_dry'].values)
-        low_CO_mean[ii], low_CO_std[ii] = calc_mean(CO_series)
-        CO_time[ii] = data['time'].values[0]
-        cell_T[ii] = np.mean(data['cell_T'].values)
-        ii += 1
+        low_CO_mean[ct], low_CO_std[ct] = calc_mean(CO_series)
+        CO_time[ct] = data['time'].values[0]
+        
+        N2O_series = pd.Series(data['N2O_dry'].values)
+        low_N2O_mean[ct], low_N2O_std[ct] = calc_mean(N2O_series)
+        
+        cell_T[ct] = np.mean(data['cell_T'].values)
 
-    ii = 0
-    for ct, data in df_highcal.groupby('groups'):
+    for ct, data in high_cals:
         CO_series = pd.Series(data['CO_dry'].values)
-        high_CO_mean[ii], high_CO_std[ii] = calc_mean(CO_series)
-        ii += 1
-    
-    ii = 0
-    for ct, data in df_lowcal.groupby('groups'):
+        high_CO_mean[ct], high_CO_std[ct] = calc_mean(CO_series)
+        
         N2O_series = pd.Series(data['N2O_dry'].values)
-        low_N2O_mean[ii], low_N2O_std[ii] = calc_mean(N2O_series)
-        ii += 1
-    
-    ii = 0
-    for ct, data in df_highcal.groupby('groups'):
-        N2O_series = pd.Series(data['N2O_dry'].values)
-        high_N2O_mean[ii], high_N2O_std[ii] = calc_mean(N2O_series)
-        ii += 1
+        high_N2O_mean[ct], high_N2O_std[ct] = calc_mean(N2O_series)
     
     # number of cycles
     n = sum(low_CO_mean>0)

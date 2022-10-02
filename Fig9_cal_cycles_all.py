@@ -17,27 +17,28 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
-import matplotlib
-import matplotlib.dates as mdates
-from load_flight_functions import read_COMA, read_MMS
-from functools import reduce
-import matplotlib.cm as cm
+from load_data_functions import read_COMA, read_MMS_ict
+import os
+import re
 
-# EDIT THESE
+# %% read all COMA data
+# walk through directory
+root = "G:/My Drive/3_COMA/Data/"
 
+for r, d, f in os.walk(root):
+    for file in f:
+        #m = re.search("f(.*).txt$", file)
+        m = re.search("2022(.*)f.{4}.txt$", file)
+        
+        # read data
+        if bool(m):
+            filename_COMA = os.path.join(r, file)
+            print(filename_COMA)
+        
+            #COMA, inlet_ix = read_COMA(filename_COMA)
 
-# %% data
-# read COMA and MMS data
-#COMA, inlet_ix = read_COMA(filename_COMA)
+# %% read all MMS data    
 #MMS = read_MMS(filename_MMS)
 
-import sys, os
-
-root = "G:/My Drive/3_COMA/COMA/"
-path = os.path.join(root, "../Data")
-
-#plt.plot(COMA["      GasP_torr"])
-
-for r, d, f in os.walk(path):
-    for file in f:
-        print(os.path.join(root, file))
+# %% process
+# sync the data (outer sync)
