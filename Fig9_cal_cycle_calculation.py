@@ -100,17 +100,31 @@ low_cal = calc_cal(COMA,ix_low)
 high_cal = calc_cal(COMA,ix_high)
 
 # %% handle filtering data
-low_cal['valid']=True
+# [not complete]
 
-# 2022-07-21_16:27:14
-# 2022-07-21_17:12:15
-# 2022-07-21_17:57:14
-# 2022-08-02_04:41:13
-# 2022-08-02_05:26:13
-# 2022-08-02_06:11:13
+# low cal
+low_cal['valid'] = True
+low_cal['ID'] = [pd.to_datetime(tmp).strftime("%Y-%m-%d_%H:%M:%S") for tmp in low_cal['time']]
 
-# plus more...
-# also need to handle high_cal
+low_cal.loc[low_cal['ID'].str.match("2022-07-21_16:27:14"),'valid']=False
+low_cal.loc[low_cal['ID'].str.match("2022-07-21_17:12:15"),'valid']=False
+low_cal.loc[low_cal['ID'].str.match("2022-07-21_17:57:14"),'valid']=False
+low_cal.loc[low_cal['ID'].str.match("2022-08-02_04:41:13"),'valid']=False
+low_cal.loc[low_cal['ID'].str.match("2022-08-02_05:26:13"),'valid']=False
+low_cal.loc[low_cal['ID'].str.match("2022-08-02_06:11:13"),'valid']=False
+low_cal.loc[low_cal['GasP_torr']<51,'valid'] = False
+
+# high cal
+high_cal['valid'] = True
+high_cal['ID'] = [pd.to_datetime(tmp).strftime("%Y-%m-%d_%H:%M:%S") for tmp in high_cal['time']]
+
+high_cal.loc[high_cal['ID'].str.match("2022-07-21_16:27:55"),'valid']=False
+high_cal.loc[high_cal['ID'].str.match("2022-07-21_17:12:55"),'valid']=False
+high_cal.loc[high_cal['ID'].str.match("2022-07-21_17:57:55"),'valid']=False
+high_cal.loc[high_cal['ID'].str.match("2022-08-02_04:41:53"),'valid']=False
+high_cal.loc[high_cal['ID'].str.match("2022-08-02_05:26:53"),'valid']=False
+high_cal.loc[high_cal['ID'].str.match("2022-08-02_06:11:53"),'valid']=False
+high_cal.loc[high_cal['GasP_torr']<51,'valid'] = False
 
 # %% load MMS data
 #MMS = read_MMS(filename_MMS)
@@ -118,16 +132,16 @@ low_cal['valid']=True
 # %% plot time series
 fig2, ax2 = plt.subplots(1, 1, figsize=(8,5))
 
-ax2.plot(COMA['[CO]d_ppm'][ix_low].values*1000,'.',markersize=1)
-ax2.set_ylim([40,65])
+ax2.plot(COMA['[CO]d_ppm'][ix_high].values*1000,'.',markersize=1)
 ax2_twin = ax2.twinx()
-#ax2_twin.plot(COMA['GasP_torr'][ix_low].values,'k.')
+ax2_twin.plot(COMA['GasP_torr'][ix_high].values,'k.')
 
-ax2.axhline(51.30,linestyle = 'dashed')
+ax2.set_ylim([140,180])
+#ax2.axhline(51.30,linestyle = 'dashed')
 ax2.set_xlabel('Seconds')
 ax2.set_ylabel('CO, ppbv')
 
-for index, row in low_cal.iterrows():
+for index, row in high_cal.iterrows():
     ax2.plot([row['start_ct'],row['end_ct']],[row['CO_val'],row['CO_val']],'b--')
 
 # %% plot calibration results
@@ -183,11 +197,13 @@ plt.tight_layout()
 
 # %% output results
 print("CO:")
-for ii in range(len(low_cal)):
-    print(str(ii) +
-          '  ' + pd.to_datetime(low_cal['time'][ii]).strftime("%Y-%m-%d_%H:%M:%S") + 
-          '  ' + "{:.3f}".format(low_cal['CO_val'][ii]) + 
-          '  ' + "{:.3f}".format(low_cal['N2O_val'][ii]))
+dat = high_cal
+
+for ii in range(len(dat)):
+    print("{:2d}".format(ii) +
+          '  ' + dat['ID'][ii] + 
+          '  ' + "{:6.2f}".format(dat['CO_val'][ii]) + 
+          '  ' + "{:6.2f}".format(dat['N2O_val'][ii]))
 
 #print()
 #print("N2O:")
@@ -201,11 +217,57 @@ for ii in range(len(low_cal)):
 # print averages
 
 # %% plot relationships
-fig3, ax3 = plt.subplots(1, 1, figsize=(7,4))
-#plt.plot(low_cal['GasP_torr'],low_cal['CO_val'],'.')
-#plt.plot(low_cal['AIN5'],low_cal['CO_val'],'.')
-#plt.plot(low_cal['AIN6'],low_cal['CO_val'],'.')
-#plt.plot(low_cal['AmbT_C'],low_cal['CO_val'],'.')
-#plt.plot(low_cal['Peak0'],low_cal['CO_val'],'.')
-#ax3.plot(low_cal['H2O'],low_cal['CO_val'],'.')
-ax3.plot(low_cal['SpectraID'],low_cal['CO_val'],'.') #proxy for time COMA on
+ix_valid = low_cal['valid']
+
+x = low_cal
+y = low_cal['N2O_val']
+
+fig3, ax3 = plt.subplots(3, 3, figsize=(8,5))
+ax3[0,0].plot(x['GasP_torr'][ix_valid],y[ix_valid],'.')
+ax3[0,1].plot(x['AIN5'][ix_valid],     y[ix_valid],'.')
+ax3[0,2].plot(x['AIN6'][ix_valid],     y[ix_valid],'.')
+ax3[1,0].plot(x['AmbT_C'][ix_valid],   y[ix_valid],'.')
+ax3[1,1].plot(x['Peak0'][ix_valid],    y[ix_valid],'.')
+ax3[1,2].plot(x['H2O'][ix_valid],      y[ix_valid],'.')
+ax3[2,0].plot(x['SpectraID'][ix_valid],y[ix_valid],'.') # proxy for time COMA on
+
+fig3.tight_layout()
+
+# TODO:
+# add MMS
+# add CO center
+# add labels
+# add other versions (high CO, low and high N2O)
+
+# %% plot valid
+fig4, ax4 = plt.subplots(4, 1, figsize=(6,5),sharex=True)
+
+# low cal
+ct = 0
+for ii in range(len(low_cal)):
+    if low_cal['valid'][ii]==True:
+        ax4[0].plot(ct,low_cal['CO_val'][ii],'kx')
+        ax4[1].plot(ct,low_cal['N2O_val'][ii]+7,'kx')
+        ct += 1
+ax4[0].axhline(51.30,linestyle = 'dashed')
+ax4[1].axhline(265.90,linestyle = 'dashed')
+
+# high cal
+ct = 0
+for ii in range(len(high_cal)):
+    if high_cal['valid'][ii]==True:
+        ax4[2].plot(ct,high_cal['CO_val'][ii],'kx')
+        ax4[3].plot(ct,high_cal['N2O_val'][ii]+7,'kx')
+        ct += 1
+
+ax4[2].axhline(163.11,linestyle = 'dashed')
+ax4[3].axhline(348.05,linestyle = 'dashed')
+
+# format plot
+ax4[0].set_ylabel('Low CO, ppb')
+ax4[1].set_ylabel('Low N2O, ppb')
+ax4[2].set_ylabel('High CO, ppb')
+ax4[3].set_ylabel('High N2O, ppb')
+ax4[3].set_xlabel('Cycle #')
+fig4.tight_layout()
+#fig4.savefig('fig4.png',dpi=300)
