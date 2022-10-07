@@ -414,19 +414,23 @@ def return_filenames(case):
         filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220901_RA.ict'
         filenames['MadgeTech'] = '../Data/2022-09-01/9.01.2022 flight Madgetech.xlsx'
     
-    elif case == 'Transit6':
+    elif case == 'Transit6': # Osan to Misawa
+        filenames['COMA_raw'] = ['../Data/2022-09-09/n2o-co_2022-09-09_f0000.txt']
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220909_RA.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220909_RA.ict'
         
-    elif case == 'Transit7':
+    elif case == 'Transit7': # Misawa to Adak
+        filenames['COMA_raw'] = ['../Data/2022-09-12/n2o-co_2022-09-12_f0000.txt']
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220912_RA.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220912_RA.ict'
     
-    elif case == 'Transit8':
+    elif case == 'Transit8': # Adak to Seattle
+        filenames['COMA_raw'] = ['../Data/2022-09-13/n2o-co_2022-09-13_f0000.txt']
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220913_RA.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220913_RA.ict'
         
-    elif case == 'Transit9':
+    elif case == 'Transit9': # Seattle to Houston
+        filenames['COMA_raw'] = ['../Data/2022-09-14/n2o-co_2022-09-14_f0000.txt']
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220914_RA.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220914_RA.ict'
         

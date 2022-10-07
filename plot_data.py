@@ -18,7 +18,7 @@ from load_data_functions import read_MMS_ict
 from load_data_functions import return_filenames
 
 # EDIT THESE
-case = 'RF11'
+case = 'Transit9'
 focus = 'flight_CO' # lab, flight_CO, flight_N2O
 
 # %% data
@@ -231,11 +231,11 @@ if focus != 'lab':
     
     # %% lat/lon map (colored by time)
     fig4 = plt.figure(4)
-    if case in [11,12]: # Transit 3-4
+    if case in ['Transit3','Transit4','Transit7','Transit8']: # Transit 3-4
         projection = ccrs.Mercator(central_longitude=180)
     else:  # Transit 1-2 and 5 (and default)
         projection = ccrs.Mercator() 
-            
+    
     ax4 = plt.axes(projection = projection)
     ax4.add_feature(cf.COASTLINE)
     ax4.add_feature(cf.BORDERS)
@@ -253,19 +253,26 @@ if focus != 'lab':
     #cb1.ax.tick_params(labelsize=10)
     
     # handle transit flights
-    if case == '2022-07-21-A':
-        ax4.set_extent([-125, -90, 23, 53], crs=plate) # Transit 1
-    elif case == '2022-07-21-B':
-        ax4.set_extent([-155, -115, 40, 65], crs=plate) # Transit 2
-    elif case == '2022-07-24':
-        ax4.set_extent([170, 220, 40, 65], crs=plate) # Transit 3 (trick for international date line)
-    elif case == '2022-07-25':
-        ax4.set_extent([130, 190, 30, 65], crs=plate) # Transit 4 (trick for international date line)
-    elif case == '2022-07-27':
-        ax4.set_extent([122, 144, 30, 45], crs=plate) # Transit 5
-    elif case == '2022-08-02':
+    if case == 'Transit1':
+        ax4.set_extent([-125, -90, 23, 53], crs=plate) # Houston to Seattle
+    elif case == 'Transit2':
+        ax4.set_extent([-155, -115, 40, 65], crs=plate) # Seattle to Anchorage
+    elif case == 'Transit3':
+        ax4.set_extent([170, 220, 40, 65], crs=plate) # Anchorage to Adak (trick for international date line)
+    elif case == 'Transit4':
+        ax4.set_extent([130, 190, 30, 65], crs=plate) # Adak to Misawa (trick for international date line)
+    elif case == 'Transit5':
+        ax4.set_extent([122, 144, 30, 45], crs=plate) # Misawa to Osan
+    elif case == 'RF03':
         ax4.set_extent([110, 145, 15, 44], crs=plate) # RF03 (first flight Osan)
-     
+    elif case == 'Transit6':
+        ax4.set_extent([122, 144, 30, 45], crs=plate) # Osan to Misawa
+    elif case == 'Transit7':
+        ax4.set_extent([130, 190, 30, 65], crs=plate) # Misawa to Adak
+    elif case == 'Transit8':
+        ax4.set_extent([170, 245, 40, 65], crs=plate) # Adak to Seattle
+    elif case == 'Transit9':
+        ax4.set_extent([-125, -90, 23, 53], crs=plate) # Seattle to Houston
     fig4.tight_layout()
     
     # %% vertical profile

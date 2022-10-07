@@ -15,11 +15,10 @@ plt.rcParams['xtick.labelsize'] = 7
 plt.rcParams['ytick.labelsize'] = 7
 
 # read chamber temperature file (2022-05-19)
-CHAMBER = pd.read_csv('../Data/2022-05-19/COMA_2022_05_19',skiprows = 10,sep='\t',header=None)
-CHAMBER.columns = ['PRESSURE','CHAMBER','CUR S REST','CPU','LASER CUR T','PWR SPLY','LASER BAKING','MID-RIB','EXT SIDE','SECONDS','DATETIME']	
-CHAMBER_TIME = [datetime.strptime(tstamp,"%H:%M:%S %d %b %Y") for tstamp in CHAMBER['DATETIME']]
+#CHAMBER = pd.read_csv('../Data/2022-05-19/COMA_2022_05_19',skiprows = 10,sep='\t',header=None)
+#CHAMBER.columns = ['PRESSURE','CHAMBER','CUR S REST','CPU','LASER CUR T','PWR SPLY','LASER BAKING','MID-RIB','EXT SIDE','SECONDS','DATETIME']	
+#CHAMBER_TIME = [datetime.strptime(tstamp,"%H:%M:%S %d %b %Y") for tstamp in CHAMBER['DATETIME']]
 
-"""
 # read chamber temperature file (2022-05-20)
 CHAMBER1 = pd.read_csv('../Data/2022-05-20/COMA_2022_05_20',skiprows = 10,sep='\t',header=None)
 CHAMBER1.columns = ['PRESSURE','CHAMBER','CUR S REST','CPU','LASER CUR T','PWR SPLY','LASER BAKING','MID-RIB','EXT SIDE','SECONDS','DATETIME']	
@@ -31,7 +30,7 @@ CHAMBER2_TIME = [datetime.strptime(tstamp,"%H:%M:%S %d %b %Y") for tstamp in CHA
 
 CHAMBER = pd.concat([CHAMBER1,CHAMBER2])
 CHAMBER_TIME = CHAMBER1_TIME + CHAMBER2_TIME
-"""
+
 
 # %% plot
 fig, ax1 = plt.subplots(figsize=(6.5,3.7))

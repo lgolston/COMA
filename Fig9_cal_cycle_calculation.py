@@ -6,18 +6,19 @@ Show results across multiple days, colored before flight; in-flight; post-flight
 Handles tank values from original NOAA tanks; and newer Matheson gas values
 
 TODO
-1. add all files
-2. check calculation of rest of COMA outputs (like cell pressure)
-3. flag [by ID (YYYY-MM-DD HH:MM:SS)]. use those to exclude incomplete cycles
-4. calculate overall statistics
-5. divide data into NOAA gas and Matheson gas
-6. Add MMS pressure
-7. Add back linear regression calculation
+1. List NOAA files
+2. List Matheson files
+3. Add MMS pressure
+4. Add laser power and CO line center
+5. Add back linear regression calculation
+6. Label or vertical lines for each flight
+7. Add pre-ACCLIP NOAA files
 """
 
 # %% load libraries and data
 import numpy as np
 import pandas as pd
+import datetime
 import matplotlib.pyplot as plt
 import matplotlib
 import matplotlib.dates as mdates
@@ -30,8 +31,8 @@ filenames_2021 = ['../Data/2021-08-06/n2o-co_2021-08-06_f0002.txt', # FCF
                   '../Data/2021-08-16/n2o-co_2021-08-16_f0002.txt', # Test Flight 2
                   '../Data/2021-08-17/n2o-co_2021-08-17_f0002.txt'] # Test Flight 3
 
+filenames_testing = ['../Data/2022-05-20/n2o-co_2022-05-20_f0000_cut_timechange.txt'] # EEL Day 2
 #'../Data/2022-04-22/n2o-co_2022-04-22_f0000.txt', # lab run cylinders
-#'../Data/2022-05-20/n2o-co_2022-05-20_f0000_cut_timechange.txt', # EEL Day 2
 
 filenames_2022a = ['../Data/2022-07-18/n2o-co_2022-07-18_f0002.txt',
                    '../Data/2022-07-18/n2o-co_2022-07-18_f0003.txt',
@@ -151,7 +152,7 @@ plt.rc('axes', labelsize=8) # xaxis and yaxis labels
 plt.rc('xtick', labelsize=8) # xtick labels
 plt.rc('ytick', labelsize=8) # ytick labels
 
-fig, ax = plt.subplots(1, 4, figsize=(10,3))
+fig, ax = plt.subplots(4, 1, figsize=(6,6))
 
 x_low=list(range(len(low_cal)))
 x_high=list(range(len(high_cal)))
@@ -192,6 +193,12 @@ ax[1].grid()
 ax[2].grid()
 ax[3].grid()
 
+# label ticks
+ax[3].set_xticks(range(0,len(low_cal)))
+ax[3].tick_params(axis='x', labelrotation = 90)
+xlabels = [pd.to_datetime(t).strftime('%m.%d %H:%M') for t in low_cal['time']]
+ax[3].set_xticklabels(xlabels)
+
 plt.tight_layout()
 #plt.savefig('fig1.png',dpi=300)
 
@@ -231,13 +238,15 @@ ax3[1,1].plot(x['Peak0'][ix_valid],    y[ix_valid],'.')
 ax3[1,2].plot(x['H2O'][ix_valid],      y[ix_valid],'.')
 ax3[2,0].plot(x['SpectraID'][ix_valid],y[ix_valid],'.') # proxy for time COMA on
 
-fig3.tight_layout()
+ax3[0,0].set_xlabel('GasP_torr')
+ax3[0,1].set_xlabel('AIN5')
+ax3[0,2].set_xlabel('AIN6')
+ax3[1,0].set_xlabel('AmbT_C')
+ax3[1,1].set_xlabel('Peak0')
+ax3[1,2].set_xlabel('H2O')
+ax3[2,0].set_xlabel('SpectraID')
 
-# TODO:
-# add MMS
-# add CO center
-# add labels
-# add other versions (high CO, low and high N2O)
+fig3.tight_layout()
 
 # %% plot valid
 fig4, ax4 = plt.subplots(4, 1, figsize=(6,5),sharex=True)
