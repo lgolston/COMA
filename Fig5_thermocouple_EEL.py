@@ -13,6 +13,7 @@ plt.rcParams['axes.labelsize'] = 8
 plt.rcParams['legend.fontsize'] = 8
 plt.rcParams['xtick.labelsize'] = 7
 plt.rcParams['ytick.labelsize'] = 7
+plt.rcParams.update({'mathtext.default': 'regular' } ) # not italics
 
 # read chamber temperature file (2022-05-19)
 #CHAMBER = pd.read_csv('../Data/2022-05-19/COMA_2022_05_19',skiprows = 10,sep='\t',header=None)
@@ -52,5 +53,3 @@ ax2.set_ylabel('Chamber altitude, km')
 ax1.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 ax1.set_xlabel('Time')
 plt.tight_layout()
-
-#plt.savefig('fig_output.png',dpi=300)
