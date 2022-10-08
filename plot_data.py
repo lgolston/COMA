@@ -21,6 +21,13 @@ from load_data_functions import return_filenames
 case = 'Transit9'
 focus = 'flight_CO' # lab, flight_CO, flight_N2O
 
+# %% plot settings
+plt.rcParams['axes.labelsize'] = 8
+plt.rcParams['legend.fontsize'] = 8
+plt.rcParams['xtick.labelsize'] = 7
+plt.rcParams['ytick.labelsize'] = 7
+plt.rcParams.update({'mathtext.default': 'regular' } ) # not italics
+
 # %% data
 # read COMA data, combining multiple files if needed
 filenames = return_filenames(case)
@@ -41,7 +48,7 @@ ix_1 = np.ravel(np.where(COMA["MIU_VALVE"]==1)) # flush
 plt.rc('axes', labelsize=8) # xaxis and yaxis labels
 plt.rc('xtick', labelsize=8) # xtick labels
 plt.rc('ytick', labelsize=8) # ytick labels
-fig, ax = plt.subplots(3, 4, figsize=(9,3.5),dpi=200,sharex=True)
+fig, ax = plt.subplots(3, 4, figsize=(9,3.5),sharex=True)
 
 # 1. CO
 ax[0,0].plot(COMA['time'][ix_8],COMA["[CO]d_ppm"][ix_8]*1000,'b.',markersize=2)
@@ -125,7 +132,7 @@ if focus != 'lab':
     # each cycle only takes a fixed amount of time
     # therefore robust method is to check for large jumps in time (here > 5s) between occurences
     
-    fig2, ax2 = plt.subplots(1, 2, figsize=(6,3),dpi=200)
+    fig2, ax2 = plt.subplots(1, 2, figsize=(6,3))
     
     df_lowcal = pd.DataFrame({'time': COMA['time'][ix_2],
                               'CO_dry': COMA["[CO]d_ppm"][ix_2]*1000,
@@ -214,7 +221,7 @@ if focus != 'lab':
     sync_data = pd.merge(MMS_sync, COMA_df_sync, how='inner', on=['time'])
 
     # %% altitude vs time scatterplot
-    fig3, ax3 = plt.subplots(1, 1, figsize=(6,3.5),dpi=200)
+    fig3, ax3 = plt.subplots(1, 1, figsize=(6,3.5))
     
     # OPTION 1: color by CO
     sc = ax3.scatter(sync_data.index,sync_data['ALT'],c=sync_data['CO_dry'],vmin=20, vmax=250, s = 15, cmap='rainbow') # color by CO
@@ -276,7 +283,7 @@ if focus != 'lab':
     fig4.tight_layout()
     
     # %% vertical profile
-    fig5, ax5 = plt.subplots(1, figsize=(5,4),dpi=200)
+    fig5, ax5 = plt.subplots(1, figsize=(5,4))
     
     if focus == 'flight_CO':
             sc2 = plt.scatter(sync_data['CO_dry'],sync_data['ALT'],c=sync_data.index,s=8)
