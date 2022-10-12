@@ -15,6 +15,12 @@ from functools import reduce
 from load_flight_functions import read_COMA
 from load_flight_functions import read_MMS
 
+# set plot style
+plt.rc('axes', labelsize=12) # xaxis and yaxis labels
+plt.rc('xtick', labelsize=12) # xtick labels
+plt.rc('ytick', labelsize=12) # ytick labels
+plt.rc('legend', fontsize=12) # ytick labels
+
 # EDIT THESE
 case = 'RF13'
 
@@ -50,11 +56,6 @@ COMA_sync = COMA.groupby(pd.Grouper(key="time", freq='1s')).mean()
 df = [MMS_sync, COMA_sync]
 sync_data = reduce(lambda  left,right: pd.merge(left,right,on=['time'],how='inner'), df).fillna(np.nan)
 
-# set plot style
-plt.rc('axes', labelsize=12) # xaxis and yaxis labels
-plt.rc('xtick', labelsize=12) # xtick labels
-plt.rc('ytick', labelsize=12) # ytick labels
-plt.rc('legend', fontsize=12) # ytick labels
 
 # %%  times series comparison of latitude, longitude, altitude
 # relevant GV variables:
