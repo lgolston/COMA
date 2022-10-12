@@ -46,7 +46,7 @@ if case == 'RF13': # fix clock setting on this day
 MMS = read_MMS_ict(filenames['MMS'])
 
 # %% plot data
-fig1, ax = plt.subplots(1, 1, figsize=(6,3))
+fig1, ax = plt.subplots(1, 1, figsize=(5.5,2.7))
 #ax[0].plot(MT['Date'],MT['Thermocouple 5 (°C)'],'r.') # RF04 (before column given name)
 ax.plot(MT['Date'],MT['InletSolen (°C)'],'r',label='Solenoid') # RF05
 ax.plot(MT['Date'],MT['Ambient Temperature 1 (°C)'],label='Ambient')
@@ -62,7 +62,7 @@ ax_twin = ax.twinx()
 ax_twin.plot(MMS['time'],MMS['ALT']/1000,'k.')
 
 ax.grid('on')
-ax.legend()
+ax.legend(handlelength=1,framealpha=0)
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 ax.set_ylabel('Temperature, °C')
 ax_twin.set_ylabel('Altitude, km')

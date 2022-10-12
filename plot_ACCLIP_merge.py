@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
 # %% select data
-case = 'Transit3'
+case = 'Transit8'
 
 if case == 'Transit1':
     filename_merge = 1 #2022-07-21
@@ -59,7 +59,7 @@ elif case == 'Transit6':
 elif case == 'Transit7':
     1
 elif case == 'Transit8':
-    1
+    filename_merge = '../Data/_Merge_/ACCLIP-mrg01-WB57_merge_20220913_RA.ict'
 elif case == 'Transit9':
     1
 
