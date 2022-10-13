@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Figure
+Plot interesting aspects of WB-57 return transit
 """
 
 # %% header
@@ -19,9 +19,10 @@ from load_data_functions import read_MMS_ict
 plt.rc('axes', labelsize=8) # xaxis and yaxis labels
 plt.rc('xtick', labelsize=8) # xtick labels
 plt.rc('ytick', labelsize=8) # ytick labels
+plt.rcParams.update({'mathtext.default': 'regular' } ) # not italics
 
 # load files
-case = 'Transit7'
+case = 'Transit8'
 
 # load COMA    
 filenames = return_filenames(case)
@@ -51,43 +52,36 @@ UASO3['time'] = [datetime.strptime(tstamp,"%Y-%m-%dT%H:%M:%S.%fZ") for tstamp in
 # %% create figure
 fig, ax = plt.subplots(2, 1, figsize=(6,3.5),sharex=True)
 
-ax[0].plot(COMA['time'][inlet_ix],COMA["[CO]d_ppm"][inlet_ix]*1000,'m',label='COMA',linewidth=1,alpha=0.9)
+ax[0].plot(COMA['time'][inlet_ix],COMA["[CO]d_ppm"][inlet_ix]*1000,'m',label='CO',linewidth=1,alpha=0.9)
 ax[0].set_ylim(0,90)
-ax[0].plot(COMA['time'][inlet_ix],COMA["[N2O]d_ppm"][inlet_ix]*1000 - 270,'k',label='COMA',linewidth=1,alpha=0.9)
+ax[0].plot(COMA['time'][inlet_ix],COMA["[N2O]d_ppm"][inlet_ix]*1000 - 270,'k',label='N2O',linewidth=1,alpha=0.9)
 ax[0].grid('on')
+ax[0].set_ylabel(r'$N_2O - 270, ppb$',color='k')
+ax[0].text(-0.13,0.4,'CO, ppb',transform=ax[0].transAxes,rotation='vertical',fontsize=8,color='m')
 
 ax0_twin = ax[0].twinx()
-ax0_twin.plot(UASO3['time'],UASO3['Ozone Mixing Ratio'],'b',linewidth=1,alpha=0.9)
+ax0_twin.plot(UASO3['time'],UASO3['Ozone Mixing Ratio'],'b',linewidth=1,alpha=0.9,label='O3')
 ax0_twin.set_ylim(0,1200)
+ax0_twin.set_ylabel('Ozone, ppb',color='b')
 
-#ax[1].plot(UASO3['time'],UASO3['Ozone Mixing Ratio'])
-#ax[1].set_ylim(0,800)
-
+fig.legend(ncol=3,loc='upper center')
 ax[1].plot(MMS['time'],MMS['P'],'k')
 ax[1].plot(GEOS['time'],GEOS[' TROPPB_GEOS'],'k:')
 ax[1].set_ylim(0,400)
 ax[1].xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 
-ax[0].set_position([0.10, 0.40, 0.80, 0.55]) # left, bottom, width, height
-ax[1].set_position([0.10, 0.10, 0.80, 0.20])
+ax[0].set_position([0.12, 0.40, 0.78, 0.55]) # left, bottom, width, height
+ax[1].set_position([0.12, 0.10, 0.78, 0.20])
+ax[1].set_ylabel('Pressure, hPa')
 
-#ax[0].plot(GEOS['time'],GEOS[' CO_GEOS']*1E9)
-#ax0_twin.set_ylim(10,50)
-
-#ax[1].plot(MMS['time'],MMS['POT'])
-#ax[1].plot(GEOS['time'],GEOS[' POTT_GEOS'])
-#ax[1].set_ylim(200,500)
-
-#ax[1].plot(MMS['time'],MMS['P'])
-#ax[1].plot(GEOS['time'],GEOS[' TROPPB_GEOS'])
-#ax[1].set_ylim(0,600)
-
-#ax[1].plot(GEOS['time'],GEOS[' EPV_GEOS'])
-#ax[1].set_ylim(0,2E-5)
-
-#ax_twin.plot(MMS['time'],MMS['T'])
+#(GEOS['time'],GEOS[' CO_GEOS']*1E9)
+#(MMS['time'],MMS['POT'])
+#(GEOS['time'],GEOS[' POTT_GEOS'])
+#(MMS['time'],MMS['P'])
+#(GEOS['time'],GEOS[' EPV_GEOS'])
+#(MMS['time'],MMS['T'])
 #MMS['ALT']
-
-
 #CO_GEOS
 #QV_GEOS
+
+#fig.savefig('fig1.png',dpi=300)
