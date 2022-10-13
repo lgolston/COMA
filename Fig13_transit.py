@@ -51,21 +51,22 @@ UASO3['time'] = [datetime.strptime(tstamp,"%Y-%m-%dT%H:%M:%S.%fZ") for tstamp in
 # %% create figure
 fig, ax = plt.subplots(2, 1, figsize=(6,3.5),sharex=True)
 
-ax[0].plot(COMA['time'][inlet_ix],COMA["[CO]d_ppm"][inlet_ix]*1000,'m',label='COMA',markersize=1,alpha=0.9)
-ax[0].set_ylim(0,60)
-ax[0].plot(COMA['time'][inlet_ix],COMA["[N2O]d_ppm"][inlet_ix]*1000 - 270,'k',label='COMA',markersize=1,alpha=0.9)
+ax[0].plot(COMA['time'][inlet_ix],COMA["[CO]d_ppm"][inlet_ix]*1000,'m',label='COMA',linewidth=1,alpha=0.9)
+ax[0].set_ylim(0,90)
+ax[0].plot(COMA['time'][inlet_ix],COMA["[N2O]d_ppm"][inlet_ix]*1000 - 270,'k',label='COMA',linewidth=1,alpha=0.9)
+ax[0].grid('on')
 
 ax0_twin = ax[0].twinx()
-ax0_twin.plot(UASO3['time'],UASO3['Ozone Mixing Ratio'],'b',markersize=1,alpha=0.9)
+ax0_twin.plot(UASO3['time'],UASO3['Ozone Mixing Ratio'],'b',linewidth=1,alpha=0.9)
 ax0_twin.set_ylim(0,1200)
 
 #ax[1].plot(UASO3['time'],UASO3['Ozone Mixing Ratio'])
 #ax[1].set_ylim(0,800)
 
-ax1_twin = ax[1].twinx()
-ax1_twin.plot(MMS['time'],MMS['P'],'k')
-ax1_twin.plot(GEOS['time'],GEOS[' TROPPB_GEOS'],'k:')
-ax1_twin.set_ylim(0,400)
+ax[1].plot(MMS['time'],MMS['P'],'k')
+ax[1].plot(GEOS['time'],GEOS[' TROPPB_GEOS'],'k:')
+ax[1].set_ylim(0,400)
+ax[1].xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 
 ax[0].set_position([0.10, 0.40, 0.80, 0.55]) # left, bottom, width, height
 ax[1].set_position([0.10, 0.10, 0.80, 0.20])

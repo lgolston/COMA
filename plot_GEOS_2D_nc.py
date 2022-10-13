@@ -14,16 +14,16 @@ import netCDF4 as nc4
 case = 2
 
 if case == 1: # Test Flight 1
-    filename_GEOS_nc = '../Data/_OtherData_/GEOSFP_CO_ACCLIP-20210810.nc'
-    filename_GEOS_txt = '../Data/_OtherData_/GEOSFP_CO_ACCLIP-20210810.txt'
+    filename_GEOS_nc = '../Data/_Model_/GEOSFP_CO_ACCLIP-20210810.nc'
+    filename_GEOS_txt = '../Data/_Model_/GEOSFP_CO_ACCLIP-20210810.txt'
     cur_day = datetime(2021,8,10)
 elif case == 2: # Test Flight 2
-    filename_GEOS_nc = '../Data/_OtherData_/GEOSFP_CO_ACCLIP-20210816.nc'
-    filename_GEOS_txt = '../Data/_OtherData_/GEOSFP_CO_ACCLIP-20210816.txt'
+    filename_GEOS_nc = '../Data/_Model_/GEOSFP_CO_ACCLIP-20210816.nc'
+    filename_GEOS_txt = '../Data/_Model_/GEOSFP_CO_ACCLIP-20210816.txt'
     cur_day = datetime(2021,8,16)
 elif case == 3: # Test Flight 3
-    filename_GEOS_nc = '../Data/_OtherData_/GEOSFP_CO_ACCLIP-20210817.nc'
-    filename_GEOS_txt = '../Data/_OtherData_/GEOSFP_CO_ACCLIP-20210817.txt'
+    filename_GEOS_nc = '../Data/_Model_/GEOSFP_CO_ACCLIP-20210817.nc'
+    filename_GEOS_txt = '../Data/_Model_/GEOSFP_CO_ACCLIP-20210817.txt'
     cur_day = datetime(2021,8,17)
 
 # %% load data
