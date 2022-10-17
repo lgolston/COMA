@@ -12,14 +12,15 @@ import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import matplotlib.dates as mdates
 from functools import reduce
-from load_flight_functions import read_COMA
-from load_flight_functions import read_MMS
+from load_data_functions import read_COMA
+from load_data_functions import read_MMS_ict
 
 # set plot style
-plt.rc('axes', labelsize=12) # xaxis and yaxis labels
-plt.rc('xtick', labelsize=12) # xtick labels
-plt.rc('ytick', labelsize=12) # ytick labels
-plt.rc('legend', fontsize=12) # ytick labels
+plt.rcParams['axes.labelsize'] = 8
+plt.rcParams['legend.fontsize'] = 8
+plt.rcParams['xtick.labelsize'] = 7
+plt.rcParams['ytick.labelsize'] = 7
+plt.rcParams.update({'mathtext.default': 'regular' } ) # not italics
 
 # EDIT THESE
 case = 'RF13'
@@ -40,7 +41,7 @@ COMA, inlet_ix = read_COMA(filename_COMA)
 if case == 'RF13':  # correct six hour offset
     COMA['time'] = COMA['time'] + timedelta(hours=6)
 
-MMS = read_MMS(filename_MMS_WB)
+MMS = read_MMS_ict(filename_MMS_WB)
 
 def read_GV_ict(filename):
     cur_day = datetime.strptime(filename[-15:-7],"%Y%m%d") # get date from end of file name
@@ -64,7 +65,7 @@ sync_data = reduce(lambda  left,right: pd.merge(left,right,on=['time'],how='inne
 #GGLAT and GGLON; GGALT
 #PALT
 
-fig1, ax = plt.subplots(3, 1, figsize=(10,8),sharex=True)
+fig1, ax = plt.subplots(3, 1, figsize=(6,4),sharex=True)
 
 ax[0].plot(MMS['time'],MMS['LAT'],'.',label='WB57')
 ax[0].plot(GV['time'],GV['LATC'],'.',label='GV')
@@ -106,7 +107,7 @@ fig1.tight_layout()
 #COCAL_ARI
 #COCAL_PIC2401
 
-fig2, ax = plt.subplots(2, 1, figsize=(10,8),sharex=True)
+fig2, ax = plt.subplots(2, 1, figsize=(6,4),sharex=True)
 #ax[0].plot(COMA['time'][inlet_ix],COMA["      [CO]d_ppm"][inlet_ix]*1000,'b.',label='COMA')
 #ax[0].plot(GV['time'],GV["CO_ARI"],'k.',label='GV ARI')
 #ax[0].plot(GV['time'],GV['CO_PIC2401']*1000,'g.',label='GV PIC2401')#,markersize=1
@@ -117,7 +118,7 @@ fig2, ax = plt.subplots(2, 1, figsize=(10,8),sharex=True)
 ix_timeWB = np.ravel(np.where((sync_data.index>datetime(2022,8,25,2,12)) & (sync_data.index<datetime(2022,8,25,2,40))))
 ix_timeGV = np.ravel(np.where((GV['time']>datetime(2022,8,25,2,10)) & (GV['time']<datetime(2022,8,25,2,30))))
 
-ax[0].plot(sync_data["LAT"][ix_timeWB],sync_data["      [CO]d_ppm"][ix_timeWB]*1000,'.',label='WB COMA')
+ax[0].plot(sync_data["LAT"][ix_timeWB],sync_data["[CO]d_ppm"][ix_timeWB]*1000,'.',label='WB COMA')
 ax[0].plot(GV['GGLAT'][ix_timeGV],GV["CO_ARI"][ix_timeGV],'k.',label='GV ARI')
 ax[0].plot(GV['GGLAT'][ix_timeGV],GV['CO_PIC2401'][ix_timeGV]*1000,'g.',label='GV PIC2401')#,markersize=1
 
@@ -127,7 +128,7 @@ ax[0].legend()
 #ax[1].plot(COMA['time'][inlet_ix],COMA["     [N2O]d_ppm"][inlet_ix]*1000,'b.',label='COMA')
 #ax[1].plot(GV['time'],GV["N2O_ARI"],'k.',label='ARI')
 
-ax[1].plot(sync_data["LAT"][ix_timeWB],sync_data["     [N2O]d_ppm"][ix_timeWB]*1000,'.')
+ax[1].plot(sync_data["LAT"][ix_timeWB],sync_data["[N2O]d_ppm"][ix_timeWB]*1000,'.')
 ax[1].plot(GV['GGLAT'][ix_timeGV],GV["N2O_ARI"][ix_timeGV],'k.',label='ARI')
 
 ax[1].set_ylabel('N2O, ppb')

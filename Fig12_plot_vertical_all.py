@@ -19,9 +19,9 @@ plt.rcParams['xtick.labelsize'] = 7
 plt.rcParams['ytick.labelsize'] = 7
 
 # %% loop to load the data
-fig1, ax1 = plt.subplots(1, 1, figsize=(5,4))
+fig1, ax1 = plt.subplots(1, 1, figsize=(3.5,3.5))
 
-for ii in [3,5,10]:  #range(3,18):
+for ii in [10,5,3]:  #range(3,18):
     # load data
     case_name = "RF" + "{:02d}".format(ii)
 

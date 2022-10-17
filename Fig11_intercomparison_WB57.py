@@ -43,7 +43,7 @@ COLD2[COLD2[' CO_COLD2_ppbv']<-600]=np.nan
 # %% Plot CO time series from COMA, ACOS, COLD2
 fig, ax = plt.subplot_mosaic([['A', 'A'],
                               ['B', 'C']],
-                              figsize=(6.5, 5))
+                              figsize=(6, 4.5))
 
 time_offset = timedelta(seconds=6)
 

@@ -34,7 +34,7 @@ CHAMBER_TIME = CHAMBER1_TIME + CHAMBER2_TIME
 
 
 # %% plot
-fig, ax1 = plt.subplots(figsize=(6.5,3.7))
+fig, ax1 = plt.subplots(figsize=(6.2,3.7))
 ax1.plot(CHAMBER_TIME,CHAMBER['CHAMBER'],label='CHAMBER')
 ax1.plot(CHAMBER_TIME,CHAMBER['CUR S REST'],label='CUR S REST')
 ax1.plot(CHAMBER_TIME,CHAMBER['CPU'],label='CPU')
@@ -44,12 +44,14 @@ ax1.plot(CHAMBER_TIME,CHAMBER['LASER BAKING'],label='LASER BACKING')
 ax1.plot(CHAMBER_TIME,CHAMBER['MID-RIB'],label='MID-RIB')
 ax1.plot(CHAMBER_TIME,CHAMBER['EXT SIDE'],label='EXT SIDE')
 ax1.grid()
-ax1.set_ylim([-20,120])
+ax1.set_ylim([-20,140])
 ax2 = ax1.twinx()
 ax2.plot(CHAMBER_TIME,CHAMBER['PRESSURE']/3280.84,'k',label='PRESSURE') # ft to km
-ax1.legend(loc='upper left',ncol=2)
+ax1.legend(loc='upper left',ncol=4)
 ax1.set_ylabel('Temperatures, °C')
 ax2.set_ylabel('Chamber altitude, km')
 ax1.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 ax1.set_xlabel('Time')
+ax2.set_ylim([0,22])
 plt.tight_layout()
+#plt.savefig('fig_output.png',dpi=300)
