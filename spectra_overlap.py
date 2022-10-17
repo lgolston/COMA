@@ -63,15 +63,15 @@ x0 = datetime(1970,1,1)
 SPECTRA_TIME = [x0+timedelta(seconds=t/1000) for t in EPOCH_TIME]
 
 # load output file
-LGR = pd.read_csv(filename_f,sep=',',header=1)
+LGR = pd.read_csv(filename_f,sep=',',header=1,skipinitialspace=True,low_memory=False)
 
-LGR_time = LGR["                     Time"]
-LGR_time = [datetime.strptime(tstamp,"  %m/%d/%Y %H:%M:%S.%f") for tstamp in LGR_time]
+LGR_time = LGR["Time"]
+LGR_time = [datetime.strptime(tstamp,"%m/%d/%Y %H:%M:%S.%f") for tstamp in LGR_time]
 LGR_time = pd.DataFrame(LGR_time)
 LGR_time = LGR_time[0]
 
-LGR_CO = LGR["      [CO]d_ppm"]*1000
-LGR_N2O = LGR["     [N2O]d_ppm"]*1000
+LGR_CO = LGR["[CO]d_ppm"]*1000
+LGR_N2O = LGR["[N2O]d_ppm"]*1000
 
 # %% calculate laser power
 laser_power = np.zeros(num_lines)
@@ -143,6 +143,11 @@ if day == 'EEL1':
     CHAMBER.columns = ['PRESSURE','CHAMBER','CUR S REST','CPU','LASER CUR T','PWR SPLY','LASER BAKING','MID-RIB','EXT SIDE','SECONDS','DATETIME']	
     CHAMBER_TIME = [datetime.strptime(tstamp,"%H:%M:%S %d %b %Y") for tstamp in CHAMBER['DATETIME']]
 
+    fig_title = 'EEL Day 1 - May 19, 2022'
+    tz_offset = timedelta(hours=7)
+    ix_f = range(599,23975) # spectra ID 600 to 23976
+    ix_lp = range(600,23976) # spectra ID 600 to 23976
+
 elif day == 'EEL2':
     # read chamber temperature file (2022-05-20)
     CHAMBER1 = pd.read_csv('../Data/2022-05-20/COMA_2022_05_20',skiprows = 10,sep='\t',header=None)
@@ -155,8 +160,13 @@ elif day == 'EEL2':
     
     CHAMBER = pd.concat([CHAMBER1,CHAMBER2])
     CHAMBER_TIME = CHAMBER1_TIME + CHAMBER2_TIME
+    
+    fig_title = 'EEL Day 2 - May 20, 2022'
+    tz_offset = timedelta(hours=0)
+    ix_f = range(599,32308) # spectra ID 600 to 32309
+    ix_lp = range(600,32309) # spectra ID 600 to 32309
 
-fig, ax = plt.subplots(ncols=1,nrows=3,figsize=(6,6),sharex=True)
+fig2, ax = plt.subplots(ncols=1,nrows=3,figsize=(5,5),sharex=True)
 ax[0].plot(CHAMBER_TIME,CHAMBER['CHAMBER'],label='CHAMBER')
 ax[0].grid()
 ax[0].set_ylim([-20,40])
@@ -166,25 +176,24 @@ ax[0].legend(loc='upper left',ncol=2)
 ax[0].set_ylabel('Temperatures, °C')
 ax0_twin.set_ylabel('Chamber altitude, km')
 ax[0].xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
-ax[0].set_xlabel('Time')
 
-ax[1].scatter(x=LGR_time[600:-1]-timedelta(hours=7),y=LGR_CO[600:-1],c=norm(LGR_time_epoch[600:-1]),s = 6)
+ax[1].scatter(x=LGR_time[ix_f]-tz_offset,y=LGR_CO[ix_f],s = 6)#c=norm(LGR_time_epoch[ix_f]) 
 ax[1].set_ylim(225,240)
 ax[1].set_ylabel('CO, ppb')
 ax1_twin = ax[1].twinx()
-ax1_twin.plot(LGR_time[600:-1]-timedelta(hours=7),laser_power[600:-1],'k')
+ax1_twin.plot(LGR_time[ix_f]-tz_offset,laser_power[ix_lp],'k')
 ax1_twin.set_ylim(0.40,0.47)
 
-ax[2].scatter(x=LGR_time[600:-1]-timedelta(hours=7),y=LGR_N2O[600:-1],c=norm(LGR_time_epoch[600:-1]),s = 6)
+ax[2].scatter(x=LGR_time[ix_f]-tz_offset,y=LGR_N2O[ix_f],s = 6)#c=norm(LGR_time_epoch[ix_f]) 
 ax[2].set_ylim(300,350)
 ax[2].set_ylabel(r'$N_2O, ppb$')
 ax2_twin = ax[2].twinx()
-ax2_twin.plot(LGR_time[600:-1]-timedelta(hours=7),laser_power[600:-1],'k')
+ax2_twin.plot(LGR_time[ix_f]-tz_offset,laser_power[ix_lp],'k')
 ax2_twin.set_ylim(0.40,0.47)
+ax[2].set_xlabel('Time')
 
 ax1_twin.set_ylabel('Laser power')
 ax2_twin.set_ylabel('Laser power')
-ax[0].set_title('EEL Day 1 - May 19, 2022',fontsize=8)
-fig.tight_layout()
-
-#plt.savefig('fig_output.png',dpi=300)
+ax[0].set_title(fig_title,fontsize=8)
+fig2.tight_layout()
+#fig2.savefig('fig_output.png',dpi=300)
