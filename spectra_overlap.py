@@ -24,17 +24,20 @@ plt.rcParams['ytick.labelsize'] = 7
 plt.rcParams.update({'mathtext.default': 'regular' } ) # not italics
 
 # %% filenames
-#filename_f = '../Data/2022-05-19/n2o-co_2022-05-19_f0000.txt' # EEL Day 1
-#filename_s = '../Data/2022-05-19/n2o-co_2022-05-19_s0000.txt' # EEL Day 1
+day = 'EEL1'
 
-#filename_f = '../Data/2022-05-20/n2o-co_2022-05-20_f0000.txt' # EEL Day 2
-#filename_s = '../Data/2022-05-20/n2o-co_2022-05-20_s0000.txt' # EEL Day 2
+if day == 'EEL1':
+    filename_f = '../Data/2022-05-19/n2o-co_2022-05-19_f0000.txt' # EEL Day 1
+    filename_s = '../Data/2022-05-19/n2o-co_2022-05-19_s0000.txt' # EEL Day 1
+elif day == 'EEL2':
+    filename_f = '../Data/2022-05-20/n2o-co_2022-05-20_f0000.txt' # EEL Day 2
+    filename_s = '../Data/2022-05-20/n2o-co_2022-05-20_s0000.txt' # EEL Day 2
+elif day == 'Transit2':
+    filename_f = '../Data/2022-07-21/n2o-co_2022-07-21_f0001.txt' # Transit 2
+    filename_s = '../Data/2022-07-21/n2o-co_2022-07-21_s0001.txt' 
 
-#filename_f = '../Data/2022-07-21/n2o-co_2022-07-21_f0001.txt' # Transit 2
-#filename_s = '../Data/2022-07-21/n2o-co_2022-07-21_s0001.txt' 
-
-filename_f = '../Data/2022-08-18/n2o-co_2022-08-18_f0000.txt'
-filename_s = '../Data/2022-08-18/n2o-co_2022-08-18_s0000.txt'
+#filename_f = '../Data/2022-08-18/n2o-co_2022-08-18_f0000.txt'
+#filename_s = '../Data/2022-08-18/n2o-co_2022-08-18_s0000.txt'
 
 
 # %% read file
@@ -134,16 +137,13 @@ fig.tight_layout()
 #fig.savefig('fig_output.png',dpi=300)
 
 # %% chamber test specific
-"""
-day = 1
-
-if day == 1:
+if day == 'EEL1':
     # read chamber temperature file (2022-05-19)
     CHAMBER = pd.read_csv('../Data/2022-05-19/COMA_2022_05_19',skiprows = 10,sep='\t',header=None)
     CHAMBER.columns = ['PRESSURE','CHAMBER','CUR S REST','CPU','LASER CUR T','PWR SPLY','LASER BAKING','MID-RIB','EXT SIDE','SECONDS','DATETIME']	
     CHAMBER_TIME = [datetime.strptime(tstamp,"%H:%M:%S %d %b %Y") for tstamp in CHAMBER['DATETIME']]
 
-elif day == 2:
+elif day == 'EEL2':
     # read chamber temperature file (2022-05-20)
     CHAMBER1 = pd.read_csv('../Data/2022-05-20/COMA_2022_05_20',skiprows = 10,sep='\t',header=None)
     CHAMBER1.columns = ['PRESSURE','CHAMBER','CUR S REST','CPU','LASER CUR T','PWR SPLY','LASER BAKING','MID-RIB','EXT SIDE','SECONDS','DATETIME']	
@@ -188,4 +188,3 @@ ax[0].set_title('EEL Day 1 - May 19, 2022',fontsize=8)
 fig.tight_layout()
 
 #plt.savefig('fig_output.png',dpi=300)
-"""

@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import matplotlib.dates as mdates
 
-case = 5
+case = 3
 
 if case == 0: # room air (24 hr)
     filename_COMA = '../Data/2022-04-06/n2o-co_2022-04-06_f0000.txt'

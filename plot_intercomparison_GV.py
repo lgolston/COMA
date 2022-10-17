@@ -21,9 +21,10 @@ plt.rcParams['legend.fontsize'] = 8
 plt.rcParams['xtick.labelsize'] = 7
 plt.rcParams['ytick.labelsize'] = 7
 plt.rcParams.update({'mathtext.default': 'regular' } ) # not italics
+plt.rcParams['figure.titlesize'] = 9
 
 # EDIT THESE
-case = 'RF13'
+case = 'RF10'
 
 if case == 'RF10': # RF10 (instrument start before midnight; takeoff on 2022-08-19 UTC)
     filename_COMA = ['../Data/2022-08-18/n2o-co_2022-08-18_f0000.txt']
@@ -107,32 +108,37 @@ fig1.tight_layout()
 #COCAL_ARI
 #COCAL_PIC2401
 
-fig2, ax = plt.subplots(2, 1, figsize=(6,4),sharex=True)
+fig2, ax = plt.subplots(2, 1, figsize=(5,3),sharex=True)
 #ax[0].plot(COMA['time'][inlet_ix],COMA["      [CO]d_ppm"][inlet_ix]*1000,'b.',label='COMA')
 #ax[0].plot(GV['time'],GV["CO_ARI"],'k.',label='GV ARI')
 #ax[0].plot(GV['time'],GV['CO_PIC2401']*1000,'g.',label='GV PIC2401')#,markersize=1
 
-#ix_timeWB = np.ravel(np.where((sync_data.index>datetime(2022,8,19,4,57)) & (sync_data.index<datetime(2022,8,19,5,30))))
-#ix_timeGV = np.ravel(np.where((GV['time']>datetime(2022,8,19,4,55)) & (GV['time']<datetime(2022,8,19,5,22))))
+if case == 'RF10':
+    ix_timeWB = np.ravel(np.where((sync_data.index>datetime(2022,8,19,4,57)) & (sync_data.index<datetime(2022,8,19,5,30))))
+    ix_timeGV = np.ravel(np.where((GV['time']>datetime(2022,8,19,4,55)) & (GV['time']<datetime(2022,8,19,5,22))))
+elif case == 'RF13':
+    ix_timeWB = np.ravel(np.where((sync_data.index>datetime(2022,8,25,2,12)) & (sync_data.index<datetime(2022,8,25,2,40))))
+    ix_timeGV = np.ravel(np.where((GV['time']>datetime(2022,8,25,2,10)) & (GV['time']<datetime(2022,8,25,2,30))))
 
-ix_timeWB = np.ravel(np.where((sync_data.index>datetime(2022,8,25,2,12)) & (sync_data.index<datetime(2022,8,25,2,40))))
-ix_timeGV = np.ravel(np.where((GV['time']>datetime(2022,8,25,2,10)) & (GV['time']<datetime(2022,8,25,2,30))))
-
-ax[0].plot(sync_data["LAT"][ix_timeWB],sync_data["[CO]d_ppm"][ix_timeWB]*1000,'.',label='WB COMA')
-ax[0].plot(GV['GGLAT'][ix_timeGV],GV["CO_ARI"][ix_timeGV],'k.',label='GV ARI')
-ax[0].plot(GV['GGLAT'][ix_timeGV],GV['CO_PIC2401'][ix_timeGV]*1000,'g.',label='GV PIC2401')#,markersize=1
+ax[0].plot(sync_data["LAT"][ix_timeWB],sync_data["[CO]d_ppm"][ix_timeWB]*1000,'.',label='WB COMA',markersize=1)
+ax[0].plot(GV['GGLAT'][ix_timeGV],GV["CO_ARI"][ix_timeGV],'k.',label='GV ARI',markersize=1)
+ax[0].plot(GV['GGLAT'][ix_timeGV],GV['CO_PIC2401'][ix_timeGV]*1000,'g.',label='GV PIC2401',markersize=1)
 
 ax[0].set_ylabel('CO, ppb')
-ax[0].legend()
+ax[0].legend(ncol=3)
 
 #ax[1].plot(COMA['time'][inlet_ix],COMA["     [N2O]d_ppm"][inlet_ix]*1000,'b.',label='COMA')
 #ax[1].plot(GV['time'],GV["N2O_ARI"],'k.',label='ARI')
 
-ax[1].plot(sync_data["LAT"][ix_timeWB],sync_data["[N2O]d_ppm"][ix_timeWB]*1000,'.')
-ax[1].plot(GV['GGLAT'][ix_timeGV],GV["N2O_ARI"][ix_timeGV],'k.',label='ARI')
+ax[1].plot(sync_data["LAT"][ix_timeWB],sync_data["[N2O]d_ppm"][ix_timeWB]*1000,'.',markersize=1)
+ax[1].plot(GV['GGLAT'][ix_timeGV],GV["N2O_ARI"][ix_timeGV],'k.',label='ARI',markersize=1)
 
 ax[1].set_ylabel('N2O, ppb')
 ax[1].set_xlabel('Latitude')
+
+ax[0].grid('on')
+ax[1].grid('on')
+
 #ax[1].xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 
 #RF10
