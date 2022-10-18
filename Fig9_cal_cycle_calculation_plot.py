@@ -5,14 +5,6 @@ Show results across multiple days, colored before flight; in-flight; post-flight
 
 Handles tank values from original NOAA tanks; and newer Matheson gas values
 
-TODO
-1. List NOAA files
-2. List Matheson files
-3. Add MMS pressure
-4. Add laser power and CO line center
-5. Add back linear regression calculation
-6. Label or vertical lines for each flight
-7. Add pre-ACCLIP NOAA files
 """
 
 # %% load libraries and data
@@ -20,12 +12,7 @@ import numpy as np
 import pandas as pd
 import datetime
 import matplotlib.pyplot as plt
-import matplotlib
 import matplotlib.dates as mdates
-from calculate_linear_cal_fun import calc_cal
-from load_data_functions import read_COMA
-from load_data_functions import return_filenames
-import matplotlib.cm as cm
 
 # set font size
 plt.rcParams['axes.labelsize'] = 8
@@ -35,86 +22,6 @@ plt.rcParams['ytick.labelsize'] = 7
 plt.rcParams.update({'mathtext.default': 'regular' } ) # not italics
 
 # %% define cases
-case = 'RF03'
-
-filenames = return_filenames(case)
-
-if case == 'FCF_2021':
-    1
-elif case == 'TF1_2021':
-    1
-elif case == 'TF2_2021':
-    1
-elif case == 'TF3_2021':
-    1
-elif case == 'EEL_2022_Day1':
-    1
-elif case == 'EEL_2022_Day2':
-    1
-elif case == 'RF02':
-    1
-elif case == 'Transit1': # Ellington to Seattle
-    1
-elif case == 'Transit2': # Seattle to Anchorage
-    1
-elif case == 'Transit3': # Anchorage to Adak
-    1
-elif case == 'Transit4': # Adak to Misawa
-    1
-elif case == 'Transit5': # Misawa to Osan
-    1
-elif case == 'RF03':
-    1
-elif case == 'RF04':
-    1
-elif case == 'RF05':
-    1
-elif case == 'RF06':
-    1
-elif case == 'RF07':
-    1
-elif case == 'RF08':
-    1
-elif case == 'RF09':
-    1
-elif case == 'RF10':
-    1
-elif case == 'RF11':
-    1
-elif case == 'RF12':
-    1
-elif case == 'RF13':
-    1
-elif case == 'RF14':
-    1
-elif case == 'RF15':
-    1
-elif case == 'RF16':
-    1
-elif case == 'RF17':
-    1
-elif case == 'Transit6': # Osan to Misawa
-    1
-elif case == 'Transit7': # Misawa to Adak
-    1
-elif case == 'Transit8': # Adak to Seattle
-    1
-elif case == 'Transit9': # Seattle to Houston
-    1
-
-"""
-# loop through multiple cases
-# define file lists
-filenames_2021 = ['FCF_2021','TF1_2021','TF2_2021','TF3_2021']
-
-filenames_testing = ['../Data/2022-05-19/n2o-co_2022-05-19_f0000.txt',
-                     '../Data/2022-05-20/n2o-co_2022-05-20_f0000_cut_timechange.txt'] # EEL Day 2
-#'../Data/2022-04-22/n2o-co_2022-04-22_f0000.txt', # lab run cylinders
-
-filenames_2022a = ['RF02','Transit1','Transit2','Transit3','Transit4','Transit5','RF03'] #...
-
-filenames_2022b = ['']
-"""
 
 # %% define cal gas cylinders
 cylinder = 'NOAA'
@@ -138,36 +45,108 @@ elif cylinder == 'Matheson':
 else:
     print('Cylinder name not recognized.')
 
-# %% load COMA data
-COMA = []
 
-filenames_COMA = filenames['COMA_raw']
+# %% load spreadsheet
 
-# load COMA files      
-for ii in range(len(filenames_COMA)):
-    fname = filenames_COMA[ii]
-    print(fname)
+
+
+# %% remove for now: linear regression
+    """
+    # number of cycles
+    n = sum(low_CO_mean>0)
+    rng = range(0,n)
     
-    if len(COMA) == 0:
-        COMA, inlet_ix = read_COMA([fname])
-    else:
-        COMA2, inlet_ix = read_COMA([fname])             
-        COMA = pd.concat([COMA,COMA2],ignore_index=True)
+    # linear slope and intercept: CO and N2O
+    CO_low_ratio = np.zeros(len(rng))
+    CO_high_ratio = np.zeros(len(rng))
+    CO_slope = np.zeros(len(rng))
+    CO_intercept = np.zeros(len(rng))
+    
+    N2O_low_ratio = np.zeros(len(rng))
+    N2O_high_ratio = np.zeros(len(rng))
+    N2O_slope = np.zeros(len(rng))
+    N2O_intercept = np.zeros(len(rng))
+    
+    starting_index = np.zeros(len(rng),dtype=int)
+    
+    # loop through and calculate slope/intercepts         
+    for ii in rng:
+        # CO
+        x1=low_tank_CO # low tank value
+        x2=high_tank_CO # high tank value
+        y1=low_CO_mean[ii]
+        y2=high_CO_mean[ii]
+        m = (x2-x1)/(y2-y1) # original method that Emma showed
+        b = x1-y1*m # same as x2-y2*m
+        
+        CO_low_ratio[ii] = x1/y1
+        CO_high_ratio[ii] = x2/y2
+        CO_slope[ii] = m
+        CO_intercept[ii] = b
 
-# calc
-ix_low = np.ravel(np.where(COMA["MIU_VALVE"]==2)) # low cal
-ix_high = np.ravel(np.where(COMA["MIU_VALVE"]==3)) # high cal
+        x1=low_tank_N2O # low tank value
+        x2=high_tank_N2O # high tank value
+        y1=low_N2O_mean[ii]
+        y2=high_N2O_mean[ii]
+        m = (x2-x1)/(y2-y1)
+        b = x1-y1*m # same as x2-y2*m
+        
+        N2O_low_ratio[ii] = x1/y1
+        N2O_high_ratio[ii] = x2/y2
+        N2O_slope[ii] = m
+        N2O_intercept[ii] = b
+        
+        tmp = np.argmax(df_lowcal['groups']==ii)
+        starting_index[ii] = df_lowcal.index[tmp]
 
-low_cal = calc_cal(COMA,ix_low)
-high_cal = calc_cal(COMA,ix_high)
+    starting_index = np.append(starting_index,len(CO_raw))
+    
+    # apply calibration factors to data
+    CO_calibrated = CO_raw*1000
+    N2O_calibrated = N2O_raw*1000
+    
+    for ii in rng:
+        tmp = CO_raw[starting_index[ii]:starting_index[ii+1]]*1000
+        CO_calibrated[starting_index[ii]:starting_index[ii+1]] = tmp*CO_slope[ii]+CO_intercept[ii]
+    
+        tmp = N2O_raw[starting_index[ii]:starting_index[ii+1]]*1000
+        N2O_calibrated[starting_index[ii]:starting_index[ii+1]] = tmp*N2O_slope[ii]+N2O_intercept[ii]
+    
+    # calibration outputs
+    CO_cal = pd.DataFrame({'low_mean': low_CO_mean[rng],
+                           'low_std': low_CO_std[rng],
+                           'high_mean': high_CO_mean[rng],
+                           'high_std': high_CO_std[rng],
+                           'low_ratio': CO_low_ratio,
+                           'high_ratio': CO_high_ratio, 
+                           'slope': CO_slope,
+                           'intercept': CO_intercept,
+                           'time':CO_time[rng],
+                           'cell_T':cell_T[rng]})
+    N2O_cal = pd.DataFrame({'low_mean': low_N2O_mean[rng],
+                            'low_std': low_N2O_std[rng],
+                            'high_mean': high_N2O_mean[rng],
+                            'high_std': high_N2O_std[rng],
+                            'low_ratio': N2O_low_ratio,
+                            'high_ratio': N2O_high_ratio, 
+                            'slope': N2O_slope,
+                            'intercept': N2O_intercept})
+    return CO_cal, N2O_cal
+    """
 
-# %% load MMS data
-# MMS = read_MMS(filename_MMS)
 
-# %% load laser power
-# ...
+# %% holding
+# label ticks with time identifier
+#xlabels = [pd.to_datetime(t).strftime('%m.%d %H:%M') for t in low_cal['time']]
+#plt.tight_layout()
+#plt.savefig('fig1.png',dpi=300)
+
+
+# -*- coding: utf-8 -*-
+
 
 # %% handle filtering data
+"""
 # [not complete]
 
 # low cal
@@ -193,27 +172,10 @@ high_cal.loc[high_cal['ID'].str.match("2022-08-02_04:41:53"),'valid']=False
 high_cal.loc[high_cal['ID'].str.match("2022-08-02_05:26:53"),'valid']=False
 high_cal.loc[high_cal['ID'].str.match("2022-08-02_06:11:53"),'valid']=False
 high_cal.loc[high_cal['GasP_torr']<51,'valid'] = False
-
-# %% plot time series
-fig2, ax2 = plt.subplots(1, 1, figsize=(8,5))
-
-to_show = 'low_cal'
-
-ax2.plot(COMA['[CO]d_ppm'][ix_high].values*1000,'.',markersize=1)
-ax2_twin = ax2.twinx()
-ax2_twin.plot(COMA['GasP_torr'][ix_high].values,'k.')
-
-if cylinder == 'NOAA':
-    ax2.set_ylim([140,180])
-
-ax2.set_xlabel('Seconds')
-ax2.set_ylabel('CO, ppbv')
-
-# make horizontal lines for end values
-for index, row in high_cal.iterrows():
-    ax2.plot([row['start_ct'],row['end_ct']],[row['CO_val'],row['CO_val']],'b--')
+"""
 
 # %% plot calibration results
+"""
 cmap = plt.get_cmap("tab20")
 
 fig, ax = plt.subplots(4, 1, figsize=(9,5),dpi=150)
@@ -265,27 +227,8 @@ ax[3].set_xticklabels(xlabels)
 
 plt.tight_layout()
 #plt.savefig('fig1.png',dpi=300)
+"""
 
-# %% output results
-print("CO:")
-dat = high_cal
-
-for ii in range(len(dat)):
-    print("{:2d}".format(ii) +
-          '  ' + dat['ID'][ii] + 
-          '  ' + "{:6.2f}".format(dat['CO_val'][ii]) + 
-          '  ' + "{:6.2f}".format(dat['N2O_val'][ii]))
-
-#print()
-#print("N2O:")
-#for ii in range(len(CO_cal)):
-#    print(pd.to_datetime(CO_cal['time'][ii]).strftime("%m/%d/%Y %H:%M:%S") + 
-#          ' ' + "{:.3f}".format(N2O_cal.slope[ii]) + 
-#          ' ' + "{:.3f}".format(N2O_cal.intercept[ii]) + 
-#          '  ' + "{:.3f}".format(N2O_cal.low_mean[ii]) + 
-#          '  ' + "{:.3f}".format(N2O_cal.high_mean[ii]))
-
-# print averages
 
 # %% plot relationships
 """
@@ -353,3 +296,4 @@ ax4[3].set_xlabel('Cycle #')
 fig4.tight_layout()
 #fig4.savefig('fig4.png',dpi=300)
 """
+
