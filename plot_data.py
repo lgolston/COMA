@@ -18,7 +18,7 @@ from load_data_functions import read_MMS_ict
 from load_data_functions import return_filenames
 
 # EDIT THESE
-case = 'RF15'
+case = 'RF06'
 focus = 'flight_CO' # lab, flight_CO, flight_N2O
 
 # %% plot settings

@@ -7,17 +7,15 @@ Handles tank values from original NOAA tanks; and newer Matheson gas values
 
 TODO
 - calculate laser power
-- sync MMS and laser power
 - add laser power
-- add altitude
 - add GasP std dev
-
 """
 
 # %% load libraries and data
 import numpy as np
 import pandas as pd
 import datetime
+from datetime import timedelta
 import matplotlib.pyplot as plt
 from calculate_linear_cal_fun import calc_cal
 from load_data_functions import read_COMA
@@ -36,15 +34,22 @@ cases = ['FCF_2021','TF1_2021','TF2_2021','TF3_2021','EEL_2022_Day1','EEL_2022_D
          'RF03_lab','RF03','RF04_lab','RF04','RF05_lab','RF05','RF06_lab','RF06','RF07_lab','RF07',
          'RF08_lab','RF08','RF09_lab','RF09','RF10_lab','RF10','RF11_lab','RF11','RF12_lab','RF12',
          'RF13_lab','RF13','RF14_lab','RF14','RF15_lab','RF15','RF16_lab','RF16','RF17_lab','RF17',
-         'RF18_lab','RF18','RF19_lab','RF19','Transit6','Transit7','Transit8','Transit9']
+         'Transit6','Transit7','Transit8','Transit9']
 
+#cases = ['TF3_2021','EEL_2022_Day1']
+
+header = "Cycle#,ID,CO_val,CO_std,N2O_val,N2O_std,H2O,CellP,Alt,Time_on,Peak0"
 a = open('plots/table_low_cal.csv', 'w')
+a.write(header)
+a.write('\n')
 b = open('plots/table_high_cal.csv', 'w')    
+b.write(header)
+b.write('\n')
 
 # %% main loop
 for case in cases:
     # %% define cases
-    filenames = return_filenames('empty')
+    filenames = {'COMA_raw':[],'MMS':[]}
     
     if case == 'RF03_lab':
         filenames['COMA_raw'] = ['../Data/2022-08-02/n2o-co_2022-08-02_f0001.txt'] #post-flight
@@ -140,20 +145,11 @@ for case in cases:
     #'Transit9':        2022-09-14_f0000 (Seattle to Houston)
     
     # %% load COMA data
-    COMA = []
+    COMA, inlet_ix = read_COMA(filenames['COMA_raw'])
+
+    if case == 'RF13': # fix clock setting on this day
+        COMA['time'] = COMA['time'] + timedelta(hours=6)
     
-    filenames_COMA = filenames['COMA_raw']
-    
-    # load COMA files      
-    for ii in range(len(filenames_COMA)):
-        fname = filenames_COMA[ii]
-        
-        if len(COMA) == 0:
-            COMA, inlet_ix = read_COMA([fname])
-        else:
-            COMA2, inlet_ix = read_COMA([fname])             
-            COMA = pd.concat([COMA,COMA2],ignore_index=True)
-        
     # %% define cal gas cylinders
     start_time = COMA['time'][0]
     
@@ -176,17 +172,8 @@ for case in cases:
         high_tank_CO = 1000
         low_tank_N2O = 200
         high_tank_N2O = 1000
-    
-    # %% load MMS data
-    if (len(filenames['MMS'])>0):
-        MMS = read_MMS_ict(filenames['MMS'])
-    else:
-        MMS = []
-    
-    # %% load laser power
-    # ...
-    
-    # %% sync data
+        
+    # %% calc data
     ix_low = np.ravel(np.where(COMA["MIU_VALVE"]==2)) # low cal
     ix_high = np.ravel(np.where(COMA["MIU_VALVE"]==3)) # high cal
     
@@ -210,6 +197,32 @@ for case in cases:
     low_cal['ID'] = [pd.to_datetime(tmp).strftime("%Y-%m-%d %H:%M:%S") for tmp in low_cal['time']]
     high_cal['ID'] = [pd.to_datetime(tmp).strftime("%Y-%m-%d %H:%M:%S") for tmp in high_cal['time']]
     
+    # %% load MMS data
+    if (len(filenames['MMS']) > 0):
+        MMS = read_MMS_ict(filenames['MMS'])
+        
+        # match by time (add 35 s since time represents start of cal cycle)
+        low_cal['alt'] = np.nan
+        for index, row in low_cal.iterrows():
+            time_distance = np.abs( MMS['time'] - (row['time']+np.timedelta64(35, 's')) )
+            match_ix = np.argmin(time_distance)
+            if time_distance[match_ix] < np.timedelta64(5, 's'):
+                low_cal.loc[index,'alt'] = MMS.loc[match_ix,'ALT']
+        
+        high_cal['alt'] = np.nan
+        for index, row in high_cal.iterrows():
+            time_distance = np.abs( MMS['time'] - (row['time']+np.timedelta64(35, 's')) )
+            match_ix = np.argmin(time_distance)
+            if time_distance[match_ix] < np.timedelta64(5, 's'):
+                high_cal.loc[index,'alt'] = MMS.loc[match_ix,'ALT']
+        
+    else:
+        low_cal['alt']=0
+        high_cal['alt']=0
+    
+    # %% load laser power
+    # ...
+
     # %% plot time series (cal cycles overlapped)
     fig2, ax2 = plt.subplots(3, 2, figsize=(6,5))
     
@@ -283,9 +296,14 @@ for case in cases:
                 '  ' + "{:6.2f}".format(dat['N2O_std'][ii]) + ',' #N2O std dev
                 '  ' + "{:6.2f}".format(dat['H2O'][ii]) + ','     #H2O value
                 '  ' + "{:5.2f}".format(dat['GasP_torr'][ii]) + ','  #Cell pressure
+                '  ' + "{:6.0f}".format(dat['alt'][ii]) + ','    #Altitude
                 '  ' + "{:6.0f}".format(dat['SpectraID'][ii]) + ','  #SpectraID / seconds on
                 '  ' + "{:6.2f}".format(dat['Peak0'][ii]))          #Peak position
             file_handle.write('\n')
     
         # Power
         # Altitude
+
+# %% close files
+a.close()
+b.close()

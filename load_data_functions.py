@@ -194,16 +194,16 @@ def sync_data(MMS,COMA,inlet_ix):
     return sync_data
 
 # %%
-filenames = {'COMA_raw':[],
-             'COMA_ict':[],
-             'EEL':[],
-             'MadgeTech':[],
-             'MMS':[],
-             'ACOS':[],
-             'DLH':[],
-             'COLD2':[]}
-
 def return_filenames(case):
+    filenames = {'COMA_raw':[],
+                 'COMA_ict':[],
+                 'EEL':[],
+                 'MadgeTech':[],
+                 'MMS':[],
+                 'ACOS':[],
+                 'DLH':[],
+                 'COLD2':[]}
+    
     if case == 'FCF_2021': # FCF
         filenames['COMA_raw'] = ['../Data/2021-08-06/n2o-co_2021-08-06_f0002.txt']
         filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20210806_RA.ict'
