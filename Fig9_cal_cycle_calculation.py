@@ -24,41 +24,101 @@ import matplotlib
 import matplotlib.dates as mdates
 from calculate_linear_cal_fun import calc_cal
 from load_data_functions import read_COMA
+from load_data_functions import return_filenames
 import matplotlib.cm as cm
 
-filenames_2021 = ['../Data/2021-08-06/n2o-co_2021-08-06_f0002.txt', # FCF
-                  '../Data/2021-08-10/n2o-co_2021-08-10_f0003.txt', # Test Flight 1
-                  '../Data/2021-08-16/n2o-co_2021-08-16_f0002.txt', # Test Flight 2
-                  '../Data/2021-08-17/n2o-co_2021-08-17_f0002.txt'] # Test Flight 3
+# set font size
+plt.rcParams['axes.labelsize'] = 8
+plt.rcParams['legend.fontsize'] = 8
+plt.rcParams['xtick.labelsize'] = 7
+plt.rcParams['ytick.labelsize'] = 7
+plt.rcParams.update({'mathtext.default': 'regular' } ) # not italics
 
-filenames_testing = ['../Data/2022-05-20/n2o-co_2022-05-20_f0000_cut_timechange.txt'] # EEL Day 2
+# %% define cases
+case = 'RF03'
+
+filenames = return_filenames(case)
+
+if case == 'FCF_2021':
+    1
+elif case == 'TF1_2021':
+    1
+elif case == 'TF2_2021':
+    1
+elif case == 'TF3_2021':
+    1
+elif case == 'EEL_2022_Day1':
+    1
+elif case == 'EEL_2022_Day2':
+    1
+elif case == 'RF02':
+    1
+elif case == 'Transit1': # Ellington to Seattle
+    1
+elif case == 'Transit2': # Seattle to Anchorage
+    1
+elif case == 'Transit3': # Anchorage to Adak
+    1
+elif case == 'Transit4': # Adak to Misawa
+    1
+elif case == 'Transit5': # Misawa to Osan
+    1
+elif case == 'RF03':
+    1
+elif case == 'RF04':
+    1
+elif case == 'RF05':
+    1
+elif case == 'RF06':
+    1
+elif case == 'RF07':
+    1
+elif case == 'RF08':
+    1
+elif case == 'RF09':
+    1
+elif case == 'RF10':
+    1
+elif case == 'RF11':
+    1
+elif case == 'RF12':
+    1
+elif case == 'RF13':
+    1
+elif case == 'RF14':
+    1
+elif case == 'RF15':
+    1
+elif case == 'RF16':
+    1
+elif case == 'RF17':
+    1
+elif case == 'Transit6': # Osan to Misawa
+    1
+elif case == 'Transit7': # Misawa to Adak
+    1
+elif case == 'Transit8': # Adak to Seattle
+    1
+elif case == 'Transit9': # Seattle to Houston
+    1
+
+"""
+# loop through multiple cases
+# define file lists
+filenames_2021 = ['FCF_2021','TF1_2021','TF2_2021','TF3_2021']
+
+filenames_testing = ['../Data/2022-05-19/n2o-co_2022-05-19_f0000.txt',
+                     '../Data/2022-05-20/n2o-co_2022-05-20_f0000_cut_timechange.txt'] # EEL Day 2
 #'../Data/2022-04-22/n2o-co_2022-04-22_f0000.txt', # lab run cylinders
 
-filenames_2022a = ['../Data/2022-07-18/n2o-co_2022-07-18_f0002.txt',
-                   '../Data/2022-07-18/n2o-co_2022-07-18_f0003.txt',
-                   '../Data/2022-07-21/n2o-co_2022-07-21_f0000.txt',
-                   '../Data/2022-07-21/n2o-co_2022-07-21_f0001.txt',
-                   '../Data/2022-07-21/n2o-co_2022-07-21_f0002.txt',
-                   '../Data/2022-07-24/n2o-co_2022-07-24_f0000.txt',
-                   '../Data/2022-07-25/n2o-co_2022-07-25_f0000.txt',
-                   '../Data/2022-07-27/n2o-co_2022-07-27_f0000.txt',
-                   '../Data/2022-08-02/n2o-co_2022-08-02_f0000.txt',  # RF03 - first flight in Osan
-                   '../Data/2022-08-05/n2o-co_2022-08-05_f0000_no_10s_cal.txt',
-                   '../Data/2022-08-04/n2o-co_2022-08-04_f0000.txt', # RF04
-                   '../Data/2022-08-06/n2o-co_2022-08-06_f0000_no_10s_cal.txt', # RF05
-                   '../Data/2022-08-06/n2o-co_2022-08-06_f0001.txt']
+filenames_2022a = ['RF02','Transit1','Transit2','Transit3','Transit4','Transit5','RF03'] #...
 
-filenames_2022b = ['../Data/2022-08-11/n2o-co_2022-08-11_f0001.txt',
-                  '../Data/2022-08-12/n2o-co_2022-08-12_f0000.txt', # RF06
-                  '../Data/2022-08-15/n2o-co_2022-08-15_f0000.txt',
-                  '../Data/2022-08-15/n2o-co_2022-08-15_f0001.txt',
-                  '../Data/2022-08-15/n2o-co_2022-08-15_f0002.txt',
-                  '../Data/2022-08-15/n2o-co_2022-08-15_f0003.txt',
-                  '../Data/2022-08-16/n2o-co_2022-08-16_f0000.txt', # RF09
-                  '../Data/2022-08-16/n2o-co_2022-08-16_f0001.txt']
+filenames_2022b = ['']
+"""
 
 # %% define cal gas cylinders
-cylinder='NOAA'
+cylinder = 'NOAA'
+
 # handle different gas tanks
 if cylinder == 'NOAA':
     #NOAA low (CC745344)
@@ -77,10 +137,11 @@ elif cylinder == 'Matheson':
     high_tank_N2O = 1000
 else:
     print('Cylinder name not recognized.')
-    
+
 # %% load COMA data
-filenames_COMA = filenames_2022a
 COMA = []
+
+filenames_COMA = filenames['COMA_raw']
 
 # load COMA files      
 for ii in range(len(filenames_COMA)):
@@ -99,6 +160,12 @@ ix_high = np.ravel(np.where(COMA["MIU_VALVE"]==3)) # high cal
 
 low_cal = calc_cal(COMA,ix_low)
 high_cal = calc_cal(COMA,ix_high)
+
+# %% load MMS data
+# MMS = read_MMS(filename_MMS)
+
+# %% load laser power
+# ...
 
 # %% handle filtering data
 # [not complete]
@@ -127,32 +194,29 @@ high_cal.loc[high_cal['ID'].str.match("2022-08-02_05:26:53"),'valid']=False
 high_cal.loc[high_cal['ID'].str.match("2022-08-02_06:11:53"),'valid']=False
 high_cal.loc[high_cal['GasP_torr']<51,'valid'] = False
 
-# %% load MMS data
-#MMS = read_MMS(filename_MMS)
-
 # %% plot time series
 fig2, ax2 = plt.subplots(1, 1, figsize=(8,5))
+
+to_show = 'low_cal'
 
 ax2.plot(COMA['[CO]d_ppm'][ix_high].values*1000,'.',markersize=1)
 ax2_twin = ax2.twinx()
 ax2_twin.plot(COMA['GasP_torr'][ix_high].values,'k.')
 
-ax2.set_ylim([140,180])
-#ax2.axhline(51.30,linestyle = 'dashed')
+if cylinder == 'NOAA':
+    ax2.set_ylim([140,180])
+
 ax2.set_xlabel('Seconds')
 ax2.set_ylabel('CO, ppbv')
 
+# make horizontal lines for end values
 for index, row in high_cal.iterrows():
     ax2.plot([row['start_ct'],row['end_ct']],[row['CO_val'],row['CO_val']],'b--')
 
 # %% plot calibration results
 cmap = plt.get_cmap("tab20")
 
-plt.rc('axes', labelsize=8) # xaxis and yaxis labels
-plt.rc('xtick', labelsize=8) # xtick labels
-plt.rc('ytick', labelsize=8) # ytick labels
-
-fig, ax = plt.subplots(4, 1, figsize=(6,6))
+fig, ax = plt.subplots(4, 1, figsize=(9,5),dpi=150)
 
 x_low=list(range(len(low_cal)))
 x_high=list(range(len(high_cal)))
@@ -193,7 +257,7 @@ ax[1].grid()
 ax[2].grid()
 ax[3].grid()
 
-# label ticks
+# label ticks with time identifier
 ax[3].set_xticks(range(0,len(low_cal)))
 ax[3].tick_params(axis='x', labelrotation = 90)
 xlabels = [pd.to_datetime(t).strftime('%m.%d %H:%M') for t in low_cal['time']]
@@ -224,6 +288,7 @@ for ii in range(len(dat)):
 # print averages
 
 # %% plot relationships
+"""
 ix_valid = low_cal['valid']
 
 x = low_cal
@@ -247,8 +312,10 @@ ax3[1,2].set_xlabel('H2O')
 ax3[2,0].set_xlabel('SpectraID')
 
 fig3.tight_layout()
+"""
 
-# %% plot valid
+# %% plot valid cycles (manuscript figure)
+"""
 fig4, ax4 = plt.subplots(4, 1, figsize=(6,5),sharex=True)
 
 # low cal
@@ -258,8 +325,8 @@ for ii in range(len(low_cal)):
         ax4[0].plot(ct,low_cal['CO_val'][ii],'kx')
         ax4[1].plot(ct,low_cal['N2O_val'][ii]+7,'kx')
         ct += 1
-ax4[0].axhline(51.30,linestyle = 'dashed')
-ax4[1].axhline(265.90,linestyle = 'dashed')
+ax4[0].axhline(low_tank_CO,linestyle = 'dashed')
+ax4[1].axhline(low_tank_N2O,linestyle = 'dashed')
 
 # high cal
 ct = 0
@@ -269,14 +336,20 @@ for ii in range(len(high_cal)):
         ax4[3].plot(ct,high_cal['N2O_val'][ii]+7,'kx')
         ct += 1
 
-ax4[2].axhline(163.11,linestyle = 'dashed')
-ax4[3].axhline(348.05,linestyle = 'dashed')
+ax4[2].axhline(high_tank_CO,linestyle = 'dashed')
+ax4[3].axhline(high_tank_N2O,linestyle = 'dashed')
+
+# label ticks with time identifier
+ax4[3].set_xticks(range(0,ct))
+xlabels = [t[5:-1] for t in low_cal[ix_valid]['ID'].values]
+ax4[3].set_xticklabels(xlabels,rotation=90)
 
 # format plot
 ax4[0].set_ylabel('Low CO, ppb')
-ax4[1].set_ylabel('Low N2O, ppb')
+ax4[1].set_ylabel(r'Low $N_2O$, ppb')
 ax4[2].set_ylabel('High CO, ppb')
-ax4[3].set_ylabel('High N2O, ppb')
+ax4[3].set_ylabel(r'High $N_2O$, ppb')
 ax4[3].set_xlabel('Cycle #')
 fig4.tight_layout()
 #fig4.savefig('fig4.png',dpi=300)
+"""
