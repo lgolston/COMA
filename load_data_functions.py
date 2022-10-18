@@ -98,7 +98,8 @@ def read_MMS_ict(filename):
     MMS_ALT[MMS_ALT<-500] = np.nan
     
     # create timestamp
-    cur_day = datetime.strptime(filename[-15:-7],"%Y%m%d") # get date from end of file name
+    #cur_day = datetime.strptime(filename[-15:-7],"%Y%m%d") # get date from end of file name
+    cur_day = datetime.strptime(filename[40:48],"%Y%m%d") # get date from start of file name
     MMS_time = [cur_day+timedelta(seconds=t) for t in MMS['TIME_START']]
     
     # save to DataFrame
@@ -438,6 +439,7 @@ def return_filenames(case):
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220914_RA.ict'
         
     else:
-        print('case not recognized')
+        1
+        #print('case not recognized')
     
     return filenames
