@@ -228,6 +228,9 @@ def return_filenames(case):
         #filename_COMA = '../Data/2021-08-10/n2o-co_2021-08-10_f0000.txt'
         #filename_COMA = '../Data/2021-08-16/n2o-co_2021-08-16_f0000.txt'
         filenames['COMA_raw'] = ['../Data/2021-08-17/n2o-co_2021-08-17_f0000.txt']
+    
+    elif case == 'EEL_2022_Day1': #
+        filenames['COMA_raw'] = ['../Data/2022-05-19/n2o-co_2022-05-19_f0000.txt']
         
     elif case == 'EEL_2022_Day2': # second day of chamber test
         filenames['COMA_raw'] = ['../Data/2022-05-20/n2o-co_2022-05-20_f0000.txt']

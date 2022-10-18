@@ -6,13 +6,13 @@ Show results across multiple days, colored before flight; in-flight; post-flight
 Handles tank values from original NOAA tanks; and newer Matheson gas values
 
 TODO
-1. List NOAA files
-2. List Matheson files
-3. Add MMS pressure
-4. Add laser power and CO line center
-5. Add back linear regression calculation
-6. Label or vertical lines for each flight
-7. Add pre-ACCLIP NOAA files
+- calculate laser power
+- sync MMS and laser power
+- add laser power
+- add altitude
+- format output table
+- output all cases
+
 """
 
 # %% load libraries and data
@@ -20,7 +20,6 @@ import numpy as np
 import pandas as pd
 import datetime
 import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
 from calculate_linear_cal_fun import calc_cal
 from load_data_functions import read_COMA
 from load_data_functions import return_filenames
@@ -34,94 +33,102 @@ plt.rcParams['ytick.labelsize'] = 7
 plt.rcParams.update({'mathtext.default': 'regular' } ) # not italics
 
 # %% define cases
-case = 'FCF_2021'
+case = 'RF06'
 
-filenames = return_filenames(case)
+filenames = return_filenames('empty')
 
-if case == 'FCF_2021':
-    1
-elif case == 'TF1_2021':
-    1
-elif case == 'TF2_2021':
-    1
-elif case == 'TF3_2021':
-    1
-elif case == 'EEL_2022_Day1':
-    1
-elif case == 'EEL_2022_Day2':
-    1
-elif case == 'RF02':
-    1
-elif case == 'Transit1': # Ellington to Seattle
-    1
-elif case == 'Transit2': # Seattle to Anchorage
-    1
-elif case == 'Transit3': # Anchorage to Adak
-    1
-elif case == 'Transit4': # Adak to Misawa
-    1
-elif case == 'Transit5': # Misawa to Osan
-    1
-elif case == 'RF03':
-    1
-elif case == 'RF04':
-    1
-elif case == 'RF05':
-    1
-elif case == 'RF06':
-    1
-elif case == 'RF07':
-    1
-elif case == 'RF08':
-    1
-elif case == 'RF09':
-    1
-elif case == 'RF10':
-    1
-elif case == 'RF11':
-    1
-elif case == 'RF12':
-    1
-elif case == 'RF13':
-    1
-elif case == 'RF14':
-    1
-elif case == 'RF15':
-    1
-elif case == 'RF16':
-    1
-elif case == 'RF17':
-    1
-elif case == 'Transit6': # Osan to Misawa
-    1
-elif case == 'Transit7': # Misawa to Adak
-    1
-elif case == 'Transit8': # Adak to Seattle
-    1
-elif case == 'Transit9': # Seattle to Houston
-    1
+if case == 'RF03_lab':
+    filenames['COMA_raw'] = ['../Data/2022-08-02/n2o-co_2022-08-02_f0001.txt'] #post-flight
+    
+elif case == 'RF04_lab':
+    filenames['COMA_raw'] = ['../Data/2022-08-04/n2o-co_2022-08-04_f0001.txt'] #post-flight
+    
+elif case == 'RF05_lab':
+    filenames['COMA_raw'] = ['../Data/2022-08-05/n2o-co_2022-08-05_f0000_no_10s_cal.txt', #pre-flight
+                             '../Data/2022-08-06/n2o-co_2022-08-06_f0001.txt'] # post-flight
 
-# %% define cal gas cylinders
-cylinder = 'NOAA'
+elif case == 'RF06_lab':
+    filenames['COMA_raw'] = ['../Data/2022-08-11/n2o-co_2022-08-11_f0001.txt'] # pre-flight
+    
+elif case == 'RF07_lab':
+    filenames['COMA_raw'] = ['../Data/2022-08-12/n2o-co_2022-08-12_f0002.txt', # pre-flight
+                             '../Data/2022-08-13/n2o-co_2022-08-13_f0001.txt']  # post-flight
+    
+elif case == 'RF08_lab':
+    filenames['COMA_raw'] = ['../Data/2022-08-15/n2o-co_2022-08-15_f0002.txt'] # post-flight
 
-# handle different gas tanks
-if cylinder == 'NOAA':
-    #NOAA low (CC745344)
-    #NOAA high (CC746190)
-    #https://gml.noaa.gov/ccl/refgas.html
-    low_tank_CO = 51.30 # 51.30 +/- 0.66
-    high_tank_CO = 163.11 # 163.11 +/- 0.92
-    low_tank_N2O = 265.90 # 265.90 +/- 0.04
-    high_tank_N2O = 348.05 # 348.05 +/- 0.04
-elif cylinder == 'Matheson':
-    #Matheson low: ~200 ppb CO and N2O
-    #Matheson high: ~1000 ppb CO and N2O
-    low_tank_CO = 200
-    high_tank_CO = 1000
-    low_tank_N2O = 200
-    high_tank_N2O = 1000
+elif case == 'RF09_lab':
+    filenames['COMA_raw'] = ['../Data/2022-08-15/n2o-co_2022-08-15_f0003.txt', # pre-flight
+                             '../Data/2022-08-16/n2o-co_2022-08-16_f0001.txt'] # post-flight
+
+elif case == 'RF10_lab':
+    filenames['COMA_raw'] = ['../Data/2022-08-19/n2o-co_2022-08-19_f0000.txt'] # post-flight
+
+elif case == 'RF11_lab':
+    filenames['COMA_raw'] = ['../Data/2022-08-20/n2o-co_2022-08-20_f0000.txt', # pre-flight
+                             '../Data/2022-08-21/n2o-co_2022-08-21_f0001.txt'] # post-flight
+
+elif case == 'RF12_lab':
+    filenames['COMA_raw'] = ['../Data/2022-08-22/n2o-co_2022-08-22_f0000.txt', # pre-flight
+                             '../Data/2022-08-23/n2o-co_2022-08-23_f0001.txt']  # post-flight
+  
+elif case == 'RF13_lab':
+    filenames['COMA_raw'] = ['../Data/2022-08-25/n2o-co_2022-08-25_f0000.txt'] # post-flight
+    
+elif case == 'RF14_lab':
+    filenames['COMA_raw'] = ['../Data/2022-08-26/n2o-co_2022-08-26_f0001.txt'] # post-flight
+
+elif case == 'RF15_lab':
+    filenames['COMA_raw'] = ['../Data/2022-08-28/n2o-co_2022-08-28_f0000.txt', # pre-flight
+                             '../Data/2022-08-29/n2o-co_2022-08-29_f0001.txt'] # post-flight
+
+elif case == 'RF16_lab':
+    filenames['COMA_raw'] = ['../Data/2022-08-30/n2o-co_2022-08-30_f0000.txt', # pre-flight
+                             '../Data/2022-08-31/n2o-co_2022-08-31_f0001.txt'] # post-flight
+    
+elif case == 'RF17_lab':
+    filenames['COMA_raw'] = ['../Data/2022-08-31/n2o-co_2022-08-31_f0002.txt', # pre-flight
+                             '../Data/2022-09-01/n2o-co_2022-09-01_f0001.txt'] # post-flight
+    
 else:
-    print('Cylinder name not recognized.')
+    filenames = return_filenames(case)
+
+# unused:
+#2022-08-18lab
+#2022-08-24_f0000
+#n2o-co_2022-09-01_f0002
+
+#'FCF_2021':        2021-08-06_f0002
+#'TF1_2021':        2021-08-10_f0003
+#'TF2_2021':        2021-08-16_f0002
+#'TF3_2021':        2021-08-17_f0002
+#'EEL_2022_Day1':   2022-05-19_f0000
+#'EEL_2022_Day2':   2022-05-20_f0000
+#'RF02':            2022-07-18_f0002, 2022-07-18_f0003
+#'Transit1':        2022-07-21_f0000, 2022-07-21_f0001 (Ellington to Seattle)
+#'Transit2':        2022-07-21_f0002 (Seattle to Anchorage)
+#'Transit3':        2022-07-24_f0000 (Anchorage to Adak)
+#'Transit4':        2022-07-25_f0000 (Adak to Misawa)
+#'Transit5':        2022-07-27_f0000 (Misawa to Osan)
+#'RF03':            2022-08-02_f0000
+#'RF04':            2022-08-04_f0000
+#'RF05':            2022-08-06_f0000_no_10s_cal
+#'RF06':            2022-08-12_f0000
+#'RF07':            2022-08-13_f0000
+#'RF08':            2022-08-15_f0000, 2022-08-15_f0001
+#'RF09':            2022-08-16_f0000
+#'RF10':            2022-08-18_f0000
+#'RF11':            2022-08-21_f0000
+#'RF12':            2022-08-23_f0000
+#'RF13':            2022-08-24_f0002
+#'RF14':            2022-08-26_f0000
+#'RF15':            2022-08-29_f0000
+#'RF16':            2022-08-31_f0000
+#'RF17':            2022-09-01_f0000
+#'Transit6':        2022-09-09_f0000 (Osan to Misawa)
+#'Transit7':        2022-09-12_f0000 (Misawa to Adak)
+#'Transit8':        2022-09-13_f0000 (Adak to Seattle)
+#'Transit9':        2022-09-14_f0000 (Seattle to Houston)
 
 # %% load COMA data
 COMA = []
@@ -160,14 +167,38 @@ df_highcal = pd.DataFrame({'time': COMA['time'][ix_high],
                            'GasP_torr': COMA['GasP_torr'][ix_high]})
 df_highcal['groups'] = (df_highcal.index.to_series().diff()>5).cumsum()
 
+# %% define cal gas cylinders
+start_time = COMA['time'][0]
+
+if start_time <= datetime.datetime(2022,8,11): # NOAA gas bottle
+    cylinder = 'NOAA'
+    
+    #NOAA low (CC745344)
+    #NOAA high (CC746190)
+    #https://gml.noaa.gov/ccl/refgas.html
+    low_tank_CO = 51.30 # 51.30 +/- 0.66
+    high_tank_CO = 163.11 # 163.11 +/- 0.92
+    low_tank_N2O = 265.90 # 265.90 +/- 0.04
+    high_tank_N2O = 348.05 # 348.05 +/- 0.04
+else:
+    cylinder = 'Matheson'
+    
+    #Matheson low: ~200 ppb CO and N2O
+    #Matheson high: ~1000 ppb CO and N2O
+    low_tank_CO = 200
+    high_tank_CO = 1000
+    low_tank_N2O = 200
+    high_tank_N2O = 1000
+
 # %% load MMS data
-MMS = read_MMS_ict(filenames['MMS'])
+if (len(filenames['MMS'])>0):
+    MMS = read_MMS_ict(filenames['MMS'])
 
 # %% load laser power
 # ...
 
 # %% plot time series (slower changing variables)
-fig1, ax1 = plt.subplots(3, 1, figsize=(6,5))
+#fig1, ax1 = plt.subplots(3, 1, figsize=(6,5))
 # 
 # altitude and laser power
 # peak position
@@ -212,37 +243,35 @@ ax2[2,1].set_xlabel('Seconds')
 ax2[0,0].set_title('Low cal')
 ax2[0,1].set_title('High cal')
 
-ax2[0,1].legend(np.linspace(1,13,13,dtype='int'),ncol=2)
-
-fig2.suptitle(case)
+fig2.suptitle(t=case,x=0.1,y=0.98)
 fig2.tight_layout()
+
+ax2[0,1].legend(np.linspace(1,13,13,dtype='int'),ncol=2,bbox_to_anchor=(0, 1.6)) #framealpha=0
+
 #fig2.savefig('fig2.png',dpi=300)
 
 
 # %% output stats
 print("CO:")
-low_cal['ID'] = [pd.to_datetime(tmp).strftime("%Y-%m-%d_%H:%M:%S") for tmp in low_cal['time']]
-high_cal['ID'] = [pd.to_datetime(tmp).strftime("%Y-%m-%d_%H:%M:%S") for tmp in high_cal['time']]
+low_cal['ID'] = [pd.to_datetime(tmp).strftime("%Y-%m-%d %H:%M:%S") for tmp in low_cal['time']]
+high_cal['ID'] = [pd.to_datetime(tmp).strftime("%Y-%m-%d %H:%M:%S") for tmp in high_cal['time']]
 
 dat = high_cal
 
 for ii in range(len(dat)):
-    print("{:2d}".format(ii) +                          #Cycle#
-          '  ' + dat['ID'][ii] +                        #Unique identifier
-          '  ' + "{:6.2f}".format(dat['CO_val'][ii]) +  #CO mean
-          '  ' + "{:6.2f}".format(dat['CO_std'][ii]) +
-          '  ' + "{:6.2f}".format(dat['N2O_val'][ii]))
+    print("{:2d}".format(ii) + ','                          #Cycle#
+          '  ' + dat['ID'][ii] + ','                        #Unique identifier
+          '  ' + "{:6.2f}".format(dat['CO_val'][ii]) + ','  #CO value
+          '  ' + "{:6.2f}".format(dat['CO_std'][ii]) + ','  #CO std dev
+          '  ' + "{:6.2f}".format(dat['N2O_val'][ii]) + ',' #N2O value
+          '  ' + "{:6.2f}".format(dat['N2O_std'][ii]) + ',' #N2O std dev
+          '  ' + "{:6.2f}".format(dat['H2O'][ii]) + ','     #H2O value
+          '  ' + "{:5.2f}".format(dat['GasP_torr'][ii]) + ','  #Cell pressure
+          '  ' + "{:6.0f}".format(dat['SpectraID'][ii]) + ','  #SpectraID / seconds on
+          '  ' + "{:6.2f}".format(dat['Peak0'][ii]))          #Peak position
 
-#print()
-#print("N2O:")
-#for ii in range(len(CO_cal)):
-#    print(pd.to_datetime(CO_cal['time'][ii]).strftime("%m/%d/%Y %H:%M:%S") + 
-#          ' ' + "{:.3f}".format(N2O_cal.slope[ii]) + 
-#          ' ' + "{:.3f}".format(N2O_cal.intercept[ii]) + 
-#          '  ' + "{:.3f}".format(N2O_cal.low_mean[ii]) + 
-#          '  ' + "{:.3f}".format(N2O_cal.high_mean[ii]))
-
-# print averages
+    # Power
+    # Altitude
 
 # %% holding
 # label ticks with time identifier
