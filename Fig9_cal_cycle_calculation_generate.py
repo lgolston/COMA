@@ -5,10 +5,6 @@ Show results across multiple days, colored before flight; in-flight; post-flight
 
 Handles tank values from original NOAA tanks; and newer Matheson gas values
 
-TODO
-- calculate laser power
-- add laser power
-- add GasP std dev
 """
 
 # %% load libraries and data
@@ -36,9 +32,9 @@ cases = ['FCF_2021','TF1_2021','TF2_2021','TF3_2021','EEL_2022_Day1','EEL_2022_D
          'RF13_lab','RF13','RF14_lab','RF14','RF15_lab','RF15','RF16_lab','RF16','RF17_lab','RF17',
          'Transit6','Transit7','Transit8','Transit9']
 
-#cases = ['TF3_2021','EEL_2022_Day1']
+#cases = ['RF13']
 
-header = "Cycle#,ID,CO_val,CO_std,N2O_val,N2O_std,H2O,CellP,Alt,Time_on,Peak0"
+header = "Case,Cycle#,ID,CO_val,CO_std,N2O_val,N2O_std,H2O,CellP,CellP_std,Alt,Time_on,Power,Peak0"
 a = open('plots/table_low_cal.csv', 'w')
 a.write(header)
 a.write('\n')
@@ -49,6 +45,8 @@ b.write('\n')
 # %% main loop
 for case in cases:
     # %% define cases
+    print('Processing case:' + case)
+    
     filenames = {'COMA_raw':[],'MMS':[]}
     
     if case == 'RF03_lab':
@@ -221,22 +219,79 @@ for case in cases:
         high_cal['alt']=0
     
     # %% load laser power
-    # ...
+    # replace f with s in filenames
+    f = lambda x: (x[0:42].replace("f", "s")+".txt") # handle no_10s_cal cropped cases
+    spectra_fnames = map(f, filenames['COMA_raw'])
+    
+    # load spectra files and calculate laser power
+    for count, fname in enumerate(spectra_fnames):
+        print("Calculating laser power:")
+        f = open(fname, "r")
+        txt = f.read()
+        f.close()
+        spectra = txt.splitlines()
+        
+        block_length = 1126
+        num_lines = int(len(spectra)/block_length)
+        
+        laser_power = np.zeros(num_lines)
+    
+        EPOCH_TIME = [int(spectra[4+x*1126][11:]) for x in range(num_lines)]
+        x0 = datetime.datetime(1970,1,1)
+        SPECTRA_TIME = [x0+timedelta(seconds=t/1000) for t in EPOCH_TIME]
+        
+        if case == 'RF13': # fix clock setting on this day
+            SPECTRA_TIME = [x + timedelta(hours=6) for x in SPECTRA_TIME]
+            
+        for ii in range(num_lines):
+            # select the laser scan (LR0)
+            x0 = 180+ii*1126
+            x1 = 1123+ii*1126
+            raw_scan = np.ravel([float(x) for x in spectra[x0:x1]])
+            
+            # select the ringdown scan (RD0)
+            x0 = 17+ii*1126
+            x1 = 176+ii*1126
+            ringdown = np.ravel([float(x) for x in spectra[x0:x1]])
+            
+            # calculate laser power
+            laser_power[ii] = np.mean(raw_scan[-11:-1]) - np.mean(ringdown[-11:-1])
 
+        if count == 0:
+            laser_power_df = pd.DataFrame({'time':SPECTRA_TIME,'power':laser_power})
+        else:
+            tmp = pd.DataFrame({'time':SPECTRA_TIME,'power':laser_power})
+            laser_power_df = pd.concat([laser_power_df,tmp],ignore_index=True)
+    
+        # match by time (add 35 s since time represents start of cal cycle)
+        low_cal['power'] = np.nan
+        for index, row in low_cal.iterrows():
+            time_distance = np.abs( laser_power_df['time'] - (row['time']+np.timedelta64(35, 's')) )
+            match_ix = np.argmin(time_distance)
+            if time_distance[match_ix] < np.timedelta64(5, 's'):
+                low_cal.loc[index,'power'] = laser_power_df.loc[match_ix,'power']
+        
+        high_cal['power'] = np.nan
+        for index, row in high_cal.iterrows():
+            time_distance = np.abs( laser_power_df['time'] - (row['time']+np.timedelta64(35, 's')) )
+            match_ix = np.argmin(time_distance)
+            if time_distance[match_ix] < np.timedelta64(5, 's'):
+                high_cal.loc[index,'power'] = laser_power_df.loc[match_ix,'power']
+        
     # %% plot time series (cal cycles overlapped)
     fig2, ax2 = plt.subplots(3, 2, figsize=(6,5))
     
     ms = 4
     
     for ct, data in df_lowcal.groupby('groups'):
-        ax2[0,0].plot(data['CO_dry'].values,'.',markersize=ms)
-        ax2[1,0].plot(data['N2O_dry'].values,'.',markersize=ms)
-        ax2[2,0].plot(data['GasP_torr'].values,'.',markersize=ms)
+        ax2[0,0].plot(data['CO_dry'].values,'-.',markersize=ms,alpha=0.6)
+        ax2[1,0].plot(data['N2O_dry'].values,'-.',markersize=ms,alpha=0.6)
+        ax2[2,0].plot(data['GasP_torr'].values,'-.',markersize=ms,alpha=0.6)
     
     for ct, data in df_highcal.groupby('groups'):
-        ax2[0,1].plot(data['CO_dry'].values,'.',markersize=ms)
-        ax2[1,1].plot(data['N2O_dry'].values,'.',markersize=ms)
-        ax2[2,1].plot(data['GasP_torr'].values,'.',markersize=ms)
+        ax2[0,1].plot(data['CO_dry'].values,'-.',markersize=ms,alpha=0.6)
+        ax2[1,1].plot(data['N2O_dry'].values,'-.',markersize=ms,alpha=0.6)
+        ax2[2,1].plot(data['GasP_torr'].values,'-.',markersize=ms,alpha=0.6)
     
     # NOAA gas bottle
     if cylinder == 'NOAA':
@@ -271,9 +326,10 @@ for case in cases:
     fig2.suptitle(t=case,x=0.15,y=0.98)
     fig2.tight_layout()
     
-    ax2[0,1].legend(np.linspace(1,13,13,dtype='int'),ncol=2,bbox_to_anchor=(0, 1.6)) #framealpha=0
+    ax2[0,1].legend(np.linspace(0,12,13,dtype='int'),ncol=2,bbox_to_anchor=(0, 1.6)) #framealpha=0
     
     fig2.savefig('plots/fig_'+case+'.png',dpi=300)
+    #fig2.savefig('plots/fig_'+case+'.svg')
     plt.close(fig2)
     
     
@@ -288,6 +344,7 @@ for case in cases:
         
         for ii in range(len(dat)):
             file_handle.write(
+                case + ','                                        # Case name
                 "{:2d}".format(ii) + ','                          #Cycle#
                 '  ' + dat['ID'][ii] + ','                        #Unique identifier
                 '  ' + "{:6.2f}".format(dat['CO_val'][ii]) + ','  #CO value
@@ -295,15 +352,14 @@ for case in cases:
                 '  ' + "{:6.2f}".format(dat['N2O_val'][ii]) + ',' #N2O value
                 '  ' + "{:6.2f}".format(dat['N2O_std'][ii]) + ',' #N2O std dev
                 '  ' + "{:6.2f}".format(dat['H2O'][ii]) + ','     #H2O value
-                '  ' + "{:5.2f}".format(dat['GasP_torr'][ii]) + ','  #Cell pressure
+                '  ' + "{:5.2f}".format(dat['GasP_val'][ii]) + ','  #Cell pressure
+                '  ' + "{:5.3f}".format(dat['GasP_std'][ii]) + ','  #Cell pressure std dev
                 '  ' + "{:6.0f}".format(dat['alt'][ii]) + ','    #Altitude
                 '  ' + "{:6.0f}".format(dat['SpectraID'][ii]) + ','  #SpectraID / seconds on
+                '  ' + "{:6.4f}".format(dat['power'][ii]) + ','  # Laser power
                 '  ' + "{:6.2f}".format(dat['Peak0'][ii]))          #Peak position
             file_handle.write('\n')
     
-        # Power
-        # Altitude
-
 # %% close files
 a.close()
 b.close()

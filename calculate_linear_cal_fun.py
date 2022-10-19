@@ -36,38 +36,39 @@ def calc_cal(COMA,ix):
     # set up output variables
     feature_list = ['time','CO_val','CO_std','N2O_val','N2O_std',
                     'H2O','AmbT_C','Peak0','AIN5','AIN6',
-                    'start','end','start_ct','end_ct','time_on']
+                    'time_on']
     zero_data = np.zeros( shape = (len(df_grouped), len(feature_list)) )
     res = pd.DataFrame(zero_data, columns=feature_list)
     
     # look through cal cycles
     for ct, data in df_grouped:
-        CO_series = pd.Series(data['[CO]d_ppb'].values)
-        N2O_series = pd.Series(data['[N2O]d_ppb'].values)
-        H2O_series = pd.Series(data['[H2O]_ppm'].values)
+        CO_series = pd.Series(data['[CO]d_ppb'].values) # make series for rolling attribute
+        N2O_series = pd.Series(data['[N2O]d_ppb'].values) # make series for rolling attribute
+        CellP_series = pd.Series(data['GasP_torr'].values)
         
         res.loc[ct,'time'] = data['time'].values[0] #start of sequence
         res.loc[ct,'CO_val'], res.loc[ct,'CO_std'] = calc_mean(CO_series)        
         res.loc[ct,'N2O_val'], res.loc[ct,'N2O_std'] = calc_mean(N2O_series)
         
-        res.loc[ct,'AmbT_C'] = np.mean(data['AmbT_C'].values)
-        res.loc[ct,'Peak0'] = np.mean(data['Peak0'].values)
-        res.loc[ct,'AIN5'] = np.mean(data['AIN5'].values)
-        res.loc[ct,'AIN6'] = np.mean(data['AIN6'].values)
-        res.loc[ct,'GasP_torr'] = np.mean(data['GasP_torr'].values)
+        res.loc[ct,'AmbT_C'] = np.mean(data['AmbT_C'].values[-10:-1])
+        res.loc[ct,'Peak0'] = np.mean(data['Peak0'].values[-10:-1])
+        res.loc[ct,'AIN5'] = np.mean(data['AIN5'].values[-10:-1])
+        res.loc[ct,'AIN6'] = np.mean(data['AIN6'].values[-10:-1])
         
-        res.loc[ct,'SpectraID'] = data['SpectraID'].values[-1]
-        res.loc[ct,'H2O'] = data['[H2O]_ppm'].values[-1]
+        res.loc[ct,'GasP_val'], res.loc[ct,'GasP_std'] = calc_mean(CellP_series)
         
-        res.loc[ct,'start'] = min(data.index)
-        res.loc[ct,'end'] = max(data.index)
+        res.loc[ct,'SpectraID'] = data['SpectraID'].values[-1] # last value
+        res.loc[ct,'H2O'] = data['[H2O]_ppm'].values[-1] # last value
         
-        if ct == 0:
-            res.loc[ct,'start_ct'] = 0
-            res.loc[ct,'end_ct'] = len(data)-1
-        else:
-            res.loc[ct,'start_ct'] = res.loc[ct-1,'end_ct'] + 1
-            res.loc[ct,'end_ct'] = res.loc[ct,'start_ct'] + len(data)-1
+        #res.loc[ct,'start'] = min(data.index)
+        #res.loc[ct,'end'] = max(data.index)
+        
+        #if ct == 0:
+        #    res.loc[ct,'start_ct'] = 0
+        #    res.loc[ct,'end_ct'] = len(data)-1
+        #else:
+        #    res.loc[ct,'start_ct'] = res.loc[ct-1,'end_ct'] + 1
+        #    res.loc[ct,'end_ct'] = res.loc[ct,'start_ct'] + len(data)-1
             
     return res
 
