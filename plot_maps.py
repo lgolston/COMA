@@ -6,64 +6,71 @@ Plot maps of 2021 test flights from Houston
 # %% header
 from datetime import datetime
 import matplotlib.pyplot as plt
-from load_flight_functions import read_COMA
-from load_flight_functions import read_MMS
-from load_flight_functions import sync_data
+from load_data_functions import read_COMA
+from load_data_functions import read_MMS_ict
+from load_data_functions import sync_data
+from load_data_functions import return_filenames
 import cartopy.crs as crs
 import cartopy.feature as cfeature
 
-# %% start cartopy map
-fig = plt.figure(figsize=(8,6),dpi=200)
+# %% plot settings
+plt.rcParams['axes.labelsize'] = 8
+plt.rcParams['legend.fontsize'] = 8
+plt.rcParams['xtick.labelsize'] = 7
+plt.rcParams['ytick.labelsize'] = 7
+plt.rcParams.update({'mathtext.default': 'regular' } ) # not italics
 
-ax = fig.add_subplot(1,1,1, projection=crs.PlateCarree())
+# %% start cartopy map
+fig = plt.figure(figsize=(6,3),dpi=100)
+
+projection = crs.Mercator(central_longitude=180)
+plate = crs.PlateCarree()
+
+ax = fig.add_subplot(1,1,1, projection=projection)
 
 ax.add_feature(cfeature.COASTLINE)
 ax.add_feature(cfeature.STATES)
 
 # %% process data
 #for case in range(0, 4):
-for case in ['RF10']:
+#for case in ['Transit6','Transit7','Transit8','Transit9']:
+for case in ['Transit1','Transit2','Transit3','Transit4','Transit5']:
     # load files
-    if case == 0: # FCF
-        filename_COMA = ['../Data/2021-08-06/n2o-co_2021-08-06_f0002.txt']
-        filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20210806_RA.ict'
-        filename_WB57 = '../Data/_OtherData_/NP_WB57_20210806_R0.ict'
-        cur_day = datetime(2021,8,6)
-    elif case == 1: # Test Flight 1
-        filename_COMA = ['../Data/2021-08-10/n2o-co_2021-08-10_f0003.txt']
-        filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20210810_RA.ict'
-        filename_WB57 = '../Data/_OtherData_/NP_WB57_20210810_R0.ict'
-        cur_day = datetime(2021,8,10)
-    elif case == 2: # Test Flight 2
-        filename_COMA = ['../Data/2021-08-16/n2o-co_2021-08-16_f0002.txt']
-        filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20210816_RA.ict'
-        filename_WB57 = '../Data/_OtherData_/NP_WB57_20210816_R0.ict'
-        cur_day = datetime(2021,8,16)
-    elif case == 3: # Test Flight 3
-        filename_COMA = ['../Data/2021-08-17/n2o-co_2021-08-17_f0002.txt']
-        filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20210817_RA.ict'
-        filename_WB57 = '../Data/_OtherData_/NP_WB57_20210817_R0.ict'
-        cur_day = datetime(2021,8,17)
-    elif case == 'RF10': # RF10
-        filename_COMA = ['../Data/2022-08-18/n2o-co_2022-08-18_f0000.txt']
-        filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220819_RA.ict'
-
-
-    COMA, inlet_ix = read_COMA(filename_COMA)
-    MMS = read_MMS(filename_MMS)
+    filenames = return_filenames(case)
+    
+    COMA, inlet_ix = read_COMA(filenames['COMA_raw'])
+    MMS = read_MMS_ict(filenames['MMS'])
     synced_data = sync_data(MMS,COMA,inlet_ix)
 
-    # plot map
-    #sc1 = ax.scatter(synced_data['LON'],synced_data['LAT'],c=synced_data['CO_dry'],vmin=20, vmax=80, s = 15)
-    sc1 = ax.scatter(synced_data['LON'],synced_data['LAT'],c=synced_data['CO_dry'],vmin=30, vmax=250, s = 15)
+    print(min(synced_data['CO_dry']))
+    print(max(synced_data['CO_dry']))
+    print(min(synced_data['N2O_dry']))
+    print(max(synced_data['N2O_dry']))
+    print()
     
-    #sc2 = ax2.scatter(synced_data['LON'],synced_data['LAT'],c=synced_data['N2O_dry'],vmin=250, vmax=300, s = 15)
-
-#fig.savefig('fig1.png',dpi=300)
+    # plot map
+    to_plot = 'N2O'
+    
+    if to_plot == 'CO':
+        sc1 = ax.scatter(synced_data['LON'],synced_data['LAT'],c=synced_data['CO_dry'],vmin=20, vmax=100, s = 15, transform=plate)
+    else:
+        sc1 = ax.scatter(synced_data['LON'],synced_data['LAT'],c=synced_data['N2O_dry'],vmin=280, vmax=340, s = 15, transform=plate)
 
 # %% format
-cb1 = plt.colorbar(sc1)
-cb1.set_label('CO, ppb')
-#ax.set_xlabel('Longitude')
-#ax.set_ylabel('Latitude')
-plt.show()
+# for outbound transit
+ax.set_position([0.025, 0.3, 0.95, 0.652])
+cbar_ax = fig.add_axes([0.06, 0.17, 0.90, 0.04])
+
+# for return transit
+#ax.set_position([0.05, 0.27, 0.92, 0.44])
+#cbar_ax = fig.add_axes([0.06, 0.17, 0.90, 0.04])
+
+# plot
+cb1 = plt.colorbar(sc1,orientation='horizontal',cax=cbar_ax)
+
+if to_plot == 'CO':
+    cb1.set_label('CO, ppb')
+elif to_plot == 'N2O':
+    cb1.set_label('$N_2O$, ppb')
+    
+#fig.savefig('COMA_transit.png',dpi=300)

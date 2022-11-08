@@ -18,8 +18,8 @@ from load_data_functions import read_MMS_ict
 from load_data_functions import return_filenames
 
 # EDIT THESE
-case = 'RF06'
-focus = 'flight_CO' # lab, flight_CO, flight_N2O
+case = 'Transit9'
+focus = 'flight_N2O' # lab, flight_CO, flight_N2O
 
 # %% plot settings
 plt.rcParams['axes.labelsize'] = 8
@@ -118,13 +118,13 @@ ax[2,3].set_ylabel('CHISQ0')
 ax[2,3].set_yscale('log')
 
 # formatting
-plt.tight_layout()
 ax[2,0].tick_params(axis='x', labelrotation = 45)
 ax[2,1].tick_params(axis='x', labelrotation = 45)
 ax[2,2].tick_params(axis='x', labelrotation = 45)
 ax[2,3].tick_params(axis='x', labelrotation = 45)
 ax[2,0].xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
-plt.show()
+fig.tight_layout()
+fig.show()
 
 
 # %% plot cal gas
@@ -199,8 +199,10 @@ if focus != 'lab':
     ax2[1].set_xlabel('Seconds')
     ax2[1].set_title('High cal')
     ax2[1].legend(np.linspace(1,13,13,dtype='int'),fontsize=5)
+    
+    fig2.tight_layout()
 
-# plots involving aicraft position
+# %% plots involving aicraft position
 if focus != 'lab':
     # import mapping library
     import cartopy.crs as ccrs
@@ -229,12 +231,16 @@ if focus != 'lab':
     cb.set_label('CO, ppb')
     
     # OPTION 2: color by time
-    #ax3.scatter(sync_data.index,sync_data['ALT'],c=sync_data.index, s = 15)
+    #sc = ax3.scatter(sync_data.index,sync_data['ALT'],c=sync_data.index, s = 15)
+    #cb1 = plt.colorbar(sc)
+    #cb1.ax.set_yticklabels(pd.to_datetime(cb1.get_ticks()).strftime(date_format='%H:%M'))
+    #cb1.set_label('Time')
     
     ax3.grid()
     ax3.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
     ax3.set_xlabel('Time (UTC)')
     ax3.set_ylabel('Altitude, m')
+    fig3.tight_layout()
     
     # %% lat/lon map (colored by time)
     fig4 = plt.figure(4)
@@ -256,8 +262,7 @@ if focus != 'lab':
     #sc1 = ax4.scatter(sync_data['LON'].values,sync_data['LAT'].values,c=sync_data.index, s = 15, transform=plate)
     #cb1 = plt.colorbar(sc1)
     #cb1.ax.set_yticklabels(pd.to_datetime(cb1.get_ticks()).strftime(date_format='%H:%M'))
-    #cb1.set_label('Time, UTC', fontsize=10)
-    #cb1.ax.tick_params(labelsize=10)
+    #cb1.set_label('Time, UTC')
     
     # handle transit flights
     if case == 'Transit1':
@@ -298,15 +303,15 @@ if focus != 'lab':
     cb2 = plt.colorbar(sc2)
     cb2.ax.set_yticklabels(pd.to_datetime(cb2.get_ticks()).strftime(date_format='%H:%M'))
     cb2.set_label('Time, UTC')
-    plt.ylabel('Altitude, m')
+    ax5.set_ylabel('Altitude, m')
+    fig5.tight_layout()
     
 # %% save all
 """
-fig.savefig('fig1.png',dpi=300)
-fig2.savefig('fig2_CO.png',dpi=300)
-fig2.savefig('fig2_N2O.png',dpi=300)
-fig3.savefig('fig3.png',dpi=300)
-fig4.savefig('fig4.png',dpi=300)
-fig5.savefig('fig5.png',dpi=300)
+fig.savefig('COMA_fig1.png',dpi=300)
+fig2.savefig('COMA_fig2.png',dpi=300)
+fig3.savefig('COMA_fig3.png',dpi=300)
+fig4.savefig('COMA_fig4.png',dpi=300)
+fig5.savefig('COMA_fig5.png',dpi=300)
 plt.close('all')
 """

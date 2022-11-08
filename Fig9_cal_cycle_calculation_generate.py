@@ -106,9 +106,10 @@ for case in cases:
         filenames = return_filenames(case)
     
     # unused:
+    #2022-04-22
     #2022-08-18lab
     #2022-08-24_f0000
-    #n2o-co_2022-09-01_f0002
+    #2022-09-01_f0002
     
     #'FCF_2021':        2021-08-06_f0002
     #'TF1_2021':        2021-08-10_f0003
