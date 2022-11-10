@@ -53,8 +53,11 @@ ax["A"].plot(COMA['time'][inlet_ix],COMA["[CO]d_ppm"][inlet_ix]*1000,'b',marker=
 ax["A"].plot(COLD2['time']+time_offset,COLD2[' CO_COLD2_ppbv'],'g',marker='.',label='COLD2',markersize=2)
 
 ax["A"].set_ylabel('CO, ppb')
-ax["A"].set_xlim(datetime(2022,8,29,1),datetime(2022,8,29,7))
-ax["A"].set_ylim([-10,200])
+
+if case == 'RF15': # used in manuscript:
+    ax["A"].set_xlim(datetime(2022,8,29,1),datetime(2022,8,29,7))
+    ax["A"].set_ylim([-10,200])
+
 ax["A"].grid('on')
 ax["A"].legend(ncol=3,loc='upper left')
 ax["A"].xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))

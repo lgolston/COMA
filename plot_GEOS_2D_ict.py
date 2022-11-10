@@ -15,12 +15,12 @@ from load_data_functions import return_filenames, read_MMS_ict
 case = 'Transit8'
 
 if case == 'Transit7': # Misawa to Adak
-    filename_GEOS = '../Data/_Model_/ACCLIP-GEOS_WB57_20220912_RA.ict'
-    filename_GEOS_2D = '../Data/_Model_/ACCLIP-GEOS-2D_WB57_20220912_RA.ict'
+    filename_GEOS = '../Data/_Model_/ACCLIP-GEOS_WB57_20220912_RC.ict'
+    filename_GEOS_2D = '../Data/_Model_/ACCLIP-GEOS-2D_WB57_20220912_RC.ict'
     cur_day = datetime(2022,9,12)
 elif case == 'Transit8': # Adak to Seattle
-    filename_GEOS = '../Data/_Model_/ACCLIP-GEOS_WB57_20220913_RA.ict'
-    filename_GEOS_2D = '../Data/_Model_/ACCLIP-GEOS-2D_WB57_20220913_RA.ict'
+    filename_GEOS = '../Data/_Model_/ACCLIP-GEOS_WB57_20220913_RC.ict'
+    filename_GEOS_2D = '../Data/_Model_/ACCLIP-GEOS-2D_WB57_20220913_RC.ict'
     cur_day = datetime(2022,9,13)
 
 # %% load data

@@ -35,10 +35,10 @@ MMS[MMS['T']<0] = np.nan
 # load GEOS model
 if case == 'Transit7': # Misawa to Adak
     filename_UASO3 = '../Data/_OtherData_/UASO3_telemetry-631fa94e32c0bcdb3575ece4.csv'
-    filename_GEOS = '../Data/_Model_/ACCLIP-GEOS_WB57_20220912_RA.ict'
+    filename_GEOS = '../Data/_Model_/ACCLIP-GEOS_WB57_20220912_RC.ict'
 elif case == 'Transit8': # Adak to Seattle
     filename_UASO3 = '../Data/_OtherData_/UASO3_telemetry-6320db6532c0bcdb35876e58.csv'
-    filename_GEOS = '../Data/_Model_/ACCLIP-GEOS_WB57_20220913_RA.ict'
+    filename_GEOS = '../Data/_Model_/ACCLIP-GEOS_WB57_20220913_RC.ict'
 
 cur_day = datetime.strptime(filename_GEOS[-15:-7],"%Y%m%d")
 GEOS = pd.read_csv(filename_GEOS,sep=',',header=61)
@@ -48,6 +48,8 @@ GEOS['time'] = [cur_day+timedelta(seconds=t) for t in GEOS['Time_Start']]
 UASO3 = pd.read_csv(filename_UASO3,sep=',', header=0, skiprows=lambda x: (x != 0) and not x % 2)
 UASO3['time'] = [datetime.strptime(tstamp,"%Y-%m-%dT%H:%M:%S.%fZ") for tstamp in UASO3['Timestamp']]
 
+# load ozone (ict version) - files not published yet
+# ...
 
 # %% create figure
 fig, ax = plt.subplots(2, 1, figsize=(6,3.5),sharex=True)
