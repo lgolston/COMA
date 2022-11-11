@@ -11,14 +11,14 @@ import numpy as np
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-from load_flight_functions import read_COMA
-from load_flight_functions import read_MMS
-from load_flight_functions import sync_data
+from load_data_functions import read_COMA
+from load_data_functions import read_MMS_ict
+from load_data_functions import sync_data
 
 # %% process data
 fig, ax = plt.subplots(1, 3, figsize=(8,3), dpi=100)
 
-to_plot = 'CO_series' # CO_vert, CO_series, CO_GEOS, or N2O_vert
+to_plot = 'CO_vert' # CO_vert, CO_series, CO_GEOS, or N2O_vert
 
 for case in range(1, 4):   
     # choose files
@@ -32,23 +32,23 @@ for case in range(1, 4):
         filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20210810_RA.ict'
         filename_WB57 = '../Data/_OtherData_/NP_WB57_20210810_R0.ict'
         cur_day = datetime(2021,8,10)
-        filename_GEOS = '../Data/_OtherData_/GEOSFP_CO_ACCLIP-20210810.txt'
+        filename_GEOS = '../Data/_Model_/GEOSFP_CO_ACCLIP-20210810.txt'
     elif case == 2: # Test Flight 2
         filename_COMA = ['../Data/2021-08-16/n2o-co_2021-08-16_f0002.txt']
         filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20210816_RA.ict'
         filename_WB57 = '../Data/_OtherData_/NP_WB57_20210816_R0.ict'
         cur_day = datetime(2021,8,16)
-        filename_GEOS = '../Data/_OtherData_/GEOSFP_CO_ACCLIP-20210816.txt'
+        filename_GEOS = '../Data/_Model_/GEOSFP_CO_ACCLIP-20210816.txt'
     elif case == 3: # Test Flight 3
         filename_COMA = ['../Data/2021-08-17/n2o-co_2021-08-17_f0002.txt']
         filename_MMS = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20210817_RA.ict'
         filename_WB57 = '../Data/_OtherData_/NP_WB57_20210817_R0.ict'
         cur_day = datetime(2021,8,17)
-        filename_GEOS = '../Data/_OtherData_/GEOSFP_CO_ACCLIP-20210817.txt'
+        filename_GEOS = '../Data/_Model_/GEOSFP_CO_ACCLIP-20210817.txt'
     
     # load files
     COMA, inlet_ix = read_COMA(filename_COMA)
-    MMS = read_MMS(filename_MMS)
+    MMS = read_MMS_ict(filename_MMS)
     synced_data = sync_data(MMS,COMA, inlet_ix)
     if case == 0:
         GEOS = pd.DataFrame(data={'Time(UTC_Sec)': [np.nan], 'GEOS_CO(ppb)': [np.nan]})
