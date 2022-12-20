@@ -18,7 +18,7 @@ from load_data_functions import read_MMS_ict
 from load_data_functions import return_filenames
 
 # EDIT THESE
-case = 'Transit9'
+case = 'RF08'
 focus = 'flight_N2O' # lab, flight_CO, flight_N2O
 
 # %% plot settings
@@ -242,7 +242,7 @@ if focus != 'lab':
     ax3.set_ylabel('Altitude, m')
     fig3.tight_layout()
     
-    # %% lat/lon map (colored by time)
+    # %% lat/lon map (colored by time or concentration)
     fig4 = plt.figure(4)
     if case in ['Transit3','Transit4','Transit7','Transit8']: # Transit 3-4
         projection = ccrs.Mercator(central_longitude=180)

@@ -76,7 +76,7 @@ plt.rcParams['font.size']=8
 plt.rcParams.update({'mathtext.default': 'regular' } ) # not italics
 
 # %% load and plot
-for case in range(0,25):
+for case in range(8,9):
     # %% load and prepare data
     filename = '../Data/_Merge_/'+filenames_60s[case][0]
     case_name = filenames_60s[case][1]
@@ -145,8 +145,8 @@ for case in range(0,25):
     ax1["A"].xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
     fig1.suptitle(case_name)
     fig1.tight_layout()
-    fig1.savefig('./plots/' + case_name + '_div_scatterplots.png',dpi=300)
-    plt.close(fig1)
+    #fig1.savefig('./plots/' + case_name + '_div_scatterplots.png',dpi=300)
+    #plt.close(fig1)
     
     # %% plot vertical profiles
     fig2, ax2 = plt.subplots(3, 2, figsize=(6,5),sharey=True)
@@ -157,7 +157,9 @@ for case in range(0,25):
         if vert_coord == 'alt':
             ydata = Data['G_ALT_MMS_BUI'][ix]/1000
         else:
-            ydata = Data['POT_MMS_BUI'][ix]
+            #ydata = Data['EPV_GEOS_NEWMAN'][ix]*1E6
+            #ydata = Data['POT_MMS_BUI'][ix]
+            ydata = Data['POTT_GEOS_NEWMAN'][ix]
         
         p0 = ax2[0,0].plot(Data['EPV_GEOS_NEWMAN'][ix]*1E6,ydata,'.',markersize=msize)
         ax2[0,1].plot(Data['POT_MMS_BUI'][ix],ydata,'.',markersize=msize)
@@ -170,7 +172,7 @@ for case in range(0,25):
             
         if vert_coord == 'alt':
             ax2[0,0].axhline(np.mean(trop_height[ix]),linestyle=':',color=p0[0].get_color(),markersize=msize)
-            
+    
     ax2[0,0].set_xlabel('EPV, $10^{-6}$ $m^{2}$ $s^{-1}$ K $kg^{-1}$')
     ax2[0,1].set_xlabel('Pot T, K')  
     ax2[1,0].set_xlabel('CO, ppb')
@@ -187,9 +189,10 @@ for case in range(0,25):
         ax2[2,0].set_ylabel('Altitude, km')
         ax2[2,1].set_ylabel('Altitude, km')
     else:
-        ax2[0,0].set_ylim(330,450)
+        1
+        #ax2[0,0].set_ylim(330,450)
     
     fig2.suptitle(case_name)
     fig2.tight_layout()
-    fig2.savefig('./plots/' + case_name + '_profile.png',dpi=300)
-    plt.close(fig2)
+    #fig2.savefig('./plots/' + case_name + '_profile.png',dpi=300)
+    #plt.close(fig2)

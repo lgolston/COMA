@@ -34,7 +34,9 @@ ax.add_feature(cfeature.STATES)
 # %% process data
 #for case in range(0, 4):
 #for case in ['Transit6','Transit7','Transit8','Transit9']:
-for case in ['Transit1','Transit2','Transit3','Transit4','Transit5']:
+to_plot = 'CO'
+    
+for case in ['RF10']: #
     # load files
     filenames = return_filenames(case)
     
@@ -48,9 +50,7 @@ for case in ['Transit1','Transit2','Transit3','Transit4','Transit5']:
     print(max(synced_data['N2O_dry']))
     print()
     
-    # plot map
-    to_plot = 'N2O'
-    
+    # plot map    
     if to_plot == 'CO':
         sc1 = ax.scatter(synced_data['LON'],synced_data['LAT'],c=synced_data['CO_dry'],vmin=20, vmax=100, s = 15, transform=plate)
     else:

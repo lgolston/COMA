@@ -12,9 +12,13 @@ import numpy as np
 from load_data_functions import return_filenames, read_MMS_ict
 
 # %% select data
-case = 'Transit8'
+case = 'RF05'
 
-if case == 'Transit7': # Misawa to Adak
+if case == 'RF05':
+    filename_GEOS = '../Data/_Model_/ACCLIP-GEOS_WB57_20220806_RC.ict'
+    filename_GEOS_2D = '../Data/_Model_/ACCLIP-GEOS-2D_WB57_20220806_RC.ict'
+    cur_day = datetime(2022,8,6)
+elif case == 'Transit7': # Misawa to Adak
     filename_GEOS = '../Data/_Model_/ACCLIP-GEOS_WB57_20220912_RC.ict'
     filename_GEOS_2D = '../Data/_Model_/ACCLIP-GEOS-2D_WB57_20220912_RC.ict'
     cur_day = datetime(2022,9,12)
