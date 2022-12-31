@@ -4,7 +4,6 @@ Calculate linear calibration based on the cal cycles
 Show results across multiple days, colored before flight; in-flight; post-flight (or by altitude, gas temperature, etc. to check for dependencies)
 
 Handles tank values from original NOAA tanks; and newer Matheson gas values
-
 """
 
 # %% load libraries and data
@@ -103,6 +102,7 @@ for case in cases:
                                  '../Data/2022-09-01/n2o-co_2022-09-01_f0001.txt'] # post-flight
         
     else:
+        # FCF, Transit, and Science Flights already defined elsewhere:
         filenames = return_filenames(case)
     
     # unused:
@@ -110,38 +110,6 @@ for case in cases:
     #2022-08-18lab
     #2022-08-24_f0000
     #2022-09-01_f0002
-    
-    #'FCF_2021':        2021-08-06_f0002
-    #'TF1_2021':        2021-08-10_f0003
-    #'TF2_2021':        2021-08-16_f0002
-    #'TF3_2021':        2021-08-17_f0002
-    #'EEL_2022_Day1':   2022-05-19_f0000
-    #'EEL_2022_Day2':   2022-05-20_f0000
-    #'RF02':            2022-07-18_f0002, 2022-07-18_f0003
-    #'Transit1':        2022-07-21_f0000, 2022-07-21_f0001 (Ellington to Seattle)
-    #'Transit2':        2022-07-21_f0002 (Seattle to Anchorage)
-    #'Transit3':        2022-07-24_f0000 (Anchorage to Adak)
-    #'Transit4':        2022-07-25_f0000 (Adak to Misawa)
-    #'Transit5':        2022-07-27_f0000 (Misawa to Osan)
-    #'RF03':            2022-08-02_f0000
-    #'RF04':            2022-08-04_f0000
-    #'RF05':            2022-08-06_f0000_no_10s_cal
-    #'RF06':            2022-08-12_f0000
-    #'RF07':            2022-08-13_f0000
-    #'RF08':            2022-08-15_f0000, 2022-08-15_f0001
-    #'RF09':            2022-08-16_f0000
-    #'RF10':            2022-08-18_f0000
-    #'RF11':            2022-08-21_f0000
-    #'RF12':            2022-08-23_f0000
-    #'RF13':            2022-08-24_f0002
-    #'RF14':            2022-08-26_f0000
-    #'RF15':            2022-08-29_f0000
-    #'RF16':            2022-08-31_f0000
-    #'RF17':            2022-09-01_f0000
-    #'Transit6':        2022-09-09_f0000 (Osan to Misawa)
-    #'Transit7':        2022-09-12_f0000 (Misawa to Adak)
-    #'Transit8':        2022-09-13_f0000 (Adak to Seattle)
-    #'Transit9':        2022-09-14_f0000 (Seattle to Houston)
     
     # %% load COMA data
     COMA, inlet_ix = read_COMA(filenames['COMA_raw'])
