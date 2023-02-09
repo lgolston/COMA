@@ -68,6 +68,8 @@ ax.set_ylabel('Temperature, °C')
 ax_twin.set_ylabel('Altitude, km')
 ax.set_xlabel('Time, UTC')
 
+ax.set_title(case)
+
 ax.set_xlim(datetime(2022,9,1,1),datetime(2022,9,1,9))
 
 fig1.tight_layout()
