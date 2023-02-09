@@ -18,8 +18,8 @@ from load_data_functions import read_MMS_ict
 from load_data_functions import return_filenames
 
 # EDIT THESE
-case = 'RF08'
-focus = 'flight_N2O' # lab, flight_CO, flight_N2O
+case = 'Nov2'
+focus = 'lab' # lab, flight_CO, flight_N2O
 
 # %% plot settings
 plt.rcParams['axes.labelsize'] = 8
@@ -52,6 +52,7 @@ fig, ax = plt.subplots(3, 4, figsize=(9,3.5),sharex=True)
 
 # 1. CO
 ax[0,0].plot(COMA['time'][ix_8],COMA["[CO]d_ppm"][ix_8]*1000,'b.',markersize=2)
+ax[0,0].plot(COMA['time'][ix_7],COMA["[CO]d_ppm"][ix_7]*1000,'b.',markersize=2)
 ax[0,0].plot(COMA['time'][ix_2],COMA["[CO]d_ppm"][ix_2]*1000,'y.',markersize=2)
 ax[0,0].plot(COMA['time'][ix_3],COMA["[CO]d_ppm"][ix_3]*1000,'m.',markersize=2)
 ax[0,0].set_ylabel('CO (dry), ppbv')
@@ -59,6 +60,7 @@ ax[0,0].set_ylim(0,200)
 
 # 2. N2O
 ax[1,0].plot(COMA['time'][ix_8],COMA["[N2O]d_ppm"][ix_8]*1000,'b.',markersize=2)
+ax[1,0].plot(COMA['time'][ix_7],COMA["[N2O]d_ppm"][ix_7]*1000,'b.',markersize=2)
 ax[1,0].plot(COMA['time'][ix_2],COMA["[N2O]d_ppm"][ix_2]*1000,'y.',markersize=2)
 ax[1,0].plot(COMA['time'][ix_3],COMA["[N2O]d_ppm"][ix_3]*1000,'m.',markersize=2)
 ax[1,0].set_ylim(0,200)

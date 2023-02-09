@@ -422,28 +422,42 @@ def return_filenames(case):
     
     elif case == 'Transit6': # Osan to Misawa
         filenames['COMA_raw'] = ['../Data/2022-09-09/n2o-co_2022-09-09_f0000.txt']
+        filenames['COMA_ict'] = './ict/acclip-COMA-CON2O_WB57_20220909_RA.ict'
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220909_RA.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220909_RA.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220909_RB.ict'
         
     elif case == 'Transit7': # Misawa to Adak
         filenames['COMA_raw'] = ['../Data/2022-09-12/n2o-co_2022-09-12_f0000.txt']
+        filenames['COMA_ict'] = './ict/acclip-COMA-CON2O_WB57_20220912_RA.ict'
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220912_RA.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220912_RA.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220912_RB.ict'
     
     elif case == 'Transit8': # Adak to Seattle
         filenames['COMA_raw'] = ['../Data/2022-09-13/n2o-co_2022-09-13_f0000.txt']
+        filenames['COMA_ict'] = './ict/acclip-COMA-CON2O_WB57_20220913_RA.ict'
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220913_RA.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220913_RA.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220913_RB.ict'
         
     elif case == 'Transit9': # Seattle to Houston
         filenames['COMA_raw'] = ['../Data/2022-09-14/n2o-co_2022-09-14_f0000.txt']
+        filenames['COMA_ict'] = './ict/acclip-COMA-CON2O_WB57_20220914_RA.ict'
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220914_RA.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220914_RA.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220914_RB.ict'
-        
+    
+    elif case == 'Nov1':
+        filenames['COMA_raw'] = ['../Data/2022-11-01/n2o-co_2022-11-01_f0000.txt',
+                                 '../Data/2022-11-01/n2o-co_2022-11-01_f0001.txt']
+    
+    elif case == 'Nov2':
+        filenames['COMA_raw'] = ['../Data/2022-11-02/n2o-co_2022-11-02_f0000.txt']
+           
+    elif case == 'Nov8':
+        filenames['COMA_raw'] = ['../Data/2022-11-08/n2o-co_2022-11-08_f0000.txt']
+                
     else:
         1
         #print('case not recognized')
