@@ -24,14 +24,16 @@ plt.rcParams['xtick.labelsize'] = 7
 plt.rcParams['ytick.labelsize'] = 7
 plt.rcParams.update({'mathtext.default': 'regular' } ) # not italics
 
+"""
 cases = ['FCF_2021','TF1_2021','TF2_2021','TF3_2021','EEL_2022_Day1','EEL_2022_Day2',
          'RF02','Transit1','Transit2','Transit3','Transit4','Transit5',
          'RF03_lab','RF03','RF04_lab','RF04','RF05_lab','RF05','RF06_lab','RF06','RF07_lab','RF07',
          'RF08_lab','RF08','RF09_lab','RF09','RF10_lab','RF10','RF11_lab','RF11','RF12_lab','RF12',
          'RF13_lab','RF13','RF14_lab','RF14','RF15_lab','RF15','RF16_lab','RF16','RF17_lab','RF17',
          'Transit6','Transit7','Transit8','Transit9']
+"""
 
-#cases = ['RF13']
+cases = ['Nov1','Nov2','Nov8']
 
 header = "Case,Cycle#,ID,CO_val,CO_std,N2O_val,N2O_std,H2O,CellP,CellP_std,Alt,Time_on,Power,Peak0"
 a = open('plots/table_low_cal.csv', 'w')
