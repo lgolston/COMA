@@ -31,10 +31,10 @@ for ii in [10,5,3]:  #range(3,18):
     filename_MMS = filenames['MMS']
 
     cur_day = datetime.strptime(filename_COMA[-15:-7],"%Y%m%d") # get date from end of file name
-
     COMA = pd.read_csv(filename_COMA,header=35)
     COMA['time'] = [cur_day+timedelta(seconds=t) for t in COMA['Time_Mid']]
-    COMA['flightID'] = [ii for t in COMA['Time_Mid']]
+    #COMA['flightID'] = [ii for t in COMA['Time_Mid']]
+    
     MMS = read_MMS_ict(filename_MMS)          
 
     # sychronize data

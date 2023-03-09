@@ -25,7 +25,7 @@ def V_to_T(voltage):
 # %% read COMA/LGR data
 def read_COMA(filename_COMA):
     """
-   Function to read the COMA/LGR data
+   Function to read the raw COMA/LGR data
     """
     # read file, combining multiple if necessary
     for count, fname in enumerate(filename_COMA):
@@ -128,6 +128,23 @@ def read_COLD2_ict(filename):
     COLD2['time'] = [cur_day+timedelta(seconds=t) for t in COLD2['Time_Start']]
     return COLD2
 
+# %% load WB57 data
+def read_IWG1(filename_IWG1,cur_day):
+    """
+   Function to read the WB57 IWG1 data
+    """
+    
+    IWG1 = pd.read_csv(filename_IWG1,sep=',',header=47)
+    IWG1_lat = IWG1[' iLat']
+    IWG1_lon = IWG1[' iLon']
+    IWG1_alt_GPS = IWG1[' gAlt']
+    IWG1_alt_baro = IWG1[' alt204']
+    return IWG1 
+    
+    # IWG1['Ground Speed']
+    # IWG1['True Airspeed']
+    # IWG1['Indicated Airspeed']
+
 # %% create helper function (for loading ICARTT files, linear regression)
 def linear_ab(df_a,df_b,avg_time):   
     # clear missing, ULOD, and LLOD flagged values
@@ -148,23 +165,6 @@ def linear_ab(df_a,df_b,avg_time):
     results = model.fit()
     return sync_data, results
 
-# %% load WB57 data
-def read_IWG1(filename_IWG1,cur_day):
-    """
-   Function to read the WB57 IWG1 data
-    """
-    
-    IWG1 = pd.read_csv(filename_IWG1,sep=',',header=47)
-    IWG1_lat = IWG1[' iLat']
-    IWG1_lon = IWG1[' iLon']
-    IWG1_alt_GPS = IWG1[' gAlt']
-    IWG1_alt_baro = IWG1[' alt204']
-    return IWG1 
-    
-    # IWG1['Ground Speed']
-    # IWG1['True Airspeed']
-    # IWG1['Indicated Airspeed']
-    
 # %% time-sync COMA and MMS data
 def sync_data(MMS,COMA,inlet_ix):
     """

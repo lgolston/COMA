@@ -12,7 +12,6 @@ import matplotlib.dates as mdates
 
 from load_data_functions import return_filenames
 from load_data_functions import read_COMA
-from load_data_functions import read_ACOS_ict
 from load_data_functions import read_MMS_ict
 
 # set plot style
@@ -32,24 +31,31 @@ COMA, inlet_ix = read_COMA(filenames['COMA_raw'])
 MMS = read_MMS_ict(filenames['MMS'])
 MMS[MMS['T']<0] = np.nan
 
-# load GEOS model
+# additional filenames
 if case == 'Transit7': # Misawa to Adak
-    filename_UASO3 = '../Data/_OtherData_/UASO3_telemetry-631fa94e32c0bcdb3575ece4.csv'
+    #filename_UASO3 = '../Data/_OtherData_/UASO3_telemetry-631fa94e32c0bcdb3575ece4.csv'
+    filename_UASO3 = '../Data/_OtherData_/ACCLIP-UASO3_WB57_20220912_RA.ict'
     filename_GEOS = '../Data/_Model_/ACCLIP-GEOS_WB57_20220912_RC.ict'
 elif case == 'Transit8': # Adak to Seattle
-    filename_UASO3 = '../Data/_OtherData_/UASO3_telemetry-6320db6532c0bcdb35876e58.csv'
+    #filename_UASO3 = '../Data/_OtherData_/UASO3_telemetry-6320db6532c0bcdb35876e58.csv'
+    filename_UASO3 = '../Data/_OtherData_/ACCLIP-UASO3_WB57_20220913_RA.ict'
     filename_GEOS = '../Data/_Model_/ACCLIP-GEOS_WB57_20220913_RC.ict'
 
+# load GEOS
 cur_day = datetime.strptime(filename_GEOS[-15:-7],"%Y%m%d")
 GEOS = pd.read_csv(filename_GEOS,sep=',',header=61)
 GEOS['time'] = [cur_day+timedelta(seconds=t) for t in GEOS['Time_Start']]
 
-# load ozone (preliminary MTS version)
-UASO3 = pd.read_csv(filename_UASO3,sep=',', header=0, skiprows=lambda x: (x != 0) and not x % 2)
-UASO3['time'] = [datetime.strptime(tstamp,"%Y-%m-%dT%H:%M:%S.%fZ") for tstamp in UASO3['Timestamp']]
+# load ozone
+# (preliminary MTS version)
+#UASO3 = pd.read_csv(filename_UASO3,sep=',', header=0, skiprows=lambda x: (x != 0) and not x % 2)
+#UASO3['time'] = [datetime.strptime(tstamp,"%Y-%m-%dT%H:%M:%S.%fZ") for tstamp in UASO3['Timestamp']]
 
-# load ozone (ict version) - files not published yet
-# ...
+# (ict version)
+cur_day = datetime.strptime(filename_UASO3[-15:-7],"%Y%m%d") # get date from end of file name
+UASO3 = pd.read_csv(filename_UASO3,header=32)
+UASO3['time'] = [cur_day+timedelta(seconds=t) for t in UASO3['Time_Start']]
+UASO3[UASO3[' O3_ppb '] == -9999] = np.nan
 
 # %% create figure
 fig, ax = plt.subplots(2, 1, figsize=(6,3.5),sharex=True)
@@ -62,7 +68,7 @@ ax[0].set_ylabel(r'$N_2O - 270, ppb$',color='k')
 ax[0].text(-0.13,0.4,'CO, ppb',transform=ax[0].transAxes,rotation='vertical',fontsize=8,color='m')
 
 ax0_twin = ax[0].twinx()
-ax0_twin.plot(UASO3['time'],UASO3['Ozone Mixing Ratio'],'b',linewidth=1,alpha=0.9,label='O3')
+ax0_twin.plot(UASO3['time'],UASO3[' O3_ppb '],'b',linewidth=1,alpha=0.9,label='O3')
 ax0_twin.set_ylim(0,1200)
 ax0_twin.set_ylabel('Ozone, ppb',color='b')
 
