@@ -3,7 +3,7 @@
 Figure
 """
 
-# header
+# %% header
 import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import timedelta
@@ -13,12 +13,13 @@ import cartopy.crs as ccrs
 import cartopy.feature as cf
     
 from load_data_functions import read_COMA
-from load_data_functions import read_MMS
+from load_data_functions import read_MMS_ict
 from load_data_functions import return_filenames
 
 # EDIT THESE
 case = 'RF10'
 focus = 'flight_CO' # lab, flight_CO, flight_N2O
+
 
 # %% data
 # read COMA data, combining multiple files if needed
@@ -29,13 +30,16 @@ COMA, inlet_ix = read_COMA(filenames['COMA_raw'])
 if case == 'RF13': # fix clock setting on this day
     COMA['time'] = COMA['time'] + timedelta(hours=6)
 
+
 # %% plot data
 plt.rc('axes', labelsize=8) # xaxis and yaxis labels
 plt.rc('xtick', labelsize=8) # xtick labels
 plt.rc('ytick', labelsize=8) # ytick labels
+cmap = 'viridis'
+
 
 # %% load MMS and WB57 data
-MMS = read_MMS(filenames['MMS'])
+MMS = read_MMS_ict(filenames['MMS'])
 MMS_sync = MMS.groupby(pd.Grouper(key="time", freq="1s")).mean()
     
 # handle COMA data
@@ -48,13 +52,11 @@ COMA_df_sync = COMA_df.groupby(pd.Grouper(key="time", freq="1s")).mean()
 # time-sync the data with COMA
 sync_data = pd.merge(MMS_sync, COMA_df_sync, how='inner', on=['time'])
 
-# %% create figure
-fig = plt.figure(figsize=(6.5, 2.5))
-ax1 = plt.subplot(121, projection=ccrs.Mercator())
-ax2 = plt.subplot(122)
-cmap = 'viridis'
 
 # %% lat/lon map (colored by time)
+fig1 = plt.figure(figsize=(3.5, 2.5))
+ax1 = plt.subplot(111, projection=ccrs.Mercator()) # originally one 121 config
+
 plate = ccrs.PlateCarree()
 
 ax1.add_feature(cf.COASTLINE)
@@ -66,9 +68,12 @@ sc1 = ax1.scatter(sync_data['LON'].values,sync_data['LAT'].values,c=sync_data['C
 
 
 # %% altitude vs time scatterplot
+fig2 = plt.figure(figsize=(3.5, 2.5))
+ax2 = plt.subplot(111)
+
 sc = ax2.scatter(sync_data.index,sync_data['ALT']/1000,c=sync_data['CO_dry'],vmin=20, vmax=250, s = 15, cmap=cmap) # color by CO
 
-cb_position=fig.add_axes([0.91,0.1,0.01,0.85])  ## the parameters are the specified position you set 
+cb_position=fig1.add_axes([0.91,0.1,0.01,0.85])  ## the parameters are the specified position you set 
 cb = plt.colorbar(sc,cax=cb_position)
 cb.set_label('CO, ppb')
 
@@ -76,10 +81,10 @@ ax2.grid()
 ax2.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 ax2.set_xlabel('Time (UTC)')
 ax2.set_ylabel('Altitude, km')
-
-ax1.set_position([0.02, 0.10, 0.397, 0.85]) # left, right, width, height
-ax2.set_position([0.49, 0.20, 0.4, 0.75])
+fig2.tight_layout()
 
   
 # %% save figure
-#fig.savefig('fig1.png',dpi=300)
+#ax1.set_position([0.02, 0.10, 0.397, 0.85]) # left, right, width, height
+#ax2.set_position([0.49, 0.20, 0.4, 0.75])
+#fig2.savefig('fig1.png',dpi=300)
