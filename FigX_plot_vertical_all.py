@@ -34,12 +34,11 @@ for ii in [10,5,3]:  #range(3,18):
     COMA = pd.read_csv(filename_COMA,header=35)
     COMA['time'] = [cur_day+timedelta(seconds=t) for t in COMA['Time_Mid']]
     #COMA['flightID'] = [ii for t in COMA['Time_Mid']]
+    COMA[COMA['CO'] == -9999] = np.nan
     
     MMS = read_MMS_ict(filename_MMS)          
 
-    # sychronize data
-    COMA[COMA['CO'] == -9999] = np.nan
-    
+    # sychronize data    
     MMS_sync = MMS.groupby(pd.Grouper(key="time", freq="10s")).mean()
     COMA_sync = COMA.groupby(pd.Grouper(key="time", freq="10s")).mean()
     sync_data = pd.merge(MMS_sync, COMA_sync, how='inner', on=['time'])
