@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 Plot interesting aspects of WB-57 return transit
+
+Todo
+* use COMA .ict file for N2O when available
+
 """
 
 # %% header
