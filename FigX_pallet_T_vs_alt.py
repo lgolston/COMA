@@ -5,7 +5,9 @@ Slow loading .xlsx files converted to csv
 In-pallet temperature vs. altitude
 
 TODO
-1. load all files
+1. add time colorbar
+2. also test labeling by time since takeoff
+3. calculate statistics in UTLS
 """
 
 # %% header
@@ -23,6 +25,7 @@ plt.rcParams['xtick.labelsize'] = 7
 plt.rcParams['ytick.labelsize'] = 7
 plt.rcParams['font.size']=8
 plt.rcParams.update({'mathtext.default': 'regular' } ) # not italics
+cmap = 'viridis'
 
 # %% load files files
 # load MadgeTech file
@@ -40,9 +43,8 @@ fname = [['8.4.2022 flight Madgetech_wAmbTemp.csv','ACCLIP-MMS-1HZ_WB57_20220804
          ['8.31.2022 flight Madgetech.csv','ACCLIP-MMS-1HZ_WB57_20220831_RA.ict'],
          ['9.01.2022 flight Madgetech.csv','ACCLIP-MMS-1HZ_WB57_20220901_RA.ict']]
 
-fig1, ax = plt.subplots(1, 1, figsize=(5,2.7))
-
 for ii in range(0,12):
+    # load MadgeTech csv file
     MT = pd.read_csv('../Data/MadgeTech_csv/'+fname[ii][0],sep=',',header=6,encoding='latin1')
     MT['time'] = [parser.parse(tstamp) for tstamp in (MT['Date']+' '+MT['Time'])]
     
@@ -52,21 +54,32 @@ for ii in range(0,12):
     # sync data
     MT_1s_avg = MT.groupby(pd.Grouper(key="time", freq="1s")).mean()
     MMS_1s_avg = MMS.groupby(pd.Grouper(key="time", freq="1s")).mean()
-    sync_data = pd.merge(MMS_1s_avg, MT_1s_avg, how='inner', on=['time'])
 
-    # %% plot data
-    #ax[0].plot(MT['Date'],MT['Thermocouple 5 (°C)'],'r.') # RF04 (before column given name)
-    #ax.plot(MT_time,MT['InletSolen (°C)'],'r',label='Solenoid') # RF05
-    #ax.plot(MT['time'],MT['Ambient Temperature 1 (°C)'],label='Ambient')
-    #ax.plot(MT_time,MT['PowrSupply (°C)'],label='Powr supply')
-    #ax.plot(MT_time,MT['Ext Front (°C)'],label='Ext front')
-    #ax.plot(MT_time,MT['Lsr_I_tran (°C)'],label='Lsr transistor')
-    #ax.plot(MT_time,MT['Lasr_I_res (°C)'],label='Lsr resistor')
-    #ax.plot(MT_time,MT['LaserBack (°C)'],label='Lsr back')
-    #ax.plot(MT_time,MT['CPU (°C)'])
-    #ax.plot(MT_time,MT['BoxFanFlow (°C)'])
+    # merge
+    if ii == 0:
+        sync_data = pd.merge(MMS_1s_avg, MT_1s_avg, how='inner', on=['time'])
+    else:
+        sync_data2 = pd.merge(MMS_1s_avg, MT_1s_avg, how='inner', on=['time'])
+        sync_data = pd.concat([sync_data,sync_data2],ignore_index=True)
+
+# %% plot data
+fig1, ax = plt.subplots(1, 1, figsize=(5,2.7))
+
+sc = ax.scatter(sync_data['Ambient Temperature 1 (°C)'],sync_data['P'],c=sync_data.index, s = 5, cmap=cmap) # color by CO
+#ax.plot(sync_data['Ambient Temperature 1 (°C)'],sync_data['P'],'.')
+
+#ax[0].plot(MT['Date'],MT['Thermocouple 5 (°C)'],'r.') # RF04 (before column given name)
+#ax.plot(MT_time,MT['InletSolen (°C)'],'r',label='Solenoid') # RF05
+#ax.plot(MT['time'],MT['Ambient Temperature 1 (°C)'],label='Ambient')
+#ax.plot(MT_time,MT['PowrSupply (°C)'],label='Powr supply')
+#ax.plot(MT_time,MT['Ext Front (°C)'],label='Ext front')
+#ax.plot(MT_time,MT['Lsr_I_tran (°C)'],label='Lsr transistor')
+#ax.plot(MT_time,MT['Lasr_I_res (°C)'],label='Lsr resistor')
+#ax.plot(MT_time,MT['LaserBack (°C)'],label='Lsr back')
+#ax.plot(MT_time,MT['CPU (°C)'])
+#ax.plot(MT_time,MT['BoxFanFlow (°C)'])
     
-    ax.plot(sync_data['Ambient Temperature 1 (°C)'],sync_data['P'],'.')
-
 fig1.tight_layout()
+ax.set_xlabel('Temperature, C')
+ax.set_ylabel('Pressure, hPa')
 #fig1.savefig('fig1.png',dpi=300)
