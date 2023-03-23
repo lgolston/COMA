@@ -45,15 +45,15 @@ MMS[MMS['T']<0] = np.nan
 if case == 'Transit7': # Misawa to Adak
     #filename_UASO3 = '../Data/_OtherData_/UASO3_telemetry-631fa94e32c0bcdb3575ece4.csv'
     filename_UASO3 = '../Data/_OtherData_/ACCLIP-UASO3_WB57_20220912_RA.ict'
-    filename_GEOS = '../Data/_Model_/ACCLIP-GEOS_WB57_20220912_RC.ict'
+    filename_GEOS = '../Data/_Model_/ACCLIP-GEOS_WB57_20220912_R0.ict'
 elif case == 'Transit8': # Adak to Seattle
     #filename_UASO3 = '../Data/_OtherData_/UASO3_telemetry-6320db6532c0bcdb35876e58.csv'
     filename_UASO3 = '../Data/_OtherData_/ACCLIP-UASO3_WB57_20220913_RA.ict'
-    filename_GEOS = '../Data/_Model_/ACCLIP-GEOS_WB57_20220913_RC.ict'
+    filename_GEOS = '../Data/_Model_/ACCLIP-GEOS_WB57_20220913_R0.ict'
 
 # load GEOS
 cur_day = datetime.strptime(filename_GEOS[-15:-7],"%Y%m%d")
-GEOS = pd.read_csv(filename_GEOS,sep=',',header=61)
+GEOS = pd.read_csv(filename_GEOS,sep=',',header=62)
 GEOS['time'] = [cur_day+timedelta(seconds=t) for t in GEOS['Time_Start']]
 
 # load ozone
