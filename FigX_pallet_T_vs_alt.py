@@ -65,7 +65,13 @@ for ii in range(0,12):
 # %% plot data
 fig1, ax = plt.subplots(1, 1, figsize=(5,2.7))
 
-sc = ax.scatter(sync_data['Ambient Temperature 1 (°C)'],sync_data['P'],c=sync_data.index, s = 5, cmap=cmap) # color by CO
+# vertical profile
+sc = ax.scatter(sync_data.index,sync_data['P'],c=sync_data['Ambient Temperature 1 (°C)'],
+                s = 5, cmap=cmap, vmin=-1, vmax=10) # color by CO
+
+# ?
+#sc = ax.scatter(sync_data['Ambient Temperature 1 (°C)'],c=sync_data['P'], s = 5, cmap=cmap) # color by CO
+
 #ax.plot(sync_data['Ambient Temperature 1 (°C)'],sync_data['P'],'.')
 
 #ax[0].plot(MT['Date'],MT['Thermocouple 5 (°C)'],'r.') # RF04 (before column given name)

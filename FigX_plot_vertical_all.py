@@ -18,8 +18,10 @@ plt.rcParams['legend.fontsize'] = 8
 plt.rcParams['xtick.labelsize'] = 7
 plt.rcParams['ytick.labelsize'] = 7
 
-# %% loop to load the data
+# %% loop to load and plot the data
 fig1, ax1 = plt.subplots(1, 1, figsize=(3.5,3.5))
+
+plot_style = 'time'
 
 for ii in [10,5,3]:  #range(3,18):
     # load data
@@ -43,14 +45,18 @@ for ii in [10,5,3]:  #range(3,18):
     COMA_sync = COMA.groupby(pd.Grouper(key="time", freq="10s")).mean()
     sync_data = pd.merge(MMS_sync, COMA_sync, how='inner', on=['time'])
 
-    # plot
-    ax1.plot(sync_data['CO'],sync_data['ALT']/1000,'.',label=case_name)
+    # plot vertical profile
+    if plot_style == 'vert':
+        ax1.plot(sync_data['CO'],sync_data['ALT']/1000,'.',label=case_name)
+    else:
+        ax1.plot(sync_data['ALT'].values/1000,'.',label=case_name)
 
 # %% format plot
-ax1.legend(ncol=3)
-ax1.set_xlim(0,350)
-ax1.grid('on')
-ax1.set_xlabel('CO, ppbv')
-ax1.set_ylabel('Altitude, km')
+if plot_style == 'vert':
+    ax1.legend(ncol=3)
+    ax1.set_xlim(0,350)
+    ax1.grid('on')
+    ax1.set_xlabel('CO, ppbv')
+    ax1.set_ylabel('Altitude, km')
 fig1.tight_layout()
 #fig1.savefig('fig1.png',dpi=300)
