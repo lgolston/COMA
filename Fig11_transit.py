@@ -2,9 +2,6 @@
 """
 Plot interesting aspects of WB-57 return transit
 
-Todo
-* use COMA .ict file for N2O when available
-
 """
 
 # %% header
@@ -30,12 +27,13 @@ case = 'Transit8'
 # load COMA    
 filenames = return_filenames(case)
 
-COMA_raw, inlet_ix = read_COMA(filenames['COMA_raw'])
+#COMA_raw, inlet_ix = read_COMA(filenames['COMA_raw'])
 
 cur_day = datetime.strptime(filenames['COMA_ict'][-15:-7],"%Y%m%d") # get date from end of file name
 COMA = pd.read_csv(filenames['COMA_ict'],header=35)
 COMA['time'] = [cur_day+timedelta(seconds=t) for t in COMA['Time_Mid']]
 COMA[COMA['CO'] == -9999] = np.nan
+COMA[COMA['N2O'] == -9999] = np.nan
 
 # load MMS
 MMS = read_MMS_ict(filenames['MMS'])
@@ -72,7 +70,8 @@ fig, ax = plt.subplots(2, 1, figsize=(6,3.5),sharex=True)
 
 ax[0].plot(COMA['time'],COMA["CO"],'m',label='CO',linewidth=1,alpha=0.9)
 ax[0].set_ylim(0,90)
-ax[0].plot(COMA_raw['time'][inlet_ix],COMA_raw["[N2O]d_ppm"][inlet_ix]*1000 - 270,'k',label='N2O',linewidth=1,alpha=0.9)
+ax[0].plot(COMA['time'],COMA["N2O"]-270,'k',label='N2O',linewidth=1,alpha=0.9)
+#ax[0].plot(COMA_raw['time'][inlet_ix],COMA_raw["[N2O]d_ppm"][inlet_ix]*1000 - 270,'k',label='N2O',linewidth=1,alpha=0.9)
 ax[0].grid('on')
 ax[0].set_ylabel(r'$N_2O - 270, ppb$',color='k')
 ax[0].text(-0.13,0.4,'CO, ppb',transform=ax[0].transAxes,rotation='vertical',fontsize=8,color='m')
@@ -102,4 +101,4 @@ ax[1].set_ylabel('Pressure, hPa')
 #CO_GEOS
 #QV_GEOS
 
-#fig.savefig('fig1.png',dpi=300)
+#fig.savefig('fig11.png',dpi=300)

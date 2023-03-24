@@ -47,7 +47,12 @@ COMA, inlet_ix = read_COMA(filenames['COMA_raw'])
 DLH = read_DLH_ict(filenames['DLH'])
 DLH[DLH['H2O_DLH']<-800] = np.nan
 
-# %% Plot CO time series and DLH H2O
+# %% quick look
+#fig1, ax1 = plt.subplots(1, 1, figsize=(3.5,3))
+#ax1.plot(COMA['time'],COMA["[H2O]_ppm"],'b',label='COMA')
+#ax1.plot(DLH['time'],DLH['H2O_DLH'],'k',label='DLH')
+
+# %% Plot CO time series and DLH H2O for specific case
 fig1, ax1 = plt.subplots(1, 1, figsize=(3.5,3))
 
 ix_COMA = np.ravel(np.where( (COMA['time'] > datetime(2022,8,16,3,5)) & (COMA['time'] < datetime(2022,8,16,3,28))  ))
@@ -63,10 +68,8 @@ ax1.set_xlim(datetime(2022,8,16,3,7),datetime(2022,8,16,3,9))
 ax1.grid(visible=True,which='major',axis='x')
 ax1.grid(visible=True,which='minor',axis='x',ls=':')
 
-days = mdates.SecondLocator(interval=60)
-ax1.xaxis.set_major_locator(days)
-days = mdates.SecondLocator(interval=10)
-ax1.xaxis.set_minor_locator(days)
+ax1.xaxis.set_major_locator( mdates.SecondLocator(interval=60) )
+ax1.xaxis.set_minor_locator( mdates.SecondLocator(interval=10) )
 
 #ax1.text(0,0,'6s')
 ax1.annotate('', xy=(datetime(2022,8,16,3,8,49), 3700),  xycoords='data',

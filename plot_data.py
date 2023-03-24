@@ -18,8 +18,8 @@ from load_data_functions import read_MMS_ict
 from load_data_functions import return_filenames
 
 # EDIT THESE
-case = 'Nov2'
-focus = 'lab' # lab, flight_CO, flight_N2O
+case = 'Transit8'
+focus = 'flight_CO' # lab, flight_CO, flight_N2O
 
 # %% plot settings
 plt.rcParams['axes.labelsize'] = 8
