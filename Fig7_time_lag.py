@@ -13,6 +13,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import matplotlib.dates as mdates
+from scipy import signal
 
 from load_data_functions import read_COMA
 from load_data_functions import linear_ab
@@ -82,6 +83,31 @@ ax1.set_ylim(1500,10000)
 fig1.tight_layout()
 #fig1.savefig('fig_output.png',dpi=300)
 
+# %% test time lag
+COMA_1s_avg = COMA.groupby(pd.Grouper(key="time", freq="1s")).mean()
+DLH_1s_avg = DLH.groupby(pd.Grouper(key="time", freq="1s")).mean()
+sync_data = pd.merge(COMA_1s_avg, DLH_1s_avg, how='inner', on=['time'])
+
+x = sync_data['[H2O]_ppm'].values
+y = sync_data['H2O_DLH'].values
+ID = sync_data['SpectraID'] 
+#ix = np.ravel(np.where(ID<2000))
+
+# above filters out nan, and only data during ascent
+# skipping first part of data also important since there was low correlation, making lag = 0
+
+ix = np.ravel(np.where((x>100) & (y>100) & (ID>1300) & (ID<2000)))
+
+x = x[ix]
+y = y[ix]
+
+#plt.plot(x) ,plt.plot(y)
+
+correlation = signal.correlate(x - np.mean(x), y - np.mean(y), mode="same")
+lags = signal.correlation_lags(len(x), len(y), mode="same")
+lag = lags[np.argmax(abs(correlation))]
+#ax=plt.plot(lags,correlation,'.'),plt.axvline(0,color='black',linestyle=':')
+    
 # %% regression
 """
 # align timestamp

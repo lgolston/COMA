@@ -50,7 +50,8 @@ for case in range(0,15):
     alt_km = Data['G_ALT_MMS_BUI']/1000
     
     x = Data['CO_PODOLSKE'] 
-    y = Data['CO_COLD2_ppbv_VICIANI']
+    y = Data['ACOS_CO_PPB_GURGANUS']
+    #y = Data['CO_COLD2_ppbv_VICIANI']
     
     plt.plot(x)
     plt.plot(y)
