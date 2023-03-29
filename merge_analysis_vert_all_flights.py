@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 import matplotlib.dates as mdates
 import numpy as np
 
-filenames_1s = \
+filenames_60s = \
 [['acclip-mrg60_wb57_20220802_RA_20221111T194047.ict','20220802_RF03'], #0-RF03
  ['acclip-mrg60_wb57_20220804_RA_20221111T194048.ict','20220804_RF04'], #1-RF04
  ['acclip-mrg60_wb57_20220806_RA_20221111T194048.ict','20220806_RF05'], #2-RF05
@@ -41,8 +41,8 @@ fig, ax = plt.subplots(1, 1, figsize=(4,4))
 
 for case in range(0,15):
     # %% load and prepare data
-    filename = '../Data/_Merge_/'+filenames_1s[case][0]
-    case_name = filenames_1s[case][1]
+    filename = '../Data/_Merge_/'+filenames_60s[case][0]
+    case_name = filenames_60s[case][1]
     
     Data = pd.read_csv(filename,sep=',',header=88,skipinitialspace=True,low_memory=False)
     Data[Data==-999999] = np.nan
