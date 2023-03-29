@@ -252,6 +252,7 @@ def return_filenames(case):
     elif case == 'Transit1': # Ellington to Seattle
         filenames['COMA_raw'] = ['../Data/2022-07-21/n2o-co_2022-07-21_f0000.txt',
                          '../Data/2022-07-21/n2o-co_2022-07-21_f0001.txt']
+        filenames['COMA_ict'] = '../Data/_COMA_ict_/acclip-COMA-CON2O_WB57_20220721_RB_1.ict'
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220721_RA_1.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220721_RA_1.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220721_RB_L1.ict'
@@ -259,6 +260,7 @@ def return_filenames(case):
         
     elif case == 'Transit2': # Seattle to Anchorage
         filenames['COMA_raw'] = ['../Data/2022-07-21/n2o-co_2022-07-21_f0002.txt']
+        filenames['COMA_ict'] = '../Data/_COMA_ict_/acclip-COMA-CON2O_WB57_20220721_RB_2.ict'
         filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220721_RA_2.ict'
         filenames['ACOS'] = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220721_RA_2.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220721_RB_L2.ict'
@@ -266,6 +268,7 @@ def return_filenames(case):
     
     elif case == 'Transit3': # Anchorage to Adak
         filenames['COMA_raw'] = ['../Data/2022-07-24/n2o-co_2022-07-24_f0000.txt']
+        filenames['COMA_ict'] = '../Data/_COMA_ict_/acclip-COMA-CON2O_WB57_20220724_RB.ict'
         filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220724_RA.ict'
         filenames['ACOS'] = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220724_RA.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220724_RB.ict'
@@ -273,6 +276,7 @@ def return_filenames(case):
             
     elif case == 'Transit4': # Adak to Misawa
         filenames['COMA_raw'] = ['../Data/2022-07-25/n2o-co_2022-07-25_f0000.txt']
+        filenames['COMA_ict'] = '../Data/_COMA_ict_/acclip-COMA-CON2O_WB57_20220725_RB.ict'
         filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220725_RA.ict'
         filenames['ACOS'] = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220725_RA.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220725_RB.ict'
@@ -280,6 +284,7 @@ def return_filenames(case):
         
     elif case == 'Transit5': # Misawa to Osan
         filenames['COMA_raw'] = ['../Data/2022-07-27/n2o-co_2022-07-27_f0000.txt']
+        filenames['COMA_ict'] = '../Data/_COMA_ict_/acclip-COMA-CON2O_WB57_20220727_RB.ict'
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220727_RA.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220727_RA.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220727_RB.ict'
