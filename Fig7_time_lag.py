@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import matplotlib.dates as mdates
 from scipy import signal
+import scipy.stats
 
 from load_data_functions import read_COMA
 from load_data_functions import linear_ab
@@ -88,25 +89,55 @@ COMA_1s_avg = COMA.groupby(pd.Grouper(key="time", freq="1s")).mean()
 DLH_1s_avg = DLH.groupby(pd.Grouper(key="time", freq="1s")).mean()
 sync_data = pd.merge(COMA_1s_avg, DLH_1s_avg, how='inner', on=['time'])
 
-x = sync_data['[H2O]_ppm'].values
-y = sync_data['H2O_DLH'].values
+x = sync_data['[H2O]_ppm'].reset_index(drop=True)
+y = sync_data['H2O_DLH'].reset_index(drop=True)
 ID = sync_data['SpectraID'] 
 #ix = np.ravel(np.where(ID<2000))
+
+plt.plot(x)
+plt.plot(y)
 
 # above filters out nan, and only data during ascent
 # skipping first part of data also important since there was low correlation, making lag = 0
 
-ix = np.ravel(np.where((x>100) & (y>100) & (ID>1300) & (ID<2000)))
+#ix = np.ravel(np.where((x>100) & (y>100) & (ID>1300) & (ID<2000)))
+#x = x[ix]
+#y = y[ix]
 
-x = x[ix]
-y = y[ix]
+for jj in range(20,10000,500):
+    
+    vals = np.zeros(41)
+    counter=0
+    
+    for ss in range (-20,21):
+        x_temp = x.values[(jj+ss):(jj+ss+500)]
+        y_temp = y.values[jj:(jj+500)]
+        ix = np.ravel(np.where((x_temp>100) & (y_temp>100))) # remove NaN and below COMA LOD
+        
+        if len(ix)>100:
+            res = scipy.stats.pearsonr(x_temp[ix], y_temp[ix])
+            vals[counter]=res.statistic
+            #print(jj,ss,res.statistic)
+            
+        counter+=1
+    
+    print(jj,np.argmax(vals)-20)
+    
+    #ix = np.ravel( np.where((x>100) & (y>100) 
+    #                        & (x.index>jj)  & (x.index<(jj+500))) ) # exclude nan
+        
+    #if len(ix)>100:
+    #    correlation = signal.correlate(x[ix]-np.mean(x[ix]), y[ix] - np.mean(y[ix]), mode="full")
+    #    lags = signal.correlation_lags(len(x[ix]), len(y[ix]), mode="full")
+    #    lag = lags[np.argmax(abs(correlation))]
+            
+    #    print(jj,lag)
+    #    #ax=plt.plot(lags,correlation,'.'),plt.axvline(0,color='black',linestyle=':')
 
 #plt.plot(x) ,plt.plot(y)
 
-correlation = signal.correlate(x - np.mean(x), y - np.mean(y), mode="same")
-lags = signal.correlation_lags(len(x), len(y), mode="same")
-lag = lags[np.argmax(abs(correlation))]
-#ax=plt.plot(lags,correlation,'.'),plt.axvline(0,color='black',linestyle=':')
+
+
     
 # %% regression
 """

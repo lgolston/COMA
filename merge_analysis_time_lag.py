@@ -20,6 +20,7 @@ from scipy import signal
 from load_data_functions import read_ACOS_ict
 from load_data_functions import read_COLD2_ict
 from load_data_functions import return_filenames
+import scipy.stats
 
 filenames_1s = \
 [['acclip-mrg1_wb57_20220802_RA_20221111T194220.ict','RF03'], #0-RF03
@@ -47,7 +48,7 @@ plt.rcParams['font.size']=8
 plt.rcParams.update({'mathtext.default': 'regular' } ) # not italics
 
 # %% load and plot
-for case in range(9,10):
+for case in range(11,12):
     # %% load merge data
     filename = '../Data/_Merge_/'+filenames_1s[case][0]
     case_name = filenames_1s[case][1]
@@ -74,23 +75,58 @@ for case in range(9,10):
     COLD2[COLD2[' CO_COLD2_ppbv']<-600]=np.nan
         
     # %% plot
-    merge_CO_COMA = Data['CO_PODOLSKE'] 
+    merge_CO_COMA = Data['CO_PODOLSKE']
     merge_CO_ACOS = Data['ACOS_CO_PPB_GURGANUS']
     merge_CO_COLD2 = Data['CO_COLD2_ppbv_VICIANI']
     
-    plt.plot(Data_time,merge_CO_COMA)
-    plt.plot(Data_time,merge_CO_COLD2)
-    plt.plot(Data_time,merge_CO_ACOS)
+    # wiht some smoothing:
+    #merge_CO_COMA = Data['CO_PODOLSKE'].rolling(10,min_periods=8,center=True).median()
+    #merge_CO_ACOS = Data['ACOS_CO_PPB_GURGANUS'].rolling(10,min_periods=8,center=True).median()
+    #merge_CO_COLD2 = Data['CO_COLD2_ppbv_VICIANI'].rolling(10,min_periods=8,center=True).median()
+    
+    x = merge_CO_COMA
+    y = merge_CO_COLD2
+    
+    plt.plot(Data_time,x)
+    plt.plot(Data_time,y)
+    #plt.plot(Data_time,merge_CO_ACOS)
     #plt.plot(COMA['time'],COMA['CO'])
+    
+    time_step = 500
+    for jj in range(20,20000,time_step):
         
-    ix = np.ravel(np.where((merge_CO_COMA>0) & (merge_CO_COLD2>0))) # exclude nan
+        vals = np.zeros(41)
+        counter=0
+        
+        for ss in range (-20,21):
+            x_temp = x.values[(jj+ss):(jj+ss+time_step)]
+            y_temp = y.values[jj:(jj+time_step)]
+            ix = np.ravel(np.where((x_temp>0) & (y_temp>0))) # remove NaN
+            
+            if len(ix)>100:
+                res = scipy.stats.pearsonr(x_temp[ix], y_temp[ix])
+                vals[counter]=res.statistic
+                #print(jj,ss,res.statistic)
+                
+            counter+=1
+        
+        print(Data_time[jj],np.argmax(vals)-20,f'{np.max(vals):.2}',f"{Data['G_ALT_MMS_BUI'][jj]:.0f}")
+        
     
-    correlation = signal.correlate(merge_CO_COMA[ix]-np.mean(merge_CO_COMA[ix]), merge_CO_COLD2[ix] - np.mean(merge_CO_COLD2[ix]), mode="full")
-    lags = signal.correlation_lags(len(merge_CO_COMA[ix]), len(merge_CO_COLD2[ix]), mode="full")
-    lag = lags[np.argmax(abs(correlation))]
-    
-    print(lag)
-    #plt.plot(lags,correlation,'.')
+    """
+    for jj in range(0,20500,1000):
+        ix = np.ravel( np.where((x>0) & (y>0) 
+                                & (x.index>jj)  & (y.index<(jj+1000))) ) # exclude nan
+        
+        if len(ix)>100:
+            correlation = signal.correlate(x[ix]-np.mean(x[ix]), y[ix] - np.mean(y[ix]), mode="same")
+            lags = signal.correlation_lags(len(x[ix]), len(y[ix]), mode="same")
+            lag = lags[np.argmax(abs(correlation))]
+            
+            print(Data_time[jj],lag)
+    #plt.plot(lags,correlation,'.'),plt.axvline(0,color='black',linestyle=':')
+    #plt.plot(merge_CO_COMA[ix]),plt.plot(merge_CO_COLD2[ix])
+    """
     
 # %% test
 #https://stackoverflow.com/questions/69117617/how-to-find-the-lag-between-two-time-series-using-cross-correlation
