@@ -89,8 +89,8 @@ COMA_1s_avg = COMA.groupby(pd.Grouper(key="time", freq="1s")).mean()
 DLH_1s_avg = DLH.groupby(pd.Grouper(key="time", freq="1s")).mean()
 sync_data = pd.merge(COMA_1s_avg, DLH_1s_avg, how='inner', on=['time'])
 
-x = sync_data['[H2O]_ppm'].reset_index(drop=True)
-y = sync_data['H2O_DLH'].reset_index(drop=True)
+x = sync_data['[H2O]_ppm']
+y = sync_data['H2O_DLH']
 ID = sync_data['SpectraID'] 
 #ix = np.ravel(np.where(ID<2000))
 
@@ -104,24 +104,37 @@ plt.plot(y)
 #x = x[ix]
 #y = y[ix]
 
-for jj in range(20,10000,500):
+time_step = 500
+iterator = range(20,len(sync_data)-500-20,time_step)
     
-    vals = np.zeros(41)
-    counter=0
+bin_time = np.zeros(len(iterator),dtype=pd.Timestamp)
+bin_lag = np.zeros_like(bin_time)
+bin_corr = np.zeros_like(bin_time)
+bin_alt = np.zeros_like(bin_time)
+
+for jj, time_index in enumerate(iterator):
     
-    for ss in range (-20,21):
-        x_temp = x.values[(jj+ss):(jj+ss+500)]
-        y_temp = y.values[jj:(jj+500)]
-        ix = np.ravel(np.where((x_temp>100) & (y_temp>100))) # remove NaN and below COMA LOD
+    vals = np.zeros(len(range(-20,21)))
+    counter = 0
         
+    # slide window by +/- 20 seconds
+    for ss in range(-20,21):
+        x_temp = x.values[(time_index+ss):(time_index+ss+time_step)]
+        y_temp = y.values[time_index:(time_index+time_step)]
+        ix = np.ravel(np.where((x_temp>100) & (y_temp>100))) # remove NaN and below COMA LOD
+          
         if len(ix)>100:
             res = scipy.stats.pearsonr(x_temp[ix], y_temp[ix])
             vals[counter]=res.statistic
             #print(jj,ss,res.statistic)
-            
+                    
         counter+=1
-    
-    print(jj,np.argmax(vals)-20)
+        
+    bin_time[jj] = sync_data.index[time_index]
+    bin_lag[jj] = np.argmax(vals)-20
+    bin_corr[jj] = np.max(vals)
+    #bin_alt[jj] = sync_data['G_ALT_MMS_BUI'][time_index]
+    print(bin_time[jj],bin_lag[jj],f'{bin_corr[jj]:.2}')#,f"{bin_alt[jj]:.0f}")
     
     #ix = np.ravel( np.where((x>100) & (y>100) 
     #                        & (x.index>jj)  & (x.index<(jj+500))) ) # exclude nan

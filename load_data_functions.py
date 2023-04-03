@@ -111,9 +111,12 @@ def read_MMS_ict(filename):
     return MMS
     
 # %%
-def read_ACOS_ict(filename):
-    # e.g. ACCLIP-ACOS-1Hz_WB57_20220816_RA.ict
-    cur_day = datetime.strptime(filename[-15:-7],"%Y%m%d") # get date from end of file name
+def read_ACOS_ict(filename):    
+    if len(filename)==58:
+        cur_day = datetime.strptime(filename[-17:-9],"%Y%m%d") # get date from end of file name
+    else: # normally 56, e.g. ACCLIP-ACOS-1Hz_WB57_20220816_RA.ict
+        cur_day = datetime.strptime(filename[-15:-7],"%Y%m%d") # get date from end of file name
+        
     ACOS = pd.read_csv(filename,sep=',',header=37)
     ACOS['time'] = [cur_day+timedelta(seconds=t) for t in ACOS['TIME_START']]
     return ACOS
@@ -122,8 +125,11 @@ def read_ACOS_ict(filename):
 def read_COLD2_ict(filename):
     #filenames['COLD2'] = filenames['COLD2'].replace("A","B")
     
-    # e.g. acclip-COLD2-CO_WB57_20220816_RA.ict
-    cur_day = datetime.strptime(filename[-15:-7],"%Y%m%d")
+    if len(filename)==59:
+        cur_day = datetime.strptime(filename[-18:-10],"%Y%m%d") # get date from end of file name
+    else: # normally 56,  e.g. acclip-COLD2-CO_WB57_20220816_RA.ict
+        cur_day = datetime.strptime(filename[-15:-7],"%Y%m%d")
+        
     COLD2 = pd.read_csv(filename,sep=',',header=33) # for RB version
     COLD2['time'] = [cur_day+timedelta(seconds=t) for t in COLD2['Time_Start']]
     return COLD2
