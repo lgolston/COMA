@@ -262,7 +262,7 @@ def return_filenames(case):
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220721_RA_1.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220721_RA_1.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220721_RB_L1.ict'
-        filenames['DLH'] = None
+        filenames['DLH'] = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220721_RA_L1.ict'
         
     elif case == 'Transit2': # Seattle to Anchorage
         filenames['COMA_raw'] = ['../Data/2022-07-21/n2o-co_2022-07-21_f0002.txt']
@@ -437,6 +437,7 @@ def return_filenames(case):
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220909_RA.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220909_RA.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220909_RB.ict'
+        filenames['DLH'] = None
         
     elif case == 'Transit7': # Misawa to Adak
         filenames['COMA_raw'] = ['../Data/2022-09-12/n2o-co_2022-09-12_f0000.txt']
@@ -444,6 +445,7 @@ def return_filenames(case):
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220912_RA.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220912_RA.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220912_RB.ict'
+        filenames['DLH'] = None
     
     elif case == 'Transit8': # Adak to Seattle
         filenames['COMA_raw'] = ['../Data/2022-09-13/n2o-co_2022-09-13_f0000.txt']
@@ -451,6 +453,7 @@ def return_filenames(case):
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220913_RA.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220913_RA.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220913_RB.ict'
+        filenames['DLH'] = None
         
     elif case == 'Transit9': # Seattle to Houston
         filenames['COMA_raw'] = ['../Data/2022-09-14/n2o-co_2022-09-14_f0000.txt']
@@ -458,6 +461,7 @@ def return_filenames(case):
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220914_RA.ict'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220914_RA.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220914_RB.ict'
+        filenames['DLH'] = None
     
     elif case == 'Nov1':
         filenames['COMA_raw'] = ['../Data/2022-11-01/n2o-co_2022-11-01_f0000.txt',
