@@ -10,7 +10,12 @@ look at time sychronization
 
 """
 
-# %% load data
+# %% header
+# ignorevery warning from Pandas about groupby (code breaks with Pandas 2.0.0)
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
+# load headers
 import numpy as np
 import pandas as pd
 from functools import reduce
@@ -25,6 +30,7 @@ from load_data_functions import read_MMS_ict
 from load_data_functions import read_COLD2_ict
 from load_data_functions import return_filenames
 
+## load data
 cases = ['Transit1','Transit2','Transit3','Transit4','Transit5','RF03','RF04','RF05','RF06',
          'RF07','RF08','RF09','RF10','RF11','RF12','RF13','RF14','RF15','RF16','RF17','Transit6',
          'Transit7','Transit8','Transit9']
@@ -54,21 +60,9 @@ def read_DLH_ict(filename):
 
 
 # %% load and plot
-for case_name in cases: #['RF04']:
+for case_name in ['RF07']: #cases: #['RF10']:
     # %% load individual ict data
     filenames = return_filenames(case_name)
-
-    # load COMA ict data
-    if case_name == 'Transit1':
-        cur_day = datetime(2022,7,21)
-    elif case_name == 'Transit2':
-        cur_day = datetime(2022,7,21)
-    else:
-        cur_day = datetime.strptime(filenames['COMA_ict'][-15:-7],"%Y%m%d") # get date from end of file name
-    COMA = pd.read_csv(filenames['COMA_ict'],header=35)
-    COMA['time'] = [cur_day+timedelta(seconds=t) for t in COMA['Time_Mid']]
-    COMA[COMA['CO'] == -9999] = np.nan
-    COMA[COMA['N2O'] == -9999] = np.nan
 
     # load ACOS
     ACOS = read_ACOS_ict(filenames['ACOS'])
@@ -95,8 +89,7 @@ for case_name in cases: #['RF04']:
     mask=np.full(len(COMA_raw.index),True,dtype=bool)
     mask[inlet_ix]=False
     non_inlet_ix = tmp[mask]
-    COMA_raw['[CO]d_ppm'][non_inlet_ix] = np.nan
-    COMA_raw['[H2O]_ppm'][non_inlet_ix] = np.nan
+    COMA_raw.loc[non_inlet_ix,('[CO]d_ppm','[H2O]_ppm)')] = np.nan
     
     # %% merge data
     COMA_1s_avg = COMA_raw.groupby(pd.Grouper(key="time", freq="1s")).mean()
@@ -127,15 +120,15 @@ for case_name in cases: #['RF04']:
     x = sync_data['[CO]d_ppm_COMA']*1000
     y = sync_data[' CO_COLD2_ppbv_COLD2']
     
-    fig1, ax = plt.subplots()
-    plt.plot(sync_data.index,x)
-    plt.plot(sync_data.index,y)
+    fig1, ax1 = plt.subplots(nrows=2,sharex=True)
+    ax1[0].plot(sync_data.index,x)
+    ax1[0].plot(sync_data.index,y)
     #plt.plot(Data_time,merge_CO_ACOS)
     #plt.plot(COMA['time'],COMA['CO'])
     
     time_step = 500
     time_distance = 50
-    iterator = range(time_distance,len(sync_data.index)-time_step-time_distance,time_step)
+    iterator = range(time_distance,len(sync_data)-time_step-time_distance,time_step)
     
     bin_time = np.zeros(len(iterator),dtype=pd.Timestamp)
     bin_lag = np.zeros_like(bin_time)
@@ -154,7 +147,7 @@ for case_name in cases: #['RF04']:
             ix = np.ravel(np.where((x_temp>0) & (y_temp>0))) # remove NaN
             
             # require a certain number of data points
-            if len(ix)>100:
+            if len(ix)>200:
                 res = scipy.stats.pearsonr(x_temp[ix], y_temp[ix])
                 vals[counter]=res.statistic
                 #print(jj,ss,res.statistic)
@@ -166,7 +159,12 @@ for case_name in cases: #['RF04']:
         bin_corr[jj] = np.max(vals)
         bin_alt[jj] = sync_data['ALT_MMS'][time_index]
         #print(bin_time[jj],bin_lag[jj],f'{bin_corr[jj]:.2}',f"{bin_alt[jj]:.0f}")
-        
+    
+    # look at correlation
+    #print(case_name,bin_lag)
+    
+    #plt.plot(range(-time_distance,time_distance+1),vals,'.')
+    #breakpoint()
     
     # %% original method using signal correlate
     """
@@ -189,27 +187,32 @@ for case_name in cases: #['RF04']:
     
         x = sync_data['[H2O]_ppm_COMA']
         y = sync_data['H2O_DLH_DLH']
+        
+        ax1[1].plot(sync_data.index,x)
+        ax1[1].plot(sync_data.index,y)
+        
         #ID = sync_data['SpectraID'] 
      
-        time_step = 500
-        time_distance = 50
+        time_step = 250
+        #time_step = 250 # make shorter window than CO since H2O very dynamic during takeoff
+        time_distance = 500 # since water vapor lag can be large during descent
         iterator = range(time_distance,len(sync_data)-time_step-time_distance,time_step)
         
         bin_time_DLH = np.zeros(len(iterator),dtype=pd.Timestamp)
-        bin_lag_DLH = np.zeros_like(bin_time)
-        bin_corr_DLH = np.zeros_like(bin_time)
-        bin_alt_DLH = np.zeros_like(bin_time)
+        bin_lag_DLH = np.zeros_like(bin_time_DLH)
+        bin_corr_DLH = np.zeros_like(bin_time_DLH)
+        bin_alt_DLH = np.zeros_like(bin_time_DLH)
     
         for jj, time_index in enumerate(iterator):
             
             vals = np.zeros(len(range(-time_distance,time_distance+1)))
             counter = 0
-                
+            
             # slide window by +/- 20 seconds
-            for ss in range(-time_distance,time_distance):
+            for ss in range(-time_distance,time_distance+1):
                 x_temp = x.values[(time_index+ss):(time_index+ss+time_step)]
                 y_temp = y.values[time_index:(time_index+time_step)]
-                ix = np.ravel(np.where((x_temp>500) & (y_temp>0))) # remove NaN and below COMA LOD
+                ix = np.ravel(np.where((x_temp>1000) & (y_temp>0))) # remove NaN and below COMA LOD
                 
                 # require a certain number of data points
                 if len(ix)>100:
@@ -218,41 +221,44 @@ for case_name in cases: #['RF04']:
                     #print(jj,ss,res.statistic)
                             
                 counter+=1
-            
+                
             bin_time_DLH[jj] = sync_data.index[time_index]
             bin_lag_DLH[jj] = np.argmax(vals)-time_distance
             bin_corr_DLH[jj] = np.max(vals)
             #print(bin_time_DLH[jj],bin_lag_DLH[jj],f'{bin_corr_DLH[jj]:.2}')
         
+        print(case_name,bin_lag_DLH)
     
     # %% plot
-    ix = np.ravel(np.where(bin_corr>0.95))
+    ix = np.ravel(np.where(bin_corr>0.98))
     if len(DLH)>0:
-        ix_DLH = np.ravel(np.where(bin_corr_DLH>0.95))
+        ix_DLH = np.ravel(np.where(bin_corr_DLH>0.98))
     
-    fig2, ax1 = plt.subplots()
-    ax1.plot(bin_time[ix],bin_lag[ix],'--.',label='COMA : COLD2')
+    fig2, ax2 = plt.subplots()
+    ax2.plot(bin_time[ix],bin_lag[ix],'--.',label='COMA : COLD2')
     if len(DLH)>0:
-        ax1.plot(bin_time_DLH[ix_DLH],bin_lag_DLH[ix_DLH],'yx',label='COMA : DLH')
-    ax1.set_ylabel('Lag, s')
-    ax1.legend()
-    ax2 = ax1.twinx()
-    ax2.plot(bin_time[ix],bin_alt[ix],'k.')
-    ax2.plot(sync_data.index,sync_data['ALT_MMS'],'k')
-    ax2.set_ylabel('MMS altitude, m')
-    ax1.set_ylim(-10,25)
-    ax1.grid('on')
+        ax2.plot(bin_time_DLH[ix_DLH],bin_lag_DLH[ix_DLH],'yx',label='COMA : DLH')
+    ax2.set_ylabel('Lag, s')
+    ax2.legend()
+    ax2_twin = ax2.twinx()
+    ax2_twin.plot(bin_time[ix],bin_alt[ix],'k.')
+    ax2_twin.plot(sync_data.index,sync_data['ALT_MMS'],'k')
+    ax2_twin.set_ylabel('MMS altitude, m')
+    ax2.set_ylim(-10,25)
+    ax2.grid('on')
     
+    """
     print(case_name)
     print('min/max COLD2 lag:', min(bin_lag[ix]), max(bin_lag[ix]))
     if len(DLH)>0:
         print('min/max DLH lag:', min(bin_lag_DLH[ix_DLH]), max(bin_lag_DLH[ix_DLH]))
     else:
         print('empty')
+    """
     
-    ax1.set_title(case_name)
-    ax2.set_ylim([0,19000])
+    ax2.set_title(case_name)
+    ax2_twin.set_ylim([0,19000])
     fig2.tight_layout()
-    fig2.savefig('COMA_' + case_name + '.png',dpi=300)
+    #fig2.savefig('COMA_' + case_name + '.png',dpi=300)
     
-    plt.close('all')
+    #plt.close('all')
