@@ -31,9 +31,9 @@ from load_data_functions import read_COLD2_ict
 from load_data_functions import return_filenames
 
 ## load data
-cases = ['Transit1','Transit2','Transit3','Transit4','Transit5','RF03','RF04','RF05','RF06',
-         'RF07','RF08','RF09','RF10','RF11','RF12','RF13','RF14','RF15','RF16','RF17','Transit6',
-         'Transit7','Transit8','Transit9']
+cases = ['FCF_2022','RF01','RF02','Transit1','Transit2','Transit3','Transit4','Transit5',
+         'RF03','RF04','RF05','RF06','RF07','RF08','RF09','RF10','RF11','RF12',
+         'RF13','RF14','RF15','RF16','RF17','Transit6','Transit7','Transit8','Transit9']
  
 # set plot style
 plt.rcParams['axes.labelsize'] = 8
@@ -60,13 +60,15 @@ def read_DLH_ict(filename):
 
 
 # %% load and plot
-for case_name in ['RF07']: #cases: #['RF10']:
+for case_name in ['Transit6']:
     # %% load individual ict data
     filenames = return_filenames(case_name)
 
     # load ACOS
+    """
     ACOS = read_ACOS_ict(filenames['ACOS'])
     ACOS[ACOS["ACOS_CO_PPB"]<-600] = np.nan
+    """
 
     # load COLD2
     COLD2 = read_COLD2_ict(filenames['COLD2'])
@@ -92,12 +94,21 @@ for case_name in ['RF07']: #cases: #['RF10']:
     COMA_raw.loc[non_inlet_ix,('[CO]d_ppm','[H2O]_ppm)')] = np.nan
     
     # %% merge data
-    COMA_1s_avg = COMA_raw.groupby(pd.Grouper(key="time", freq="1s")).mean()
-    COLD2_1s_avg = COLD2.groupby(pd.Grouper(key="time", freq="1s")).mean()
-    MMS_1s_avg = MMS.groupby(pd.Grouper(key="time", freq="1s")).mean()
+    #COMA_1s_avg = COMA_raw.groupby(pd.Grouper(key="time", freq="1s")).mean()
+    #COLD2_1s_avg = COLD2.groupby(pd.Grouper(key="time", freq="1s")).mean()
+    #MMS_1s_avg = MMS.groupby(pd.Grouper(key="time", freq="1s")).mean()
+    
+    COMA_1s_avg = COMA_raw.groupby(pd.Grouper(key="time", freq="100L")).mean()
+    COLD2_1s_avg = COLD2.groupby(pd.Grouper(key="time", freq="100L")).mean()
+    MMS_1s_avg = MMS.groupby(pd.Grouper(key="time", freq="100L")).mean()
+    
+    COMA_1s_avg = COMA_1s_avg.interpolate()
+    COLD2_1s_avg = COLD2_1s_avg.interpolate()
+    MMS_1s_avg = MMS_1s_avg.interpolate()
     
     if len(DLH)>0:
-        DLH_1s_avg = DLH.groupby(pd.Grouper(key="time", freq="1s")).mean()
+        DLH_1s_avg = DLH.groupby(pd.Grouper(key="time", freq="100L")).mean()
+        DLH_1s_avg = DLH_1s_avg.interpolate()
         data_frames = [COMA_1s_avg, COLD2_1s_avg, DLH_1s_avg, MMS_1s_avg]
         suffixes = ['_COMA','_COLD2','_DLH', '_MMS']
     else:
@@ -126,8 +137,8 @@ for case_name in ['RF07']: #cases: #['RF10']:
     #plt.plot(Data_time,merge_CO_ACOS)
     #plt.plot(COMA['time'],COMA['CO'])
     
-    time_step = 500
-    time_distance = 50
+    time_step = 5000
+    time_distance = 500
     iterator = range(time_distance,len(sync_data)-time_step-time_distance,time_step)
     
     bin_time = np.zeros(len(iterator),dtype=pd.Timestamp)
@@ -147,7 +158,7 @@ for case_name in ['RF07']: #cases: #['RF10']:
             ix = np.ravel(np.where((x_temp>0) & (y_temp>0))) # remove NaN
             
             # require a certain number of data points
-            if len(ix)>200:
+            if len(ix)>1200:
                 res = scipy.stats.pearsonr(x_temp[ix], y_temp[ix])
                 vals[counter]=res.statistic
                 #print(jj,ss,res.statistic)
@@ -193,7 +204,7 @@ for case_name in ['RF07']: #cases: #['RF10']:
         
         #ID = sync_data['SpectraID'] 
      
-        time_step = 250
+        time_step = 2500
         #time_step = 250 # make shorter window than CO since H2O very dynamic during takeoff
         time_distance = 500 # since water vapor lag can be large during descent
         iterator = range(time_distance,len(sync_data)-time_step-time_distance,time_step)
@@ -212,10 +223,10 @@ for case_name in ['RF07']: #cases: #['RF10']:
             for ss in range(-time_distance,time_distance+1):
                 x_temp = x.values[(time_index+ss):(time_index+ss+time_step)]
                 y_temp = y.values[time_index:(time_index+time_step)]
-                ix = np.ravel(np.where((x_temp>1000) & (y_temp>0))) # remove NaN and below COMA LOD
+                ix = np.ravel(np.where((x_temp>1000) & (y_temp>1000))) # remove NaN and below COMA LOD
                 
                 # require a certain number of data points
-                if len(ix)>100:
+                if len(ix)>1200:
                     res = scipy.stats.pearsonr(x_temp[ix], y_temp[ix])
                     vals[counter]=res.statistic
                     #print(jj,ss,res.statistic)
@@ -226,18 +237,19 @@ for case_name in ['RF07']: #cases: #['RF10']:
             bin_lag_DLH[jj] = np.argmax(vals)-time_distance
             bin_corr_DLH[jj] = np.max(vals)
             #print(bin_time_DLH[jj],bin_lag_DLH[jj],f'{bin_corr_DLH[jj]:.2}')
-        
-        print(case_name,bin_lag_DLH)
     
     # %% plot
     ix = np.ravel(np.where(bin_corr>0.98))
+    print(case_name,' COLD2: ', bin_lag[ix]/10)
+    
     if len(DLH)>0:
         ix_DLH = np.ravel(np.where(bin_corr_DLH>0.98))
-    
+        print(case_name,' DLH: ', bin_lag_DLH[ix_DLH]/10)
+        
     fig2, ax2 = plt.subplots()
-    ax2.plot(bin_time[ix],bin_lag[ix],'--.',label='COMA : COLD2')
+    ax2.plot(bin_time[ix],bin_lag[ix]/10,'--.',label='COMA : COLD2')
     if len(DLH)>0:
-        ax2.plot(bin_time_DLH[ix_DLH],bin_lag_DLH[ix_DLH],'yx',label='COMA : DLH')
+        ax2.plot(bin_time_DLH[ix_DLH],bin_lag_DLH[ix_DLH]/10,'yx',label='COMA : DLH')
     ax2.set_ylabel('Lag, s')
     ax2.legend()
     ax2_twin = ax2.twinx()
@@ -245,7 +257,13 @@ for case_name in ['RF07']: #cases: #['RF10']:
     ax2_twin.plot(sync_data.index,sync_data['ALT_MMS'],'k')
     ax2_twin.set_ylabel('MMS altitude, m')
     ax2.set_ylim(-10,25)
-    ax2.grid('on')
+    
+    import matplotlib
+    yminor_locator = matplotlib.ticker.MultipleLocator(1)
+    ax2.yaxis.set_minor_locator(yminor_locator)
+    
+    ax2.grid(visible=True, which='major', linestyle='-')
+    ax2.grid(visible=True, which='minor', linestyle='--')
     
     """
     print(case_name)
