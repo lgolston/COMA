@@ -21,9 +21,9 @@ plt.rcParams['ytick.labelsize'] = 7
 # %% loop to load and plot the data
 fig1, ax1 = plt.subplots(1, 1, figsize=(3.5,3.5))
 
-plot_style = 'time'
+plot_style = 'vert'
 
-for ii in [10,5,3]:  #range(3,18):
+for ii in range(3,18): #[10,5,3]:
     # load data
     case_name = "RF" + "{:02d}".format(ii)
 
@@ -47,13 +47,13 @@ for ii in [10,5,3]:  #range(3,18):
 
     # plot vertical profile
     if plot_style == 'vert':
-        ax1.plot(sync_data['CO'],sync_data['ALT']/1000,'.',label=case_name)
+        ax1.plot(sync_data['CO'],sync_data['ALT']/1000,'k.',label=case_name,markersize=1)
     else:
         ax1.plot(sync_data['ALT'].values/1000,'.',label=case_name)
 
 # %% format plot
 if plot_style == 'vert':
-    ax1.legend(ncol=3)
+    #ax1.legend(ncol=3)
     ax1.set_xlim(0,350)
     ax1.grid('on')
     ax1.set_xlabel('CO, ppbv')

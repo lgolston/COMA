@@ -85,7 +85,7 @@ fig1.tight_layout()
 #fig1.savefig('fig_output.png',dpi=300)
 
 # %% test time lag
-COMA_1s_avg = COMA.groupby(pd.Grouper(key="time", freq="1s")).mean()
+COMA_1s_avg = COMA.groupby(pd.Grouper(key="time", freq="1s")).mean(numeric_only=True)
 DLH_1s_avg = DLH.groupby(pd.Grouper(key="time", freq="1s")).mean()
 sync_data = pd.merge(COMA_1s_avg, DLH_1s_avg, how='inner', on=['time'])
 

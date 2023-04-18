@@ -15,16 +15,20 @@ from load_data_functions import return_filenames, read_MMS_ict
 case = 'RF05'
 
 if case == 'RF05':
-    filename_GEOS = '../Data/_Model_/ACCLIP-GEOS_WB57_20220806_RC.ict'
-    filename_GEOS_2D = '../Data/_Model_/ACCLIP-GEOS-2D_WB57_20220806_RC.ict'
+    filename_GEOS = '../Data/_Model_/ACCLIP-GEOS_WB57_20220806_R0.ict'
+    filename_GEOS_2D = '../Data/_Model_/ACCLIP-GEOS-2D_WB57_20220806_R0.ict'
     cur_day = datetime(2022,8,6)
+if case == 'RF10':
+    filename_GEOS = '../Data/_Model_/ACCLIP-GEOS_WB57_20220819_R0.ict'
+    filename_GEOS_2D = '../Data/_Model_/ACCLIP-GEOS-2D_WB57_20220819_R0.ict'
+    cur_day = datetime(2022,8,19)
 elif case == 'Transit7': # Misawa to Adak
-    filename_GEOS = '../Data/_Model_/ACCLIP-GEOS_WB57_20220912_RC.ict'
-    filename_GEOS_2D = '../Data/_Model_/ACCLIP-GEOS-2D_WB57_20220912_RC.ict'
+    filename_GEOS = '../Data/_Model_/ACCLIP-GEOS_WB57_20220912_R0.ict'
+    filename_GEOS_2D = '../Data/_Model_/ACCLIP-GEOS-2D_WB57_20220912_R0.ict'
     cur_day = datetime(2022,9,12)
 elif case == 'Transit8': # Adak to Seattle
-    filename_GEOS = '../Data/_Model_/ACCLIP-GEOS_WB57_20220913_RC.ict'
-    filename_GEOS_2D = '../Data/_Model_/ACCLIP-GEOS-2D_WB57_20220913_RC.ict'
+    filename_GEOS = '../Data/_Model_/ACCLIP-GEOS_WB57_20220913_R0.ict'
+    filename_GEOS_2D = '../Data/_Model_/ACCLIP-GEOS-2D_WB57_20220913_R0.ict'
     cur_day = datetime(2022,9,13)
 
 # %% load data
@@ -40,11 +44,12 @@ MMS = read_MMS_ict(filenames['MMS'])
 MMS[MMS['T']<0] = np.nan
 
 # 2D model file
+header_lines = 65
 dat = open(filename_GEOS_2D).readlines()
-dat = dat[64:len(dat)]
-num_chunks = int(len(dat)/32)
+dat = dat[header_lines:len(dat)]
+num_chunks = int(len(dat)/32) # one set of data (31 P levels + 1 header line)
 num_P_levels = 31
-num_variables = 22
+num_variables = 23
 GEOS_2D = np.zeros(shape=(num_chunks,num_P_levels,num_variables))
 GEOS_2D_time = np.zeros(num_chunks, dtype='datetime64[s]')
 
@@ -62,7 +67,7 @@ GEOS_levels = [1000,975,950,925,900,875,850,825,800,775,
                750,725,700,650,600,550,500,450,400,350,
                300,250,200,150,100,70,50,40,30,20,10]
 
-GEOS_2D_CO = GEOS_2D[:,:,9]
+GEOS_2D_CO = GEOS_2D[:,:,10]
 GEOS_2D_CO[GEOS_2D_CO<=-99] = np.nan
 
 im = plt.pcolormesh(GEOS_2D_time,GEOS_levels,GEOS_2D_CO.T*1E9,vmax=150)

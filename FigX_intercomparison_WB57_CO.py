@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Compare COLD2, ACOS, and COMA CO measurements
+
+Add option for aggregate of all days
 """
 
 # %% header

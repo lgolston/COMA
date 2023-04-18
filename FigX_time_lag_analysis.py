@@ -56,7 +56,7 @@ def read_DLH_ict(filename):
 
 
 # %% load and plot
-for case_name in ['Transit6']:
+for case_name in cases:#['Transit5']:
     # %% load individual ict data
     filenames = return_filenames(case_name)
 
@@ -94,7 +94,7 @@ for case_name in ['Transit6']:
     #COLD2_1s_avg = COLD2.groupby(pd.Grouper(key="time", freq="1s")).mean()
     #MMS_1s_avg = MMS.groupby(pd.Grouper(key="time", freq="1s")).mean()
     
-    COMA_1s_avg = COMA_raw.groupby(pd.Grouper(key="time", freq="100L")).mean()
+    COMA_1s_avg = COMA_raw.groupby(pd.Grouper(key="time", freq="100L")).mean(numeric_only=True)
     COLD2_1s_avg = COLD2.groupby(pd.Grouper(key="time", freq="100L")).mean()
     MMS_1s_avg = MMS.groupby(pd.Grouper(key="time", freq="100L")).mean()
     
@@ -273,6 +273,6 @@ for case_name in ['Transit6']:
     ax2.set_title(case_name)
     ax2_twin.set_ylim([0,19000])
     fig2.tight_layout()
-    #fig2.savefig('COMA_' + case_name + '.png',dpi=300)
+    fig2.savefig('COMA_' + case_name + '.png',dpi=300)
     
-    #plt.close('all')
+    plt.close('all')
