@@ -254,7 +254,7 @@ def return_filenames(case):
         filenames['COMA_raw'] = ['../Data/2022-07-14/n2o-co_2022-07-14_f0002.txt']
         filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220714_R0.ICT'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220714_R0.ict'
-        filenames['DLH'] = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220714_R0.ict'
+        filenames['DLH'] = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220714_R2.ict'
         
     elif case == 'RF01': # science flight 1 Houston
         filenames['COMA_raw'] = ['../Data/2022-07-16/n2o-co_2022-07-16_f0002.txt']
@@ -262,7 +262,7 @@ def return_filenames(case):
         filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220716_R0.ICT'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220716_R0.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220716_R0.ict'
-        filenames['DLH'] = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220716_R0.ict'
+        filenames['DLH'] = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220716_R2.ict'
         
     elif case == 'RF02': # science flight 2 Houston
         filenames['COMA_raw'] = ['../Data/2022-07-18/n2o-co_2022-07-18_f0002.txt',
@@ -271,7 +271,7 @@ def return_filenames(case):
         filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220718_R0.ICT'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220718_R0.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220718_R0.ict'
-        filenames['DLH'] = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220718_R0.ict'
+        filenames['DLH'] = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220718_R2.ict'
         
     elif case == 'Transit1': # Ellington to Seattle
         filenames['COMA_raw'] = ['../Data/2022-07-21/n2o-co_2022-07-21_f0000.txt',
@@ -280,7 +280,7 @@ def return_filenames(case):
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220721_R0_1.ICT'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220721_R0_1.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220721_R0_L1.ict'
-        filenames['DLH'] = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220721_R0_L1.ict'
+        filenames['DLH'] = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220721_R2_L1.ict'
         
     elif case == 'Transit2': # Seattle to Anchorage
         filenames['COMA_raw'] = ['../Data/2022-07-21/n2o-co_2022-07-21_f0002.txt']
@@ -288,7 +288,7 @@ def return_filenames(case):
         filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220721_R0_2.ICT'
         filenames['ACOS'] = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220721_R0_2.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220721_R0_L2.ict'
-        filenames['DLH'] = None
+        filenames['DLH'] = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220721_R2_L2.ict'
     
     elif case == 'Transit3': # Anchorage to Adak
         filenames['COMA_raw'] = ['../Data/2022-07-24/n2o-co_2022-07-24_f0000.txt']
@@ -296,7 +296,7 @@ def return_filenames(case):
         filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220724_R0.ICT'
         filenames['ACOS'] = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220724_R0.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220724_R0.ict'
-        filenames['DLH'] = None
+        filenames['DLH'] = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220724_R2.ict'
             
     elif case == 'Transit4': # Adak to Misawa
         filenames['COMA_raw'] = ['../Data/2022-07-25/n2o-co_2022-07-25_f0000.txt']
@@ -304,7 +304,7 @@ def return_filenames(case):
         filenames['MMS'] = '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220725_R0.ICT'
         filenames['ACOS'] = '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220725_R0.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220725_R0.ict'
-        filenames['DLH'] = None
+        filenames['DLH'] = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220725_R2.ict'
         
     elif case == 'Transit5': # Misawa to Osan
         filenames['COMA_raw'] = ['../Data/2022-07-27/n2o-co_2022-07-27_f0000.txt']
@@ -312,7 +312,7 @@ def return_filenames(case):
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220727_R0.ICT'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220727_R0.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220727_R0.ict'
-        filenames['DLH'] = None
+        filenames['DLH'] = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220727_R2.ict'
     
     elif case == 'RF03': # RF03
         filenames['COMA_raw'] = ['../Data/2022-08-02/n2o-co_2022-08-02_f0000.txt']
@@ -328,7 +328,7 @@ def return_filenames(case):
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220804_R0.ICT'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220804_R0.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220804_R0.ict'
-        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220804_R0.ict'
+        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220804_R2.ict'
         filenames['MadgeTech'] = '../Data/2022-08-04/8.4.2022 flight Madgetech.xlsx'
         
     elif case == 'RF05': # RF05
@@ -337,7 +337,7 @@ def return_filenames(case):
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220806_R0.ICT'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220806_R0.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220806_R0.ict'
-        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220806_R0.ict'
+        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220806_R2.ict'
         filenames['MadgeTech'] = '../Data/2022-08-06/8.6.2022 flight Madgetech.xlsx'
         
     elif case == 'RF06': # RF06
@@ -346,7 +346,7 @@ def return_filenames(case):
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220812_R0.ICT'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220812_R0.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220812_R0.ict'
-        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220812_R0.ict'    
+        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220812_R2.ict'    
         filenames['MadgeTech'] = '../Data/2022-08-12/8.12.2022 flight Madgetech.xlsx' 
     
     elif case == 'RF07': # RF07
@@ -355,7 +355,7 @@ def return_filenames(case):
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220813_R0.ICT'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220813_R0.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220813_R0.ict'
-        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220813_R0.ict'
+        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220813_R2.ict'
         filenames['MadgeTech'] = '../Data/2022-08-13/8.13.2022 flight Madgetech.xlsx'
         
     elif case == 'RF08': # RF08
@@ -365,7 +365,7 @@ def return_filenames(case):
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220815_R0.ICT'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220815_R0.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220815_R0.ict'
-        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220815_R0.ict'
+        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220815_R2.ict'
         filenames['MadgeTech'] = '../Data/2022-08-15/8.15.2022 flight Madgetech.xlsx'
         
     elif case == 'RF09': # RF09
@@ -374,7 +374,7 @@ def return_filenames(case):
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220816_R0.ICT'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220816_R0.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220816_R0.ict'
-        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220816_R0.ict'
+        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220816_R2.ict'
         filenames['MadgeTech'] = '../Data/2022-08-16/8.16.2022 flight Madgetech.xlsx'  
         
     elif case == 'RF10': # RF10 (instrument start before midnight; takeoff on 2022-08-19 UTC)
@@ -383,7 +383,7 @@ def return_filenames(case):
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220819_R0.ICT'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220819_R0.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220819_R0.ict'
-        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220819_R0.ict'
+        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220819_R2.ict'
         filenames['MadgeTech'] = '../Data/2022-08-18/8.18.2022 flight Madgetech.xlsx'
     
     elif case == 'RF11': # RF11
@@ -392,7 +392,7 @@ def return_filenames(case):
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220821_R0.ICT'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220821_R0.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220821_R0.ict'
-        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220821_R0.ict'
+        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220821_R2.ict'
         filenames['MadgeTech'] = '../Data/2022-08-21/8.21.2022 flight Madgetech.xlsx'
         
     elif case == 'RF12': # RF12 [need to fix time offset in MadgeTech file]
@@ -401,7 +401,7 @@ def return_filenames(case):
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220823_R0.ICT'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220823_R0.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220823_R0.ict'
-        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220823_R0.ict'
+        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220823_R2.ict'
         filenames['MadgeTech'] = '../Data/2022-08-23/8.23.2022 flight Madgetech.xlsx'
         
     elif case == 'RF13': # RF13
@@ -410,7 +410,7 @@ def return_filenames(case):
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220825_R0.ICT'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220825_R0.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220825_R0.ict'
-        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220825_R0.ict'
+        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220825_R2.ict'
         filenames['MadgeTech'] = '../Data/2022-08-25/8.25.2022 flight Madgetech.xlsx'
         
     elif case == 'RF14': # RF14
@@ -419,7 +419,7 @@ def return_filenames(case):
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220826_R0.ICT'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220826_R0.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220826_R0.ict'
-        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220826_R0.ict'
+        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220826_R2.ict'
         filenames['MadgeTech'] = '../Data/2022-08-26/8.26.2022 flight Madgetech.xlsx'
         
     elif case == 'RF15': # RF15
@@ -428,7 +428,7 @@ def return_filenames(case):
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220829_R0.ICT'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220829_R0.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220829_R0.ict'
-        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220829_R0.ict'
+        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220829_R2.ict'
         filenames['MadgeTech'] = '../Data/2022-08-29/8.29.2022 flight Madgetech.xlsx'
     
     elif case == 'RF16': # RF16
@@ -437,7 +437,7 @@ def return_filenames(case):
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220831_R0.ICT'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220831_R0.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220831_R0.ict'
-        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220831_R0.ict'
+        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220831_R2.ict'
         filenames['MadgeTech'] = '../Data/2022-08-31/8.31.2022 flight Madgetech.xlsx'
     
     elif case == 'RF17': # RF17
@@ -446,7 +446,7 @@ def return_filenames(case):
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220901_R0.ICT'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220901_R0.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220901_R0.ict'
-        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220901_R0.ict'
+        filenames['DLH'] =   '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220901_R2.ict'
         filenames['MadgeTech'] = '../Data/2022-09-01/9.01.2022 flight Madgetech.xlsx'
     
     elif case == 'Transit6': # Osan to Misawa
@@ -455,7 +455,7 @@ def return_filenames(case):
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220909_R0.ICT'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220909_R0.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220909_R0.ict'
-        filenames['DLH'] = None
+        filenames['DLH'] = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220909_R2.ict'
         
     elif case == 'Transit7': # Misawa to Adak
         filenames['COMA_raw'] = ['../Data/2022-09-12/n2o-co_2022-09-12_f0000.txt']
@@ -463,7 +463,7 @@ def return_filenames(case):
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220912_R0.ICT'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220912_R0.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220912_R0.ict'
-        filenames['DLH'] = None
+        filenames['DLH'] = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220912_R2.ict'
     
     elif case == 'Transit8': # Adak to Seattle
         filenames['COMA_raw'] = ['../Data/2022-09-13/n2o-co_2022-09-13_f0000.txt']
@@ -471,7 +471,7 @@ def return_filenames(case):
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220913_R0.ICT'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220913_R0.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220913_R0.ict'
-        filenames['DLH'] = None
+        filenames['DLH'] = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220913_R2.ict'
         
     elif case == 'Transit9': # Seattle to Houston
         filenames['COMA_raw'] = ['../Data/2022-09-14/n2o-co_2022-09-14_f0000.txt']
@@ -479,7 +479,7 @@ def return_filenames(case):
         filenames['MMS'] =   '../Data/_OtherData_/ACCLIP-MMS-1HZ_WB57_20220914_R0.ICT'
         filenames['ACOS'] =  '../Data/_OtherData_/ACCLIP-ACOS-1Hz_WB57_20220914_R0.ict'
         filenames['COLD2'] = '../Data/_OtherData_/acclip-COLD2-CO_WB57_20220914_R0.ict'
-        filenames['DLH'] = None
+        filenames['DLH'] = '../Data/_OtherData_/ACCLIP-DLH-H2O_WB57_20220914_R2.ict'
     
     elif case == 'Nov1':
         filenames['COMA_raw'] = ['../Data/2022-11-01/n2o-co_2022-11-01_f0000.txt',

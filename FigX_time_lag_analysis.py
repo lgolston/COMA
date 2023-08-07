@@ -30,7 +30,7 @@ from load_data_functions import return_filenames
 cases = ['FCF_2022','RF01','RF02','Transit1','Transit2','Transit3','Transit4','Transit5',
          'RF03','RF04','RF05','RF06','RF07','RF08','RF09','RF10','RF11','RF12',
          'RF13','RF14','RF15','RF16','RF17','Transit6','Transit7','Transit8','Transit9']
- 
+
 # set plot style
 plt.rcParams['axes.labelsize'] = 8
 plt.rcParams['xtick.labelsize'] = 7
@@ -41,7 +41,7 @@ plt.rcParams.update({'mathtext.default': 'regular' } ) # not italics
 
 # %% create helper function (for loading ICARTT files, linear regression)
 def read_DLH_ict(filename):
-    # e.g. ACCLIP-DLH-H2O_WB57_20220816_RA.ict
+    # e.g. ACCLIP-DLH-H2O_WB57_20220816_R2.ict
     if filename==None:
         DLH = []
     else:
@@ -49,7 +49,7 @@ def read_DLH_ict(filename):
             cur_day = datetime.strptime(filename[-18:-10],"%Y%m%d")
         else:
             cur_day = datetime.strptime(filename[-15:-7],"%Y%m%d")
-        DLH = pd.read_csv(filename,sep=',',header=35)
+        DLH = pd.read_csv(filename,sep=',',header=36)
         DLH['time'] = [cur_day+timedelta(seconds=t) for t in DLH['Time_Start']]
         DLH[DLH['H2O_DLH']<-800] = np.nan
     return DLH
