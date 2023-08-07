@@ -17,6 +17,7 @@ from scipy import signal
 import scipy.stats
 
 from load_data_functions import read_COMA
+from load_data_functions import read_DLH_ict
 from load_data_functions import linear_ab
 from load_data_functions import return_filenames
 
@@ -32,14 +33,6 @@ plt.rcParams.update({'mathtext.default': 'regular' } ) # not italics
 
 # %% list file names
 filenames = return_filenames(case)
-    
-# %% create helper function (for loading ICARTT files, linear regression)
-def read_DLH_ict(filename):
-    # e.g. ACCLIP-DLH-H2O_WB57_20220816_RA.ict
-    cur_day = datetime.strptime(filename[-15:-7],"%Y%m%d")
-    DLH = pd.read_csv(filename,sep=',',header=35)
-    DLH['time'] = [cur_day+timedelta(seconds=t) for t in DLH['Time_Start']]
-    return DLH
 
 
 # %% load COMA and DLH files

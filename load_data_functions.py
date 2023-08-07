@@ -62,6 +62,20 @@ def read_COMA(filename_COMA):
     # return files
     return COMA, inlet_ix
 
+# %% create helper function (for loading ICARTT files, linear regression)
+def read_DLH_ict(filename):
+    # e.g. ACCLIP-DLH-H2O_WB57_20220816_R2.ict
+    if filename==None:
+        DLH = []
+    else:
+        if len(filename)==58: # had two files on 2022-07-21
+            cur_day = datetime.strptime(filename[-18:-10],"%Y%m%d")
+        else:
+            cur_day = datetime.strptime(filename[-15:-7],"%Y%m%d")
+        DLH = pd.read_csv(filename,sep=',',header=36)
+        DLH['time'] = [cur_day+timedelta(seconds=t) for t in DLH['Time_Start']]
+        DLH[DLH['H2O_DLH']<-800] = np.nan
+    return DLH
 
 # %% read MMS data
 def read_MMS_ict(filename):

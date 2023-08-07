@@ -22,8 +22,9 @@ from scipy import signal
 import scipy.stats
 from load_data_functions import read_COMA
 from load_data_functions import read_ACOS_ict
-from load_data_functions import read_MMS_ict
 from load_data_functions import read_COLD2_ict
+from load_data_functions import read_DLH_ict
+from load_data_functions import read_MMS_ict
 from load_data_functions import return_filenames
 
 ## load data
@@ -38,22 +39,6 @@ plt.rcParams['ytick.labelsize'] = 7
 plt.rcParams['legend.fontsize'] = 7
 plt.rcParams['font.size']=8
 plt.rcParams.update({'mathtext.default': 'regular' } ) # not italics
-
-# %% create helper function (for loading ICARTT files, linear regression)
-def read_DLH_ict(filename):
-    # e.g. ACCLIP-DLH-H2O_WB57_20220816_R2.ict
-    if filename==None:
-        DLH = []
-    else:
-        if len(filename)==58:
-            cur_day = datetime.strptime(filename[-18:-10],"%Y%m%d")
-        else:
-            cur_day = datetime.strptime(filename[-15:-7],"%Y%m%d")
-        DLH = pd.read_csv(filename,sep=',',header=36)
-        DLH['time'] = [cur_day+timedelta(seconds=t) for t in DLH['Time_Start']]
-        DLH[DLH['H2O_DLH']<-800] = np.nan
-    return DLH
-
 
 # %% load and plot
 for case_name in cases:#['Transit5']:
